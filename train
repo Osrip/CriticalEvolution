@@ -134,7 +134,7 @@ def parse():
     parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
     parser.add_argument('-l','--load', type=str, dest = 'loadfile',
                         help='Filename of previously saved simulation in save folder. Specify iteration using -li')
-    parser.add_argument('-li', '--loadi', type=int, dest='loaditer',
+    parser.add_argument('-li', '--loadi', type=str, dest='loaditer',
                         help='Iteration of previously saved simulation that is loaded. Only use in combination with -l')
     parser.add_argument('-ns', '--nseas', action='store_true', dest='no_seasons', help='Deactivates seasons')
     parser.add_argument('-ser', '--ser', action='store_true', dest='server_mode',
