@@ -170,11 +170,6 @@ class ising:
             # self.r = np.abs(np.arctan(self.ypos / self.xpos))
             self.r = np.arctan2(self.v[1], self.v[0]) * 180 / np.pi
             
-            '''
-            If 'BoidOn' == False self.r is undefined (it is defined in the upper if condition)
-            --> fixed by moving definition of self.r up in else condition
-            '''
-            
         else:
             self.r = np.random.rand() * 360 
             self.v = np.random.rand() * settings['v_max'] #TODO: This cannot work with huge v_max
@@ -921,11 +916,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     #Add command line input to folder name
     s = sys.argv[1:]
     command_input = '_'.join([str(elem) for elem in s])
-    folder = 'save/sim-' + time.strftime("%Y%m%d-%H%M%S") + command_input + '/'
+    sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S") + command_input
+    folder = 'save/' + sim_name  + '/'
     if settings['save_data'] == True:#
-        '''
-        name save folder
-        '''
 
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -1017,6 +1010,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             '''
 
             isings = evolve(settings, isings, rep)
+    return sim_name
 
 def CriticalLearning(isings, foods, settings, Iterations=1):
     # settings['TimeSteps'] = 10

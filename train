@@ -7,7 +7,7 @@ import numpy as np
 import argparse
 import matplotlib.pyplot as plt
 from sys import argv
-
+import automatic_plotting
 import pickle
 
 
@@ -94,6 +94,8 @@ def create_settings():
     settings['cost_speed'] = args.cost_speed  # FLOAT [0,1] energy cost of speed as a factor of speed #default 0.05
     settings['initial_energy'] = args.init_energy  # Energy that each organism starts with in each simulation
 
+    settings['plot_pipeline'] = args.plot_pipeline
+
     
     Iterations = args.iterations
 
@@ -102,6 +104,9 @@ def create_settings():
 
 
     return settings, Iterations
+
+
+
 
 def parse():
     parser = argparse.ArgumentParser(description=
@@ -122,10 +127,9 @@ def parse():
                         help='''Number of food particles. Serves as largest number of food particles when seasons are 
                         activated''')
     parser.add_argument('-s', '--save', dest='save_data', action='store_true', help="Save data of simulation")
-    # parser.add_argument('-p', '--plot', dest='plot', action='store_true',
-    #                     help="Plot animated simulation data for each generation, drastically increases runtime")
-    parser.add_argument('-g', '--gen', type=int, dest='iterations',
-                        help='Number of generations in simulation')
+    parser.add_argument('-plt', '--plot', dest='plot_pipeline', action='store_true',
+                        help='Run Plotting pipeline at end of simulation')
+    parser.add_argument('-g', '--gen', type=int, dest='iterations', help='Number of generations in simulation')
     parser.add_argument('-t', '--ts', type=int, dest='time_steps',
                         help='Number of time steps in simulation')
     parser.add_argument('-b', '--beta', dest='init_beta', type=float, help='Initial beta of first generation')
@@ -162,7 +166,7 @@ def parse():
     parser.set_defaults(save_data=False, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
                         loadfile='', loaditer = 2000, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
-                        init_energy=0, food_energy=1, no_ener_mod=False)
+                        init_energy=0, food_energy=1, no_ener_mod=False, plot_pipeline=False)
     args = parser.parse_args()
     return args
 
@@ -217,16 +221,20 @@ def run(settings):
     #No critical learning:
     # CriticalLearning(isings, foods, settings, Iterations)
 
-    EvolutionLearning(isings, foods, settings, Iterations)
+    sim_name = EvolutionLearning(isings, foods, settings, Iterations)
 
-    pass
+    return sim_name
 
 
 # --- RUN ----------------------------------------------------------------------+
 
 if __name__ ==  '__main__':
     settings, Iterations = create_settings()
-    run(settings)
+    sim_name = run(settings)
+    if settings['save_data'] and settings['plot_pipeline']:
+        automatic_plotting.main(sim_name)
+
+
 
 
 # --- END ----------------------------------------------------------------------+
