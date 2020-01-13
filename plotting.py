@@ -5,7 +5,7 @@ from matplotlib.patches import Circle
 import matplotlib.lines as lines
 import matplotlib.animation as animation
 import time
-
+import numpy as np
 from math import sin
 from math import cos
 from math import radians
@@ -183,21 +183,32 @@ def plot_frame(settings, folder, fig, ax, isings, foods, time, rep):
 
 def initial_plot(isings, foods, settings, ax):
     for I in isings:
-        __plot_organism_init(settings, I[0], I[1], I[2], ax)
+        __plot_organism_init(settings, I[0], I[1], I[2], I[3], ax)
 
     # PLOT FOOD PARTICLES
     for food in foods:
         __plot_food_init(settings, food[0], food[1], ax)
 
-def __plot_organism_init(settings, x1, y1, theta, ax):
+def __plot_organism_init(settings, x1, y1, theta, energy, ax):
+    if energy < 0.5:
+        energy = 0.5
 
-    circle = Circle([x1,y1], settings['org_radius'], edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
+    if settings['energy_model']:
+        #org_size = settings['org_radius'] * (energy / 3)
+        org_size = settings['org_radius'] * (np.log(energy+1))
+    else:
+        #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus
+        #  foods eaten as energy
+        #org_size = settings['org_radius'] * (energy / 3)
+        org_size = settings['org_radius'] * (np.log(energy + 1))
+
+    circle = Circle([x1,y1], org_size, edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
     ax.add_artist(circle)
 
-    edge = Circle([x1,y1], settings['org_radius'], facecolor='None', edgecolor = 'darkgreen', zorder=8)
+    edge = Circle([x1,y1], org_size, facecolor='None', edgecolor = 'darkgreen', zorder=8)
     ax.add_artist(edge)
 
-    tail_len = settings['org_radius']*1.25
+    tail_len = org_size*1.25
     
     x2 = cos(radians(theta)) * tail_len + x1
     y2 = sin(radians(theta)) * tail_len + y1
