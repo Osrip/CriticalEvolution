@@ -10,6 +10,7 @@ from math import sin
 from math import cos
 from math import radians
 import os
+from matplotlib import colors
 
 
 #plt.rcParams["figure.figsize"] = [8,8]
@@ -190,28 +191,28 @@ def initial_plot(isings, foods, settings, ax):
         __plot_food_init(settings, food[0], food[1], ax)
 
 def __plot_organism_init(settings, x1, y1, theta, energy, ax):
-    # if energy < 0.5:
-    #     energy = 0.5
+    if energy < 0.5:
+       energy = 0.5
 
-    cmap = plt.get_cmap('plasma')
-    norm = colors.Normalize(vmin=0, vmax=len(iter_list))
-    color1 = cmap(norm(energy))
-    color2 = cmap(norm(energy))
-    org_size = settings['org_radius']
-    # if settings['energy_model']:
-    #     org_size = settings['org_radius'] * (np.log(energy+1)
-    # else:
-    #     #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus
-    #     #  foods eaten as energy
-    #
-    #     org_size = settings['org_radius'] * (np.log(energy + 1))
+    #cmap = plt.get_cmap('gist_rainbow')
+    #norm = colors.Normalize(vmin=0, vmax=25) #Je nach maximaler Energie
+    #color1 = cmap(norm(-energy))
+    #color1 = 'black'
+    #color2 = cmap(norm(-(energy+1)))
+    #org_size = settings['org_radius']
+    if settings['energy_model']:
+        org_size = settings['org_radius'] * (np.log(energy+1))
+    else:
+        org_size = settings['org_radius'] * (np.log(energy + 1))
+        #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus#  foods eaten as energy
 
-    #circle = Circle([x1,y1], org_size, edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
-    circle = Circle([x1,y1], org_size, edgecolor = color1, facecolor = color1, zorder=8)
+
+    circle = Circle([x1,y1], org_size, edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
+    #circle = Circle([x1,y1], org_size, edgecolor = color1, facecolor = color1, zorder=8)
     ax.add_artist(circle)
 
-    #edge = Circle([x1,y1], org_size, facecolor='None', edgecolor = 'darkgreen', zorder=8)
-    edge = Circle([x1, y1], org_size, facecolor='None', edgecolor=color2, zorder=8)
+    edge = Circle([x1,y1], org_size, facecolor='None', edgecolor = 'darkgreen', zorder=8)
+    #edge = Circle([x1, y1], org_size, facecolor='None', edgecolor=color2, zorder=8)
     ax.add_artist(edge)
 
     tail_len = org_size*1.25
@@ -220,8 +221,8 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax):
     y2 = sin(radians(theta)) * tail_len + y1
 
 
-    #ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='darkgreen', linewidth=1, zorder=10))
-    ax.add_line(lines.Line2D([x1, x2], [y1, y2], color=color2, linewidth=1, zorder=10))
+    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='darkgreen', linewidth=1, zorder=10))
+    #ax.add_line(lines.Line2D([x1, x2], [y1, y2], color=color2, linewidth=1, zorder=10))
 
     pass
 
