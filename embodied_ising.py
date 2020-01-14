@@ -111,7 +111,7 @@ class ising:
         self.energy = 0.0
         self.food = 0
         self.energies = [] #Allows for using median as well... Replace with adding parameter up for average in future to save memory? This array is deleted before saving to reduce file size
-        self.avg_energy = 0
+        self.avg_energy = 0 #currently median implemented
         self.all_velocity = 0
         self.avg_velocity = 0
         self.v = 0.0
@@ -578,7 +578,7 @@ def extract_plot_information(isings, foods, settings):
     foods_info = []
     for I in isings:
         if settings['energy_model']:
-            isings_info.append([I.xpos, I.ypos, I.r, I.avg_energy])
+            isings_info.append([I.xpos, I.ypos, I.r, I.energy])
         else:
             isings_info.append([I.xpos, I.ypos, I.r, I.fitness])
     for f in foods:
@@ -1403,7 +1403,7 @@ def interact(settings, isings, foods):
             if food_org_dist <= settings['org_radius']:
                 if settings['energy_model']:
                     I.energy += food.energy
-                    I.food += food.energy
+                    I.food += 1
                 else:
                     I.fitness += food.energy
                 '''
