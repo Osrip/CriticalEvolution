@@ -76,9 +76,9 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
     plt.rc('legend', **{'fontsize': 20})
 
     fig, ax = plt.subplots(1, 1, figsize=(19, 10))
-    fig.text(0.51, 0.035, r'$Generation$', ha='center', fontsize=20)
+    fig.text(0.51, 0.035, r'Generation', ha='center', fontsize=20)
     # fig.text(0.07, 0.5, r'$Avg. Food Consumed$', va='center', rotation='vertical', fontsize=20)
-    fig.text(0.07, 0.5, r'$%s$' %plot_var.replace('_',' '), va='center', rotation='vertical', fontsize=20)
+    fig.text(0.07, 0.5, r'%s' %plot_var.replace('_',' '), va='center', rotation='vertical', fontsize=20)
     title = '' #'Food consumed per organism'
     fig.suptitle(title)
 

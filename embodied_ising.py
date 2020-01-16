@@ -434,6 +434,21 @@ class ising:
 
     # mutate the connectivity matrix of an organism by stochastically adding/removing an edge
     def mutate(self, settings):
+        '''
+         3 Mutations happening at once:
+        CONNECTIVITY Mutations:
+        One of these things happen
+        - A new edge is removed (according to sparsity settingsmore or less likely)
+        - or added (if no adding is possible some random edge gets new edge weight)
+
+        EDGE MUTATIONS
+        currently in an edge mutation means, that the whole adge weight is replaced by a randomly generated weight
+        
+
+        BETA Mutations
+        Beta is mutated
+        '''
+
         # ADDS/REMOVES RANDOM EDGE DEPENDING ON SPARSITY SETTING, RANDOMLY MUTATES ANOTHER RANDOM EDGE
 
         # expected number of disconnected edges

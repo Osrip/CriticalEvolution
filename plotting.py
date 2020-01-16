@@ -207,11 +207,11 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax):
         #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus#  foods eaten as energy
 
 
-    circle = Circle([x1,y1], org_size, edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
+    circle = Circle([x1,y1], settings['org_radius'], edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
     #circle = Circle([x1,y1], org_size, edgecolor = color1, facecolor = color1, zorder=8)
     ax.add_artist(circle)
 
-    edge = Circle([x1,y1], org_size, facecolor='None', edgecolor = 'darkgreen', zorder=8)
+    edge = Circle([x1,y1], settings['org_radius'], facecolor='None', edgecolor = 'darkgreen', zorder=8)
     #edge = Circle([x1, y1], org_size, facecolor='None', edgecolor=color2, zorder=8)
     ax.add_artist(edge)
 
@@ -221,8 +221,8 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax):
     y2 = sin(radians(theta)) * tail_len + y1
 
 
-    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='darkgreen', linewidth=1, zorder=10))
-    #ax.add_line(lines.Line2D([x1, x2], [y1, y2], color=color2, linewidth=1, zorder=10))
+    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='red', linewidth=1, zorder=10))
+    #ax.add_line(lines.Line2D([x1, x2], [y1, y2], color='darkgreen', linewidth=1, zorder=10))
 
     pass
 
