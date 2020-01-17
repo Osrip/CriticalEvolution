@@ -3,7 +3,7 @@
 import plotting
 import numpy as np
 import operator
-from itertools import combinations
+from itertools import combinations, product
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -27,6 +27,7 @@ import os
 import pickle
 import time
 #import random
+#from tqdm import tqdm
 
 
 
@@ -236,11 +237,14 @@ class ising:
         self.ypos += self.dy
 
         # torus boundary conditions
-        if abs(self.xpos) > settings['x_max']:
-            self.xpos = -self.xpos
+        # if abs(self.xpos) > settings['x_max']:
+        #     self.xpos = -self.xpos
+        #
+        # if abs(self.ypos) > settings['y_max']:
+        #     self.ypos = -self.ypos
 
-        if abs(self.ypos) > settings['y_max']:
-            self.ypos = -self.ypos
+        self.xpos = (self.xpos + settings['x_max']) % settings['x_max']
+        self.ypos = (self.ypos + settings['y_max']) % settings['y_max']
 
     def UpdateSensors(self, settings):
         # self.s[0] = sigmoid(self.r_food / 180)
@@ -443,7 +447,7 @@ class ising:
 
         EDGE MUTATIONS
         currently in an edge mutation means, that the whole adge weight is replaced by a randomly generated weight
-
+        
 
         BETA Mutations
         Beta is mutated
@@ -561,6 +565,77 @@ class food():
 def dist(x1, y1, x2, y2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
+def pdistance_pairwise(x0, x1, dimensions, food=False):
+    '''
+    Parameters
+    ----------
+    x0, x1:
+        (vectorized) list of coordinates. Can be N-dimensional. e.g. x0 = [[0.5, 2.], [1.1, 3.8]].
+
+    dimensions:
+        size of the bounding box, array of length N. e.g. [8., 8.], [xmax - xmin, ymax - ymin].
+
+    food:
+        boolean signifying if the distance calculations are between organisms or between organisms and food. In the
+        latter case we don't need to compare it both ways around, in the former, theta_mat is a non-symmetric matrix.
+
+    Returns
+    -------
+
+    dist_mat:
+        upper triangle matrix of pairwise distances accounting for periodic boundaries
+
+    theta_mat:
+        full matrix of angles between each position accounting for periodic boundaries
+    '''
+
+
+    # get all unique pairs combinations
+    N1 = len(x0)
+    N2 = len(x1)
+
+    if food:
+        combo_index = list(product(np.arange(N1), np.arange(N2)))
+    else:
+        if not len(x0) == len(x1):
+            raise Exception('x0.shape[0] not equal to x1.shape[0] when comparing organisms.')
+        combo_index = list(combinations(np.arange(N1), 2))
+
+
+    Ii = np.array([x0[i[0]] for i in combo_index])
+    Ij = np.array([x1[i[1]] for i in combo_index])
+
+    # calculate distances accounting for periodic boundaries
+    # delta = np.abs(Ipostiled_seq - Ipostiled)
+    delta = Ij - Ii
+    delta = np.where(np.abs(delta) > 0.5 * dimensions, delta - np.sign(delta)*dimensions, delta)
+
+    dist_vec = np.sqrt((delta ** 2).sum(axis=-1))
+    theta_vec_ij = np.degrees(np.arctan2(delta[:, 1], delta[:, 0]))  # from org i to org j
+    if not food:
+        theta_vec_ji = np.degrees(np.arctan2(-delta[:, 1], -delta[:, 0])) # from org j to org i
+
+    if food:
+        dist_mat = dist_vec.reshape(N1, N2)
+    else:
+        dist_mat = np.zeros((N1, N2))
+    theta_mat = np.zeros((N1, N2))
+
+    for ii, ind in enumerate(combo_index):
+        i = ind[0]
+        j = ind[1]
+        # can leave this as upper triangle since it's symmetric
+        if not food:
+            dist_mat[i, j] = dist_vec[ii]
+        # need to get a full matrix since eventually these angles are not symmetric
+        theta_mat[i, j] = theta_vec_ij[ii]
+        # if comparing org-to-org angles, need the other direction as well
+        if not food:
+            theta_mat[j, i] = theta_vec_ji[ii]
+
+
+    return dist_mat, theta_mat
+
 
 def calc_heading(I, food):
     d_x = food.xpos - I.xpos
@@ -630,11 +705,12 @@ def TimeEvolve(isings, foods, settings, folder, rep):
     '''
     !!! iterating through timesteps
     '''
+    #for t in tqdm(range(T)):
     for t in range(T):
         #print(len(foods))
 
         # print('\r', 'Iteration {0} of {1}'.format(t, T), end='') #, end='\r'
-        print('\r', 'Tstep {0}/{1}'.format(t, T), end='')  # , end='\r'
+        # print('\r', 'Tstep {0}/{1}'.format(t, T), end='')  # , end='\r'
         if settings['seasons'] == True:
             foods = seasons(settings, foods, t, T)
 
@@ -1404,46 +1480,54 @@ def interact(settings, isings, foods):
     consider making a matrix of values instead of looping through all organisms
     currently, there is redundancy in these loops which might end up being time consuming
     '''
-    for I in isings:
-        I.d_food = I.maxRange
-        I.r_food = 0
-        I.org_sens = 0
+
+    # calculate all agent-agent and agent-food distances
+    Ipos = np.array( [[I.xpos, I.ypos] for I in isings] )
+    foodpos = np.array( [[food.xpos, food.ypos] for food in foods] )
+    dimensions = np.array([settings['x_max'] - settings['x_min'], settings['y_max'] - settings['y_min']])
+    org_heading = np.array([I.r for I in isings]).reshape(len(Ipos), 1)
+
+    dist_mat_org, theta_mat_org = pdistance_pairwise(Ipos, Ipos, dimensions, food=False)
+    dist_mat_food, theta_mat_food = pdistance_pairwise(Ipos, foodpos, dimensions, food=True)
+
+    # calculate agent-agent and agent-food angles
+    theta_mat_org = theta_mat_org - org_heading
+    theta_mat_food = theta_mat_food - org_heading
+
+    theta_mat_org = np.mod(theta_mat_org, 360)
+    theta_mat_org = np.where(theta_mat_org > 180, theta_mat_org - 360, theta_mat_org)
+
+    theta_mat_food = np.mod(theta_mat_food, 360)
+    theta_mat_food = np.where(theta_mat_food > 180, theta_mat_food - 360, theta_mat_food)
+
+    # calculate org sensor
+    org_sensor = np.where(np.abs(theta_mat_org) > 90, 0, np.cos(np.deg2rad(theta_mat_org)))
+    org_radius = np.array([I.radius for I in isings]).reshape(len(Ipos), 1)
+    org_sensor = (org_sensor * org_radius) / (dist_mat_org + dist_mat_org.T + 1e-6) ** 2
+    np.fill_diagonal(org_sensor, 0)
+    org_sensor = np.sum(org_sensor, axis=1)
+
+
+    for i, I in enumerate(isings):
         if settings['energy_model']:
             I.energies.append(I.energy)
 
-        for food in foods:
-            food_org_dist = dist(I.xpos, I.ypos, food.xpos, food.ypos)
+        minFoodDist = np.min(dist_mat_food[i, :])
+        foodInd = np.argmin(dist_mat_food[i, :])
 
-            # EAT
-            if food_org_dist <= settings['org_radius']:
-                if settings['energy_model']:
-                    I.energy += food.energy
-                    I.food += 1
-                else:
-                    I.fitness += food.energy
-                '''
-                finess is proportional to energy
-                '''
-                food.respawn(settings)
+        I.d_food = minFoodDist  # Distance to closest food
+        I.r_food = theta_mat_food[i, foodInd] # "angle" to closest food
 
-            # DETERMINE IF THIS IS THE CLOSEST FOOD PARTICLE
-            if food_org_dist < I.d_food:
-                I.d_food = food_org_dist #Distance to closest food
-                I.r_food = calc_heading(I, food) #"angle" to closest food
+        if minFoodDist <= settings['org_radius']:
+            if settings['energy_model']:
+                I.energy += foods[foodInd].energy
+            I.food += foods[foodInd].energy
+            '''
+            finess is proportional to energy
+            '''
+            foods[foodInd].respawn(settings)
 
-        for I2 in isings:
-
-            if I != I2:
-                org_org_dist = dist(I.xpos, I.ypos, I2.xpos, I2.ypos)
-                org_org_heading = calc_heading(I, I2)
-
-                # implement a directional sensor
-                if abs(org_org_heading) > 90:
-                    dot_org_heading = 0
-                else:
-                    dot_org_heading = np.cos(np.deg2rad(org_org_heading))
-
-                I.org_sens += ((dot_org_heading * I.radius) / (org_org_dist + 1e-6) ** 2)
+        I.org_sens = org_sensor[i]
 
 
 
