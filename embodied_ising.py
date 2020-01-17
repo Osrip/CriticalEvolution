@@ -443,7 +443,7 @@ class ising:
 
         EDGE MUTATIONS
         currently in an edge mutation means, that the whole adge weight is replaced by a randomly generated weight
-        
+
 
         BETA Mutations
         Beta is mutated
