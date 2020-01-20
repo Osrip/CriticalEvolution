@@ -19,7 +19,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
 def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
-         sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$']):
+         sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter = True):
 
     '''
     Can either plot one or multiple simulations in a combined plot
@@ -88,13 +88,16 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
         c = cmap(norm(i))
 
         muF = np.mean(FOOD, axis=1)
-        ax.plot(iter_list, muF, color=c, label=labels[i])
+        if scatter:
+            ax.scatter(iter_list, muF, color=c, label=labels[i], alpha=0.15)
+        else:
+            ax.plot(iter_list, muF, color=c, label=labels[i])
 
-
-        sigmaF = FOOD.std(axis=1)
-        ax.fill_between(iter_list, muF + sigmaF, muF - sigmaF,
-                        color=c, alpha=a
-                        )
+        if not scatter:
+            sigmaF = FOOD.std(axis=1)
+            ax.fill_between(iter_list, muF + sigmaF, muF - sigmaF,
+                            color=c, alpha=a
+                            )
 
     custom_legend = [Line2D([0], [0], marker='o', color='w',
                             markerfacecolor=cmap(norm(0)), markersize=15),
