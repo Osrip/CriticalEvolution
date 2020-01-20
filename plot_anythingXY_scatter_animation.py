@@ -20,7 +20,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
-def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=0.8, alpha=0.8, autoLoad=True, x_lim=None,
+def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=3, alpha=0.8, autoLoad=True, x_lim=None,
          y_lim=None, log=True, y_noise=True):
 
 
@@ -32,11 +32,11 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     saveFigBool = True
 
-    if settings['server_mode']:
-        plt.rcParams['animation.ffmpeg_path'] = '/data-uwks159/home/jprosi/ffmpeg-4.2.1-linux-64/ffmpeg'
-        #'/usr/local/bin/ffmpeg'
-    else:
-        plt.rcParams['animation.ffmpeg_path'] = "D:/Program Files/ffmpeg-20191217-bd83191-win64-static/bin/ffmpeg.exe"
+    # if settings['server_mode']:
+    #     plt.rcParams['animation.ffmpeg_path'] = '/data-uwks159/home/jprosi/ffmpeg-4.2.1-linux-64/ffmpeg'
+    #     #'/usr/local/bin/ffmpeg'
+    # else:
+    plt.rcParams['animation.ffmpeg_path'] = "D:/Program Files/ffmpeg-20191217-bd83191-win64-static/bin/ffmpeg.exe"
 
 
     new_order = [2, 0, 1]
@@ -58,7 +58,7 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     fig = plt.figure()
     ani = animation.FuncAnimation(fig, update_plot,
-                                  fargs=[x_pars_list, y_pars_list, c_pars_list], interval=1,
+                                  fargs=[x_pars_list, y_pars_list, c_pars_list, s, alpha], interval=1,
                                   frames=len(x_pars_list))
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
@@ -67,7 +67,7 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     folder = 'save/' + loadfile
     savefolder = folder + '/figs/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
-    savefilename = 'ani' + savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
+    savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
         iter_list[-1]) + '.mpg'
 
     if not path.exists(savefolder):
@@ -78,7 +78,7 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     plt.show()
 
-def update_plot(f, x_pars_list, y_pars_list, c_pars_list):
+def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True):
 
     # cmap = plt.get_cmap('plasma')
     # norm = colors.Normalize(vmin=np.min(c_pars_list), vmax=np.max(c_pars_list)
@@ -89,18 +89,18 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list):
     # plt.rc('font', **font)
     # c = cmap(norm(gen))
     x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
-    if y_noise:
-        y_pars = y_pars.astype(float)
-        y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
+    # if y_noise:
+    #     y_pars = y_pars.astype(float)
+    #     y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
     ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
-    if y_noise:
-        plt.ylim(1,1000)
+    # if y_noise:
+    #     plt.ylim(1,1000)
     if log:
         plt.xscale('log')
         plt.yscale('log')
 
-    plt.xlim(x_lim)
-    plt.ylim(y_lim)
+    # plt.xlim(x_lim)
+    # plt.ylim(y_lim)
     plt.xlabel('{}'.format(plot_var_x.replace('_', ' ')))
     plt.ylabel('{}'.format(plot_var_y.replace('_', ' ')))
 def upper_tri_masking(A):
