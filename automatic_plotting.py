@@ -8,8 +8,9 @@ def main(sim_name, load_isings_list=True):
     settings = load_settings(sim_name)
     if load_isings_list:
         isings_list = load_isings(sim_name)
-    plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list = isings_list, autoLoad=False)
-    plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+    #plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list = isings_list, autoLoad=False)
+    #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+    plot_var_tuples = [('avg_velocity', 'food')]
     plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
 
 def plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad = True):

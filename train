@@ -85,6 +85,7 @@ def create_settings():
     settings['seasons'] = not args.no_seasons #BOO; Activates seasons
     settings['years_per_iteration'] = 1 #INT amount of seasonal changes per iteration
     settings['min_food_winter'] = 0.5 #FLOAT [0,1]; relative decimation of food in winter
+    settings['chg_food_gen'] = args.chg_food_gen
     
     settings['parallel_computing'] = False #BOO
     settings['cores'] = 4 #INT if 0 number is determined automatically
@@ -126,7 +127,7 @@ def parse():
     parser.add_argument('-f','--food', dest='num_food', type=int,
                         help='''Number of food particles. Serves as largest number of food particles when seasons are 
                         activated''')
-    parser.add_argument('-s', '--save', dest='save_data', action='store_true', help="Save data of simulation")
+    parser.add_argument('-s', '--save', dest='save_data', action='store_false', help="Don't save data of simulation")
     parser.add_argument('-plt', '--plot', dest='plot_pipeline', action='store_true',
                         help='Run Plotting pipeline at end of simulation')
     parser.add_argument('-g', '--gen', type=int, dest='iterations', help='Number of generations in simulation')
@@ -159,14 +160,16 @@ def parse():
     parser.add_argument('-vmi', '--v_min', dest='v_min', type=float,
                         help='''Min speed of agends. Up until this speed agends do not use energy for movement when 
                         energy model is switched on''')
+    parser.add_argument('-cfg', '--chg_food_gen', dest='chg_food_gen', nargs='+', type=int,
+                        help='''Expects a blank separated list of len 2 X Y. At generation X aet num_food to Y''')
     parser.add_argument('-n', '--name', dest='savename', help='Optional name for the folder')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
-    parser.set_defaults(save_data=False, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
+    parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
                         loadfile='', loaditer = 2000, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
-                        init_energy=0, food_energy=1, no_ener_mod=False, plot_pipeline=False)
+                        init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None)
     args = parser.parse_args()
     return args
 

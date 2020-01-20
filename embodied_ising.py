@@ -711,6 +711,9 @@ def TimeEvolve(isings, foods, settings, folder, rep):
 
         # print('\r', 'Iteration {0} of {1}'.format(t, T), end='') #, end='\r'
         # print('\r', 'Tstep {0}/{1}'.format(t, T), end='')  # , end='\r'
+        if not (settings['chg_food_gen'] is None):
+            if t == settings['chg_food_gen'][0]:
+                settings['num_food'] = settings['chg_food_gen'][1]
         if settings['seasons'] == True:
             foods = seasons(settings, foods, t, T)
 

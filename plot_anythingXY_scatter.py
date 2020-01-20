@@ -19,7 +19,8 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
-def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s = 0.8, alpha = 0.13, autoLoad = True, x_lim = None, y_lim = None):
+def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.13, autoLoad=True, x_lim=None,
+         y_lim=None, log=True, y_noise=True):
 
 
     loadfiles = [loadfile]#loadfiles = ['sim-20191114-000009_server']
@@ -57,7 +58,15 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s = 0.8, alpha
     plt.figure()
     for gen, (x_pars, y_pars) in enumerate(zip(x_pars_list, y_pars_list)):
         c = cmap(norm(gen))
+        if y_noise:
+            y_pars = y_pars.astype(float)
+            y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
         ax = plt.scatter(x_pars, y_pars, s = s, alpha = alpha, c=c)
+        if y_noise:
+            plt.ylim(1,1000)
+        if log:
+            plt.xscale('log')
+            plt.yscale('log')
         #TODO:colour acc to generation!!
     plt.xlim(x_lim)
     plt.ylim(y_lim)
