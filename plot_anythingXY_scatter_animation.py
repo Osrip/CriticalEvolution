@@ -80,13 +80,15 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
 
     plt.show()
+
+
 def plot(f, x_pars_list, y_pars_list, c_pars_list, alpha = 1, y_noise = True, s = 10):
 
 
     x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
-    if y_noise:
-        y_pars = y_pars.astype(float)
-        y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
+    # if y_noise:
+    #     y_pars = y_pars.astype(float)
+    #     y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
     ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
     plt.xscale('log')
     plt.yscale('log')
@@ -103,13 +105,13 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log 
     # plt.rc('font', **font)
     # c = cmap(norm(gen))
     plt.cla()
-    if f > 100:
-        fade = 100
+    if f > 10:
+        fade = 10
     else:
         fade = f
     for i in range(fade):
-        alpha = (101 - fade)/101
-        frame = f - fade
+        alpha = (11 - i)/5
+        frame = f - i
         plot(frame, x_pars_list, y_pars_list, c_pars_list, alpha)
 
     # if y_noise:
