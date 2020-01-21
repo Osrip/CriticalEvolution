@@ -15,14 +15,13 @@ from automatic_plot_helper import load_isings
 import matplotlib.animation as animation
 import os
 import sys
-import time
 '''
 loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
-def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=10, alpha=1, autoLoad=True, x_lim=1,
-         y_lim=1000, log=True, y_noise=True):
+def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=3, alpha=0.8, autoLoad=True, x_lim=None,
+         y_lim=None, log=True, y_noise=True):
 
 
     loadfiles = [loadfile]#loadfiles = ['sim-20191114-000009_server']
@@ -59,7 +58,7 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     fig = plt.figure()
     ani = animation.FuncAnimation(fig, update_plot,
-                                  fargs=[x_pars_list, y_pars_list, c_pars_list, s, alpha, x_lim, y_lim], interval=1,
+                                  fargs=[x_pars_list, y_pars_list, c_pars_list, s, alpha], interval=1,
                                   frames=len(x_pars_list))
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
@@ -67,23 +66,19 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
 
     folder = 'save/' + loadfile
-    savefolder = folder + '/scatter_ani' + format(time.strftime("%Y%m%d-%H%M%S")) + '/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
+    savefolder = folder + '/figs/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
     savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
         iter_list[-1]) + '.mpg'
 
     if not path.exists(savefolder):
         makedirs(savefolder)
 
-
-    cur_wdir = os.getcwd()
-    os.chdir(savefolder)
-    ani.save(savefilename, writer=writer)
-    os.chdir(cur_wdir)
+    if saveFigBool:
+        ani.save(savefilename, writer=writer)
 
     plt.show()
 
-def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 10, alpha=1, log = True, x_lim = 1, y_lim = 1000):
-    plt.clf()
+def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True):
 
     # cmap = plt.get_cmap('plasma')
     # norm = colors.Normalize(vmin=np.min(c_pars_list), vmax=np.max(c_pars_list)
@@ -104,8 +99,8 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 10, alpha=1, log =
         plt.xscale('log')
         plt.yscale('log')
 
-    plt.xlim(x_lim)
-    plt.ylim(y_lim)
+    # plt.xlim(x_lim)
+    # plt.ylim(y_lim)
     plt.xlabel('{}'.format(plot_var_x.replace('_', ' ')))
     plt.ylabel('{}'.format(plot_var_y.replace('_', ' ')))
 def upper_tri_masking(A):
@@ -182,7 +177,7 @@ if __name__ == '__main__':
 
     #loadfile = sys.argv[1]
     #plot_var = sys.argv[2] #plot_var = 'v'
-    loadfile = 'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    loadfile = 'sim-20200120-194413-cfg_10_10_-g_20_-t_20_-n_test'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
     plot_var_x = 'avg_velocity'
     plot_var_y = 'food'#'food'
     plot_var_c = 'avg_energy'
@@ -190,6 +185,6 @@ if __name__ == '__main__':
     settings = load_settings(loadfile)
     #TODO: add something that detetcts .npz file and skips loading isings in that case
 
-    main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, autoLoad=False, x_lim=None, y_lim=(1, 1000), alpha = 0.05)
+    main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, autoLoad=False, x_lim=None, y_lim=None)
     #TODO: Evt. PCA oder decision trees um herauszufinden welche eigenschaften wichtig sind für hohe avg energy?
 
