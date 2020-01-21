@@ -205,7 +205,7 @@ if __name__ == '__main__':
 
     #loadfile = sys.argv[1]
     #plot_var = sys.argv[2] #plot_var = 'v'
-    loadfile = 'sim-20200103-170556-ser_-s_-b_1_TEST_ANIMATION_SCATTER'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    loadfile = 'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
     plot_var_x = 'avg_velocity'
     plot_var_y = 'food'#'food'
     plot_var_c = 'avg_energy'

@@ -118,13 +118,13 @@ def parse():
                                      python train -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
                                      Animation will be saved in previous folder of simulation
                                      ------Default values-----
-                                     save_data=False, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
+                                     save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
                         loadfile='', loaditer = 2000, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
-                        init_energy=0, food_energy=1, no_ener_mod=False
+                        init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None
                                      ''')
     parser.add_argument('-p', '--pop', dest='pop_size', type=int, help='Number of individuals in each generation')
-    parser.add_argument('-f','--food', dest='num_food', type=int,
+    parser.add_argument('-f','--food', dest='food_num', type=int,
                         help='''Number of food particles. Serves as largest number of food particles when seasons are 
                         activated''')
     parser.add_argument('-s', '--save', dest='save_data', action='store_false', help="Don't save data of simulation")
@@ -161,7 +161,7 @@ def parse():
                         help='''Min speed of agends. Up until this speed agends do not use energy for movement when 
                         energy model is switched on''')
     parser.add_argument('-cfg', '--chg_food_gen', dest='chg_food_gen', nargs='+', type=int,
-                        help='''Expects a blank separated list of len 2 X Y. At generation X aet num_food to Y''')
+                        help='''Expects a blank separated list of len 2 X Y. At generation X change num_food to Y''')
     parser.add_argument('-n', '--name', dest='savename', help='Optional name for the folder')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
