@@ -80,7 +80,18 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
 
     plt.show()
+def plot(f, x_pars_list, y_pars_list, c_pars_list, alpha = 1, y_noise = True, s = 10):
 
+
+    x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
+    if y_noise:
+        y_pars = y_pars.astype(float)
+        y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
+    ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.ylim(1, 1000)
+    plt.xlim(0.001, 1)
 def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True, y_noise = True):
 
     # cmap = plt.get_cmap('plasma')
@@ -91,17 +102,21 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log 
     #
     # plt.rc('font', **font)
     # c = cmap(norm(gen))
-    x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
-    if y_noise:
-        y_pars = y_pars.astype(float)
-        y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
-    ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
-    if y_noise:
-        plt.gca().set_ylim(bottom=1)
+    plt.cla()
+    if f > 100:
+        fade = 100
+    else:
+        fade = f
+    for i in range(fade):
+        alpha = (101 - fade)/101
+        frame = f - fade
+        plot(frame, x_pars_list, y_pars_list, c_pars_list, alpha)
+
+    # if y_noise:
+    #     plt.gca().set_ylim(bottom=1)
     #     plt.ylim(1,1000)
-    if log:
-        plt.xscale('log')
-        plt.yscale('log')
+
+
 
     # plt.xlim(x_lim)
     # plt.ylim(y_lim)
@@ -181,7 +196,7 @@ if __name__ == '__main__':
 
     #loadfile = sys.argv[1]
     #plot_var = sys.argv[2] #plot_var = 'v'
-    loadfile = 'sim-20200120-194413-cfg_10_10_-g_20_-t_20_-n_test'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    loadfile = 'sim-20200103-170556-ser_-s_-b_1_TEST_ANIMATION_SCATTER'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
     plot_var_x = 'avg_velocity'
     plot_var_y = 'food'#'food'
     plot_var_c = 'avg_energy'
