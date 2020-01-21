@@ -15,6 +15,7 @@ from automatic_plot_helper import load_isings
 import matplotlib.animation as animation
 import os
 import sys
+import time
 '''
 loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
@@ -66,19 +67,21 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
 
     folder = 'save/' + loadfile
-    savefolder = folder + '/figs/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
+    savefolder = folder + '/scatter_ani' + format(time.strftime("%Y%m%d-%H%M%S")) + '/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
     savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
         iter_list[-1]) + '.mpg'
 
     if not path.exists(savefolder):
         makedirs(savefolder)
 
-    if saveFigBool:
-        ani.save(savefilename, writer=writer)
+
+
+    ani.save(savefilename, writer=writer)
+
 
     plt.show()
 
-def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True):
+def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True, y_noise = True):
 
     # cmap = plt.get_cmap('plasma')
     # norm = colors.Normalize(vmin=np.min(c_pars_list), vmax=np.max(c_pars_list)
@@ -89,11 +92,12 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log 
     # plt.rc('font', **font)
     # c = cmap(norm(gen))
     x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
-    # if y_noise:
-    #     y_pars = y_pars.astype(float)
-    #     y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
+    if y_noise:
+        y_pars = y_pars.astype(float)
+        y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
     ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
-    # if y_noise:
+    if y_noise:
+        plt.gca().set_ylim(bottom=1)
     #     plt.ylim(1,1000)
     if log:
         plt.xscale('log')
