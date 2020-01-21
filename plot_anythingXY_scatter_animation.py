@@ -58,6 +58,8 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
     #fig, ax = plt.subplots()
 
     fig = plt.figure()
+    if y_noise:
+        y_pars_list = [noise(y_pars) for y_pars in y_pars_list]
     ani = animation.FuncAnimation(fig, update_plot,
                                   fargs=[x_pars_list, y_pars_list, c_pars_list, s, alpha], interval=1,
                                   frames=len(x_pars_list))
@@ -81,19 +83,22 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=
 
     plt.show()
 
+def noise(y_pars):
+    y_pars = y_pars.astype(float)
+    y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
+    return y_pars
 
 def plot(f, x_pars_list, y_pars_list, c_pars_list, alpha = 1, y_noise = True, s = 10):
 
-
     x_pars, y_pars, c_pars = x_pars_list[f], y_pars_list[f], c_pars_list[f]
-    # if y_noise:
-    #     y_pars = y_pars.astype(float)
-    #     y_pars = y_pars + np.random.rand(np.shape(y_pars)[0]) - 0.5
-    ax = plt.scatter(x_pars, y_pars, c=c_pars, s = s, alpha = alpha)
+
+
+    ax = plt.scatter(x_pars, y_pars, c=c_pars, s=s, alpha=alpha)
     plt.xscale('log')
     plt.yscale('log')
-    plt.ylim(1, 1000)
-    plt.xlim(0.001, 1)
+    plt.ylim(0.3, 1000)
+    plt.xlim(0.001, 10)
+
 def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log = True, y_noise = True):
 
     # cmap = plt.get_cmap('plasma')
@@ -105,12 +110,14 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log 
     # plt.rc('font', **font)
     # c = cmap(norm(gen))
     plt.cla()
-    if f > 10:
-        fade = 10
+    fade_out_iter = 20
+
+    if f > fade_out_iter:
+        fade = fade_out_iter
     else:
         fade = f
     for i in range(fade):
-        alpha = (11 - i)/5
+        alpha = (fade_out_iter + 1 - i) / fade_out_iter
         frame = f - i
         plot(frame, x_pars_list, y_pars_list, c_pars_list, alpha)
 
