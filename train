@@ -84,7 +84,7 @@ def create_settings():
     #Seasons
     settings['seasons'] = not args.no_seasons #BOO; Activates seasons
     settings['years_per_iteration'] = args.years_per_iteration #INT amount of seasonal changes per iteration
-    settings['min_food_winter'] = 0.5 #FLOAT [0,1]; relative decimation of food in winter
+    settings['min_food_winter'] = args.min_food_winter #  0.5 #FLOAT [0,1]; relative decimation of food in winter
     settings['chg_food_gen'] = args.chg_food_gen
     
     settings['parallel_computing'] = False #BOO
@@ -146,13 +146,15 @@ def parse():
     parser.add_argument('-li', '--loadi', type=str, dest='loaditer',
                         help='Iteration of previously saved simulation that is loaded. Only use in combination with -l')
     parser.add_argument('-ns', '--nseas', action='store_true', dest='no_seasons', help='Deactivates seasons')
+    parser.add_argument('-mf', '--min_food', dest='min_food_winter', type=float,
+                        help='[0,1] Minimal amount of food in winter relative to max_food (food_num)')
     parser.add_argument('-ypi', dest='years_per_iteration', type=float,
                         help='''Number of years per generation when seasons is activated. When <0 one year is longer 
                         than an iteration''')
     parser.add_argument('-ser', '--ser', action='store_true', dest='server_mode',
                         help='''Activates server mode. Certain plotting settings are adjusted for linux server''')
     parser.add_argument('-cs', '--cospeed', dest='cost_speed', type=float,
-                        help='FLOAT [0,1] energy cost of speed as a factor of speed')
+                        help='FLOAT [0,1] energy cost of speed as a factor of speed (linear function)')
     parser.add_argument('-ie', '--init_en', dest='init_energy', type=float,
                         help='initial energy at beginning of each generation in energy model')
     parser.add_argument('-fe', '--food_energy', type=float, dest ='food_energy',
@@ -164,7 +166,8 @@ def parse():
                         help='''Min speed of agents. Up until this speed agents do not use energy for movement when 
                         energy model is switched on''')
     parser.add_argument('-cfg', '--chg_food_gen', dest='chg_food_gen', nargs='+', type=int,
-                        help='''Expects a blank separated list of len 2 X Y. At generation X change num_food to Y''')
+                        help='''Expects a blank separated list of len 2 X Y. At generation X change num_food to Y
+                        num_food: maximal number of food when seasons active''')
     parser.add_argument('-n', '--name', dest='savename', help='Optional name for the folder')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.

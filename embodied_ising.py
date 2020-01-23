@@ -1483,7 +1483,7 @@ def seasons(settings, foods, t, T, total_timesteps):
     foods = deepcopy(foods)
     years_per_i = settings['years_per_iteration']
     min_food_rel = settings['min_food_winter']
-    if years_per_i >= 1:
+    if years_per_i < 1:
         t = total_timesteps
     if min_food_rel > 1 or min_food_rel < 0:
         raise Exception("'min_food_winter' has to be a float between 0 and 1")
