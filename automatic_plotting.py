@@ -3,6 +3,7 @@ from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
 import plot_anything_combined
 import plot_anythingXY_scatter
+import plot_anythingXY_scatter_animation
 
 def main(sim_name, load_isings_list=True):
     settings = load_settings(sim_name)
@@ -12,6 +13,8 @@ def main(sim_name, load_isings_list=True):
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
     plot_var_tuples = [('avg_velocity', 'food')]
     plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
+    #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
+    #  TODO: Animation dies not work for some reasone when called from here but does work when it is called itself... WHY???
 
 def plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad = True):
     for plot_var_x, plot_var_y in plot_var_tuples:
@@ -36,6 +39,6 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200121-205621-cfg_10_10_-g_20_-t_50_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    sim_name = 'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
     main(sim_name)
 

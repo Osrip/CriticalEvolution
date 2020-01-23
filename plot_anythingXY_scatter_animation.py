@@ -21,8 +21,8 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
-def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, s=3, alpha=0.8, autoLoad=True, x_lim=None,
-         y_lim=None, log=True, y_noise=True):
+def main(loadfile, settings, isings_list, plot_var_x = 'avg_velocity', plot_var_y = 'food', plot_var_c = 'avg_energy',
+         s=3, alpha=0.8, autoLoad=False, x_lim=None, y_lim=None, log=True, y_noise=True):
 
 
     loadfiles = [loadfile]#loadfiles = ['sim-20191114-000009_server']
@@ -205,7 +205,7 @@ if __name__ == '__main__':
 
     #loadfile = sys.argv[1]
     #plot_var = sys.argv[2] #plot_var = 'v'
-    loadfile = 'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    loadfile = 'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' #'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'#sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
     plot_var_x = 'avg_velocity'
     plot_var_y = 'food'#'food'
     plot_var_c = 'avg_energy'

@@ -34,7 +34,7 @@ def create_settings():
     settings['TimeSteps'] = args.time_steps # number of timesteps per iteration #2000
 
     # number of system-wide spin updates per unit of time  (multiplies computation time)
-    settings['thermalTime'] = 3
+    settings['thermalTime'] = args.thermal_time
     
     settings['evolution_toggle'] = False  # only toggles for CriticalLearning
     settings['evolution_rate'] = 1  # only with critical learning number of iterations to skip to kill/mate (gives more time to eat before evolution)
@@ -119,9 +119,10 @@ def parse():
                                      Animation will be saved in previous folder of simulation
                                      ------Default values-----
                                      save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
-                        loadfile='', loaditer = 2000, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
+                        loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
-                        init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None
+                        init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5
                                      ''')
     parser.add_argument('-p', '--pop', dest='pop_size', type=int, help='Number of individuals in each generation')
     parser.add_argument('-f','--food', dest='food_num', type=int,
@@ -168,6 +169,8 @@ def parse():
     parser.add_argument('-cfg', '--chg_food_gen', dest='chg_food_gen', nargs='+', type=int,
                         help='''Expects a blank separated list of len 2 X Y. At generation X change num_food to Y
                         num_food: maximal number of food when seasons active''')
+    parser.add_argument('-tt', '--thermal', dest='thermal_time', type=int,
+                        help='Number of thermal steps in each ising network')
     parser.add_argument('-n', '--name', dest='savename', help='Optional name for the folder')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
@@ -176,7 +179,7 @@ def parse():
                         loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
-                        years_per_iteration=1)
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5)
     args = parser.parse_args()
     return args
 
