@@ -678,7 +678,7 @@ def extract_plot_information(isings, foods, settings):
 
 
 
-def TimeEvolve(isings, foods, settings, folder, rep):
+def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
 
     if settings['energy_model']:
         for I in isings:
@@ -715,7 +715,7 @@ def TimeEvolve(isings, foods, settings, folder, rep):
             if t == settings['chg_food_gen'][0]:
                 settings['num_food'] = settings['chg_food_gen'][1]
         if settings['seasons'] == True:
-            foods = seasons(settings, foods, t, T)
+            foods = seasons(settings, foods, t, T, total_timesteps)
 
         # PLOT SIMULATION FRAME
         if settings['plot'] == True and (t % settings['frameRate']) == 0:
@@ -1025,8 +1025,14 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             #save settings dicitionary
             save_settings(folder, settings)
-    # else:
-    #     folder = None
+
+
+    total_timesteps = 0 #  Total amount of time steps, needed for bacterial seasons
+    if settings['seasons']:
+        handle_total_timesteps(folder, settings, 0)
+
+    if (settings['seasons'] and (settings['years_per_iteration'] < 1)) and not (settings['loadfile'] is ''):
+        time_steps = handle_total_timesteps(folder, settings)
 
 
     count = 0
@@ -1039,7 +1045,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         else:
             settings['plot'] = False
 
-        TimeEvolve(isings, foods, settings, folder, rep)
+        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps)
         if settings['energy_model']:
 
             for I in isings:
@@ -1086,6 +1092,12 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             else:
                 print('\n', count, '|', 'Avg_fitness', eat_rate)
 
+            if settings['seasons'] and (settings['years_per_iteration'] < 1):
+                total_timesteps = handle_total_timesteps(folder, settings)
+
+
+
+
             if settings['save_data']:
                 if settings['energy_model']:
                     # Clear I.energies in isings_copy before saving
@@ -1108,6 +1120,19 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             isings = evolve(settings, isings, rep)
     return sim_name
+
+def handle_total_timesteps(folder, settings, save_value = None):
+    #if count > 0 or (settings['loadfile'] is ''):
+    if save_value is None:
+        #  total_timesteps = pickle.load(open('{}total_timesteps.pickle'.format(folder)), 'rb')
+        total_timesteps = pickle.load(open('{}total_timesteps.pickle'.format(folder), 'rb'))
+    else:
+        total_timesteps = save_value
+    total_timesteps += settings['TimeSteps']
+    pickle_out = open('{}total_timesteps.pickle'.format(folder), 'wb')
+    pickle.dump(total_timesteps, pickle_out)
+    pickle_out.close()
+    return total_timesteps
 
 def CriticalLearning(isings, foods, settings, Iterations=1):
     # settings['TimeSteps'] = 10
@@ -1452,18 +1477,23 @@ def seasons_func(food_max, food_min, t, year_t):
                                                    (year_t / 2)) * (curr_t - (year_t / 2))))
     return wanted_food_len
     
-    
+
                 
-def seasons(settings, foods, t, T):
+def seasons(settings, foods, t, T, total_timesteps):
     foods = deepcopy(foods)
     years_per_i = settings['years_per_iteration']
     min_food_rel = settings['min_food_winter']
+    if years_per_i >= 1:
+        t = total_timesteps
     if min_food_rel > 1 or min_food_rel < 0:
         raise Exception("'min_food_winter' has to be a float between 0 and 1")
     max_food = settings['food_num']
     min_food = int(np.round(max_food * min_food_rel))
     year_t = T / years_per_i #amount of time steps corresponding to half a year
+
     wanted_food_len = seasons_func(max_food, min_food, t, year_t)
+
+
     
     diff_food_len = wanted_food_len - len(foods)
     
