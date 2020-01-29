@@ -14,8 +14,8 @@ from os import path, makedirs
 #              'beta_experiment/beta-10/sim-20180512-105824',
 #              'beta_experiment/beta-0-1/sim-20180512-105719']
 
-loadfiles = ['sim-20190814-181925']
-iter_list = np.arange(0, 482, 1)
+loadfiles = ['sim-20200123-212741-ser_-b_10_-ypi_0.02_-mf_0.1_-a_0_50_75_87_100_500_525_1000_1025_1975_1987_1999_-n_bact_seasons']
+iter_list = np.arange(0, 1999, 1)
 numAgents = 50
 numNeurons = 10
 
