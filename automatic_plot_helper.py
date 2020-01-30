@@ -8,7 +8,7 @@ import pickle
 def detect_all_isings(sim_name):
     '''
     Creates iter_list
-    Automatically detects the ising generations in the isings folder
+    detects the ising generations in the isings folder
     '''
     curdir = os.getcwd()
     mypath = curdir + '/save/{}/isings/'.format(sim_name)
@@ -37,6 +37,29 @@ def load_isings(loadfile):
     :param loadfile : simulation name
     '''
     iter_list = detect_all_isings(loadfile)
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    isings_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            isings = pickle.load(open(filename, 'rb'))
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        isings_list.append(isings)
+    return isings_list
+
+def load_isings_from_list(loadfile, iter_list):
+    '''
+    Load isings pickle files specified in iter_list and return them as list
+    :param loadfile : simulation name
+    :param iter_list : list of ints
+    '''
     settings = load_settings(loadfile)
     numAgents = settings['pop_size']
     isings_list = []
