@@ -36,13 +36,13 @@ def load_plot_data(trained_sim_names, switched_sim_names, attr):
 
     all_trained_vals = []
     for trained_sim_name in trained_sim_names:
-        all_trained_vals += load_trained_vals(trained_sim_name, attr)
+        all_trained_vals.append(load_trained_vals(trained_sim_name, attr))
     # trained_avg = np.avg(all_trained_vals)
     # trained_std = np.std(all_trained_vals)
 
     all_switched_vals = []
     for switched_sim_name in switched_sim_names:
-        all_switched_vals += load_switched_vals(switched_sim_name, attr)
+        all_switched_vals.append(load_switched_vals(switched_sim_name, attr))
     # switched_avg = np.avg(all_switched_vals)
     # switched_std = np.std(all_switched_vals)
 
