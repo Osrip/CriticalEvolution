@@ -72,18 +72,35 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
         trained_sets = add_folder_name(trained_sets, trained_folder)
         switched_sets = add_folder_name(switched_sets, switched_folder)
 
+
+    # -----PLot concetinated data
+    # trained_sets = [j for sub in trained_sets for j in sub]
+    # switched_sets = [j for sub in switched_sets for j in sub]
+
     data = []
+    all_data = []
     for trained_set, switched_set in zip(trained_sets, switched_sets):
         trained_vals, switched_vals = load_plot_data(trained_set, switched_set, attr)
-        data.append(trained_vals)
-        data.append(switched_vals)
 
-    plt.boxplot(data)
-    plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
-    plt.show()
+        for trained_single_sim in trained_vals:
+            all_data.append(trained_single_sim)
+        for switched_single_sim in switched_vals:
+            all_data.append(switched_single_sim)
+
+        trained_vals_concat = [j for sub in trained_vals for j in sub]
+        switched_vals_concat = [j for sub in switched_vals for j in sub]
+        data.append(trained_vals_concat)
+        data.append(switched_vals_concat)
+
+    # plt.boxplot(data)
+    # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+    # plt.show()
 
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+    plt.show()
+
+    plt.boxplot(all_data, showmeans=True)
     plt.show()
 
 def which(trained_sim, switched_sets):
