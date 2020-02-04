@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.use('Agg') #For server use
+import matplotlib.pyplot as plt
+
+
 from matplotlib import colors
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle

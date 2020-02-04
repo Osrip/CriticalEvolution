@@ -95,12 +95,18 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     # plt.boxplot(data)
     # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
     # plt.show()
+    # savefolder =
+    # if not path.exists(savefolder):
+    #     makedirs(savefolder)
 
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+    plt.savefig('save/{}boxplot.png'.format(switched_folder), dpi=200, bbox_inches='tight')
     plt.show()
 
     plt.boxplot(all_data, showmeans=True)
+    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
+    plt.savefig('save/{}boxplot_all.png'.format(switched_folder), dpi=200, bbox_inches='tight')
     plt.show()
 
 def which(trained_sim, switched_sets):

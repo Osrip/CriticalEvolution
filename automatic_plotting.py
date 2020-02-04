@@ -1,8 +1,12 @@
 import os
+import matplotlib as mpl
+mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
 import plot_anything_combined
 import plot_anythingXY_scatter
+
+
 import plot_anythingXY_scatter_animation
 
 def main(sim_name, load_isings_list=True):
@@ -45,7 +49,8 @@ def plot_all_in_folder(folder_name):
     '''
     directory_list = [f.path for f in os.scandir('save/{}'.format(folder_name)) if f.is_dir()]
     for sim_name in directory_list:
-        if sim_name.startswith('sim-'):
+        if 'sim-' in sim_name:
+            sim_name = sim_name.replace('save/', '')
             main(sim_name)
 
 if __name__ == '__main__':
