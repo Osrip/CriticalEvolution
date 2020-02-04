@@ -1016,7 +1016,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S") + command_input
     folder = 'save/' + sim_name  + '/'
 
-    orig_isings = isings
+    orig_isings = copy.deepcopy(isings)
     if settings['save_data'] == True:#
 
         if not os.path.exists(folder):
@@ -1107,7 +1107,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 if settings['save_data']:
                     if settings['energy_model']:
                         # Clear I.energies in isings_copy before saving
-                        isings_copy = deepcopy(isings)
+                        isings_copy = copy.deepcopy(isings)
                         for I in isings_copy:
                             I.energies = []
 
@@ -1118,7 +1118,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             count += 1
 
 
-            isings = orig_isings
+            isings = copy.deepcopy(orig_isings)
     return sim_name
 
 def handle_total_timesteps(folder, settings, save_value = None):

@@ -3,6 +3,7 @@ from automatic_plot_helper import load_isings_from_list
 from automatic_plot_helper import detect_all_isings
 from automatic_plot_helper import load_isings
 import matplotlib.pylab as plt
+from os import makedirs, path
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -95,18 +96,19 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     # plt.boxplot(data)
     # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
     # plt.show()
-    # savefolder =
-    # if not path.exists(savefolder):
-    #     makedirs(savefolder)
+
+    savefolder = 'save/figs/{}'.format(switched_folder)
+    if not path.exists(savefolder):
+        makedirs(savefolder)
 
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
-    plt.savefig('save/{}boxplot.png'.format(switched_folder), dpi=200, bbox_inches='tight')
+    plt.savefig('{}boxplot.png'.format(savefolder), dpi=200, bbox_inches='tight')
     plt.show()
 
     plt.boxplot(all_data, showmeans=True)
     plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
-    plt.savefig('save/{}boxplot_all.png'.format(switched_folder), dpi=200, bbox_inches='tight')
+    plt.savefig('{}boxplot_all.png'.format(savefolder), dpi=200, bbox_inches='tight')
     plt.show()
 
 def which(trained_sim, switched_sets):
@@ -193,7 +195,8 @@ if __name__ == '__main__':
     trained_folder = 'seasons_training_one_season/'
     switched_folder = 'season_switch_repeat_scenarios/'
 
-    attr = 'avg_energy'
+    #attr = 'avg_energy'
+    attr = 'avg_velocity'
     plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder )
 
 
