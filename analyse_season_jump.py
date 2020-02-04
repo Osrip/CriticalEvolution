@@ -4,6 +4,7 @@ from automatic_plot_helper import detect_all_isings
 from automatic_plot_helper import load_isings
 import matplotlib.pylab as plt
 from os import makedirs, path
+import seaborn as sns
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -119,6 +120,12 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     plt.boxplot(all_data, showmeans=True)
     plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
     plt.savefig('{}boxplot_all.png'.format(savefolder), dpi=200, bbox_inches='tight')
+    plt.show()
+
+    plt.figure(figsize=(20,5))
+    plt.violinplot(all_data, showmeans=True)
+    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
+    plt.savefig('{}violin_all.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
 
 def which(trained_sim, switched_sets):
