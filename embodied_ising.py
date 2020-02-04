@@ -1408,14 +1408,14 @@ def save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
     pickle.dump(isings, pickle_out)
     pickle_out.close()
 
-    pickle_out = open(filenameS, 'wb')
-
-    if type(mutationrate) is not type(None):
-        pickle.dump((fitness_stat, (mutationh, mutationh ** 2), (mutationJ, mutationJ ** 2), fitC, fitm), pickle_out)
-        pickle_out.close()
-    else:
-        pickle.dump(fitness_stat, pickle_out)
-        pickle_out.close()
+    # pickle_out = open(filenameS, 'wb')
+    #
+    # if type(mutationrate) is not type(None):
+    #     pickle.dump((fitness_stat, (mutationh, mutationh ** 2), (mutationJ, mutationJ ** 2), fitC, fitm), pickle_out)
+    #     pickle_out.close()
+    # else:
+    #     pickle.dump(fitness_stat, pickle_out)
+    #     pickle_out.close()
 
 
 def mutation_rate(isings):
