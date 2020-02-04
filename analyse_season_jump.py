@@ -68,7 +68,7 @@ def add_folder_name(sets, folder):
         new_sets.append(new_set)
     return new_sets
 
-def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switched_folder = None ):
+def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switched_folder = None, auto_load = True ):
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
         switched_sets = add_folder_name(switched_sets, switched_folder)
@@ -78,29 +78,39 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     # trained_sets = [j for sub in trained_sets for j in sub]
     # switched_sets = [j for sub in switched_sets for j in sub]
 
-    data = []
-    all_data = []
-    for trained_set, switched_set in zip(trained_sets, switched_sets):
-        trained_vals, switched_vals = load_plot_data(trained_set, switched_set, attr)
 
-        for trained_single_sim in trained_vals:
-            all_data.append(trained_single_sim)
-        for switched_single_sim in switched_vals:
-            all_data.append(switched_single_sim)
+    npz_name = 'save/figs/boxplot.npz'
 
-        trained_vals_concat = [j for sub in trained_vals for j in sub]
-        switched_vals_concat = [j for sub in switched_vals for j in sub]
-        data.append(trained_vals_concat)
-        data.append(switched_vals_concat)
+    if path.isfile(npz_name) and auto_load:
+        txt = 'Loading: ' + npz_name
+        print(txt)
+        data = np.load(npz_name)
+        all_data = data['all_data']
+        data = data['data']
+    else:
+        data = []
+        all_data = []
+        for trained_set, switched_set in zip(trained_sets, switched_sets):
+            trained_vals, switched_vals = load_plot_data(trained_set, switched_set, attr)
 
-    # plt.boxplot(data)
-    # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
-    # plt.show()
+            for trained_single_sim in trained_vals:
+                all_data.append(trained_single_sim)
+            for switched_single_sim in switched_vals:
+                all_data.append(switched_single_sim)
+
+            trained_vals_concat = [j for sub in trained_vals for j in sub]
+            switched_vals_concat = [j for sub in switched_vals for j in sub]
+            data.append(trained_vals_concat)
+            data.append(switched_vals_concat)
+
+        # plt.boxplot(data)
+        # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+        # plt.show()
 
     savefolder = 'save/figs/{}'.format(switched_folder)
     if not path.exists(savefolder):
         makedirs(savefolder)
-
+    np.savez(npz_name, all_data=all_data, data=data)
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
     plt.savefig('{}boxplot.png'.format(savefolder), dpi=200, bbox_inches='tight')
@@ -195,8 +205,8 @@ if __name__ == '__main__':
     trained_folder = 'seasons_training_one_season/'
     switched_folder = 'season_switch_repeat_scenarios/'
 
-    #attr = 'avg_energy'
-    attr = 'avg_velocity'
+    attr = 'avg_energy'
+    #attr = 'avg_velocity'
     plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder )
 
 
