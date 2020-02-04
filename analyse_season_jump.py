@@ -80,7 +80,7 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     # switched_sets = [j for sub in switched_sets for j in sub]
 
 
-    npz_name = 'save/figs/boxplot.npz'
+    npz_name = 'save/{}figs/{}_boxplot.npz'.format(switched_folder, attr)
 
     if path.isfile(npz_name) and auto_load:
         txt = 'Loading: ' + npz_name
@@ -108,23 +108,26 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
         # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
         # plt.show()
 
-    savefolder = 'save/figs/{}'.format(switched_folder)
+    savefolder = 'save/{}figs/{}_'.format(switched_folder, attr)
     if not path.exists(savefolder):
         makedirs(savefolder)
     np.savez(npz_name, all_data=all_data, data=data)
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+    plt.ylabel(attr)
     plt.savefig('{}boxplot.png'.format(savefolder), dpi=200, bbox_inches='tight')
     plt.show()
 
     plt.boxplot(all_data, showmeans=True)
     plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
+    plt.ylabel(attr)
     plt.savefig('{}boxplot_all.png'.format(savefolder), dpi=200, bbox_inches='tight')
     plt.show()
 
     plt.figure(figsize=(20,5))
     plt.violinplot(all_data, showmeans=True)
-    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
+    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation=70)
+    plt.ylabel(attr)
     plt.savefig('{}violin_all.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -152,6 +155,11 @@ def sort_switched_sets(trained_sets, switched_sets):
 
 if __name__ == '__main__':
     #Sort labels according to order of trained sets!!!!!
+    trained_folder = 'seasons_training_one_season/'
+    switched_folder = 'season_switch_repeat_scenarios/'
+
+    #attr = 'avg_energy'
+    attr = 'avg_velocity'
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
     trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
@@ -209,11 +217,7 @@ if __name__ == '__main__':
     #                 'sim-20200129-212115-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213403-ser_-cfg_2000_100_-b_10_-nmb',]]
 
 
-    trained_folder = 'seasons_training_one_season/'
-    switched_folder = 'season_switch_repeat_scenarios/'
 
-    attr = 'avg_energy'
-    #attr = 'avg_velocity'
     plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder )
 
 
