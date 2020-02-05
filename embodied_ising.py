@@ -1379,6 +1379,7 @@ def evolve(settings, I_old, gen):
     for I in I_new:
         I.fitness = 0
 
+
     return I_new
 
 def save_settings(folder, settings):

@@ -18,8 +18,8 @@ gens=(save/$sim/isings/*)
 #j14 <-- Number of procesors
 parallel --bar --eta -j7 "python3 compute-heat-capacity-generational-2 $sim {1} {2}" ::: \
 $(seq 101) ::: \
-0 600 780 1600 1999 
-#1 2 3 10 20 30 40 300 600 900 1002
+#0 600 780 1600 1999 
+1 2 3 10 20 30 40 300 600 900 1000 1300 1600 1900 2200 2500 2800 3100 3400 3700 4990
 
 # parallel --bar 'python3 compute-heat-capacity {1}' ::: $(seq 101)
 

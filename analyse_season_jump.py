@@ -159,7 +159,8 @@ if __name__ == '__main__':
     switched_folder = 'season_switch_repeat_scenarios/'
 
     #attr = 'avg_energy'
-    attr = 'avg_velocity'
+    #attr = 'avg_velocity'
+    attr = 'food'
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
     trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
