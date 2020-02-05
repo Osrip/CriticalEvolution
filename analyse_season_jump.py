@@ -5,6 +5,7 @@ from automatic_plot_helper import load_isings
 import matplotlib.pylab as plt
 from os import makedirs, path
 import seaborn as sns
+import os
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -131,36 +132,48 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     plt.savefig('{}violin_all.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
 
-def which(trained_sim, switched_sets):
-    switched_sets_1D = [j for sub in switched_sets for j in sub]
+def which(trained_sim, switched_sets, two_dim = True):
+    if two_dim:
+        switched_sets_1D = [j for sub in switched_sets for j in sub]
+    else:
+        switched_sets_1D = switched_sets
     for switched_sim in switched_sets_1D:
         if trained_sim in switched_sim:
             return switched_sim
-    raise FileNotFoundError('No switched simulation found for the trained simulation {}'.format(trained_sim))
+    #raise FileNotFoundError('No switched simulation found for the trained simulation {}'.format(trained_sim))
 
 
 
-def sort_switched_sets(trained_sets, switched_sets):
+def sort_switched_sets(trained_sets, switched_sets, two_dim = True):
     '''Sort switched sets according to trained sets'''
     sorted_switched_sets = []
     for trained_set in trained_sets:
         sorted_switched_set = []
         for trained_sim in trained_set:
-            acc_switched_sim = which(trained_sim, switched_sets)
+            acc_switched_sim = which(trained_sim, switched_sets, two_dim)
             sorted_switched_set.append(acc_switched_sim)
         sorted_switched_sets.append(sorted_switched_set)
     return sorted_switched_sets
+
+def load_switched_sets_sorted(switched_folder, trained_sets):
+    directory_list = [f.path for f in os.scandir('save/{}'.format(switched_folder)) if f.is_dir()]
+    switched_set = []
+    for sim_name in directory_list:
+        sim_name = sim_name.split('/')[-1]
+        if 'sim-' in sim_name:
+            switched_set.append(sim_name)
+    return sort_switched_sets(trained_sets, switched_set, two_dim = False)
 
 
 
 if __name__ == '__main__':
     #Sort labels according to order of trained sets!!!!!
     trained_folder = 'seasons_training_one_season/'
-    switched_folder = 'season_switch_repeat_scenarios/'
+    switched_folder = 'season_switch_repeat_scenarios_2/'
 
     #attr = 'avg_energy'
-    #attr = 'avg_velocity'
-    attr = 'food'
+    attr = 'avg_velocity'
+    #attr = 'food'
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
     trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
@@ -180,22 +193,23 @@ if __name__ == '__main__':
                      'sim-20200121-213524-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
                      'sim-20200121-213537-ser_-f_10_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190'
                      ]]
-    switched_sets = [['sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213347-ser_-cfg_2000_100_-b_1_-nmb_-a_200_1999_2190',
-                    'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
-                    'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',
-                    'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213321-ser_-cfg_2000_100_-b_1_-nmb'],
-                    ['sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213537-ser_-f_10_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190',
-                    'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213512-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
-                    'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213520-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
-                    'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213524-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
-                    'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-a_5_-l_sim-20200121-213458-ser_-f_10_-cfg_2000_100_-b_1_-nmb_-a_200_1999_2190'],
-                    ['sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213437-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
-                    'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213441-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
-                    'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213446-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
-                    'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213424-ser_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190'],
-                    ['sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213356-ser_-cfg_2000_100_-b_10_-nmb',
-                    'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213400-ser_-cfg_2000_100_-b_10_-nmb',
-                    'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213403-ser_-cfg_2000_100_-b_10_-nmb']]
+    switched_sets = load_switched_sets_sorted(switched_folder, trained_sets)
+    # switched_sets = [['sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213347-ser_-cfg_2000_100_-b_1_-nmb_-a_200_1999_2190',
+    #                 'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
+    #                 'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',
+    #                 'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213321-ser_-cfg_2000_100_-b_1_-nmb'],
+    #                 ['sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213537-ser_-f_10_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190',
+    #                 'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213512-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
+    #                 'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213520-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
+    #                 'sim-20200130-205401-ser_-f_100_-b_10_-r_200_-li_1999_-l_sim-20200121-213524-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
+    #                 'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-a_5_-l_sim-20200121-213458-ser_-f_10_-cfg_2000_100_-b_1_-nmb_-a_200_1999_2190'],
+    #                 ['sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213437-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
+    #                 'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213441-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
+    #                 'sim-20200130-205401-ser_-f_100_-b_1_-r_200_-li_1999_-l_sim-20200121-213446-ser_-f_10_-cfg_2000_100_-b_1_-nmb',
+    #                 'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213424-ser_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190'],
+    #                 ['sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213356-ser_-cfg_2000_100_-b_10_-nmb',
+    #                 'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213400-ser_-cfg_2000_100_-b_10_-nmb',
+    #                 'sim-20200130-205401-ser_-f_10_-b_10_-r_200_-li_1999_-l_sim-20200121-213403-ser_-cfg_2000_100_-b_10_-nmb']]
 
     switched_sets = sort_switched_sets(trained_sets, switched_sets)
 
