@@ -72,6 +72,7 @@ def create_settings():
     settings['init_beta'] = args.init_beta
     settings['mutateB'] = not args.no_mut_beta  # toggle to allow Beta (temperature) mutations (toggle off if critical learning is on)
     settings['sigB'] = args.sig_beta #0.02  # std for Beta mutation
+    settings['diff_init_betas'] = args.diff_init_betas
     
 
     #settings['loadfile'] = sim-20191114-000009_server
@@ -135,6 +136,10 @@ def parse():
     parser.add_argument('-t', '--ts', type=int, dest='time_steps',
                         help='Number of time steps in simulation')
     parser.add_argument('-b', '--beta', dest='init_beta', type=float, help='Initial beta of first generation')
+    parser.add_argument('-bs', '--betas', nargs='+', required=False, dest = 'diff_init_betas', type=float
+                        , help='''In case you want different initial beta values in the first generations define those 
+                        in a blank separated list after this argument. Probability of each entry occurring
+                         is uniformly distributed''')
     parser.add_argument('-sb', '--sigb', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
     parser.add_argument('-nmb', '--nomutb', dest='no_mut_beta', action='store_true', help='Switch off beta mutation')
@@ -179,7 +184,7 @@ def parse():
                         loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
-                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5)
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5, diff_init_betas=None)
     args = parser.parse_args()
     return args
 

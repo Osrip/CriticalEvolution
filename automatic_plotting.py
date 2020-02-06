@@ -5,6 +5,7 @@ from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
 import plot_anything_combined
 import plot_anythingXY_scatter
+import plot_anythingXY_scatter_food_velocity_optimized
 
 
 import plot_anythingXY_scatter_animation
@@ -13,10 +14,22 @@ def main(sim_name, load_isings_list=True):
     settings = load_settings(sim_name)
     if load_isings_list:
         isings_list = load_isings(sim_name)
-    plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list = isings_list, autoLoad=False)
+    try:
+        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list = isings_list, autoLoad=False)
+    except Exception:
+        print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
-    plot_var_tuples = [('avg_velocity', 'food')]
-    plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
+    plot_var_tuples = [('generation', 'avg_energy')]
+    try:
+        plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
+    except Exception:
+        print('Could not create scatter plot')
+    try:
+        plot_anythingXY_scatter_food_velocity_optimized.main(sim_name, settings, isings_list, 'avg_velocity', 'food', s=0.8,
+                                                             alpha=0.05, autoLoad=False)
+    except Exception:
+        print('Could not create food velocity scatter plot')
+
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
     #  TODO: Animation dies not work for some reasone when called from here but does work when it is called itself... WHY???
 
@@ -54,7 +67,7 @@ def plot_all_in_folder(folder_name):
             main(sim_name)
 
 if __name__ == '__main__':
-    # sim_name ='sim-20200105-024531-ser_-ne_-s_-b_10_-a_0_200_500_1000_1500_1999_-vma_0.5' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
-    # main(sim_name)
-    plot_all_in_folder('seasons_training_one_season')
+    sim_name ='sim-20200206-195842-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test_-bs_0.1_1_10' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    main(sim_name)
+    #plot_all_in_folder('seasons_training_one_season')
 

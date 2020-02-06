@@ -40,8 +40,8 @@ settings = {}
 
 class ising:
     # Initialize the network
-    def __init__(self, settings, netsize, Nsensors=2, Nmotors=2, name=None):  # Create ising model
-
+    def __init__(self, settings, netsize, Nsensors=2, Nmotors=2, name=None):
+        # Create ising model
         self.size = netsize
         self.Ssize = Nsensors  # Number of sensors
         self.Msize = Nmotors  # Number of sensors
@@ -77,7 +77,10 @@ class ising:
         '''
         initial beta
         '''
-        self.Beta = settings['init_beta']
+        if settings['diff_init_betas'] is None:
+            self.Beta = settings['init_beta']
+        else:
+            self.Beta = np.random.choice(settings['diff_init_betas'], 1)
         #self.Beta = 1.0
         # self.defaultT = max(100, netsize * 20)
 
@@ -116,6 +119,7 @@ class ising:
         self.all_velocity = 0
         self.avg_velocity = 0
         self.v = 0.0
+        self.generation = 0
 
 
         self.assign_critical_values(settings)
@@ -1040,6 +1044,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         ''' 
         !!! jede Iteration
         '''
+        for I in isings:
+            I.generation = rep
         if rep in settings['plot_generations']:
             settings['plot'] = True
         else:

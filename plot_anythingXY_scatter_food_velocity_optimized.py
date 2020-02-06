@@ -20,7 +20,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
 def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.13, autoLoad=True, x_lim=None,
-         y_lim=None, log=False, y_noise=False):
+         y_lim=None, log=True, y_noise=True):
 
 
     loadfiles = [loadfile]#loadfiles = ['sim-20191114-000009_server']
