@@ -6,7 +6,7 @@ import matplotlib
 from os import path, makedirs
 
 # TODO: make these scripts take these as params
-loadfile = 'sim-20191114-000009_server'
+loadfile = 'merged_bact_seasons/sim-20200123-212741-ser_-b_10_-ypi_0.02_-mf_0.1_-a_0_50_75_87_100_500_525_1000_1025_1975_1987_1999_-n_bact_seasons'
 folder = 'save/' + loadfile
 # iter_gen = np.arange(0, 2000, 250)
 # iter_gen = np.append(iter_gen, 1999)
@@ -15,7 +15,7 @@ folder = 'save/' + loadfile
 #             2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
 # iter_gen = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 1999,
 #            2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
-iter_gen = [500, 1999]
+iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2200, 2500, 2800, 3100, 3400, 3700]
 
 R = 10
 Nbetas = 101
