@@ -51,7 +51,7 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
         plot_anything_combined.main([sim_name], 'fitness', isings_lists=[isings_list], autoLoad=autoLoad)
 
     for plot_var in plot_vars:
-        plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter = True)
+        plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
 
 
 def plot_all_in_folder(folder_name):
