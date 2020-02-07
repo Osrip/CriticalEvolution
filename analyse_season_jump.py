@@ -70,7 +70,8 @@ def add_folder_name(sets, folder):
         new_sets.append(new_set)
     return new_sets
 
-def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switched_folder = None, auto_load = True, yscale = 'linear' ):
+def plot(trained_sets, switched_sets, attr, labes, trained_folder=None, switched_folder=None, auto_load=True,
+         yscale='linear', ylim=None, save_addition='', xlim=None):
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
         switched_sets = add_folder_name(switched_sets, switched_folder)
@@ -126,11 +127,13 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     plt.show()
 
     plt.figure(figsize=(20,5))
-    plt.violinplot(all_data, showmeans=True)
+    plt.violinplot(all_data, showmeans=True, showextrema=False)
     plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation=70)
     plt.yscale(yscale)
     plt.ylabel(attr)
-    plt.savefig('{}violin_all.png'.format(savefolder), dpi=300, bbox_inches='tight')
+    plt.ylim(ylim)
+    plt.xlim(xlim)
+    plt.savefig('{}violin_all{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
 def which(trained_sim, switched_sets, two_dim = True):
@@ -172,8 +175,8 @@ if __name__ == '__main__':
     trained_folder = 'seasons_training_one_season/'
     switched_folder = 'season_switch_repeat_scenarios_2/'
 
-    #attr = 'avg_energy'
-    attr = 'avg_velocity'
+    attr = 'avg_energy'
+    #attr = 'avg_velocity'
     #attr = 'food'
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
@@ -234,7 +237,8 @@ if __name__ == '__main__':
 
 
 
-    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='log' )
+    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='linear', ylim=None,
+         save_addition='_noextrema', xlim=None)
 
 
 
