@@ -70,7 +70,7 @@ def add_folder_name(sets, folder):
         new_sets.append(new_set)
     return new_sets
 
-def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switched_folder = None, auto_load = True ):
+def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switched_folder = None, auto_load = True, yscale = 'linear' ):
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
         switched_sets = add_folder_name(switched_sets, switched_folder)
@@ -128,6 +128,7 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder = None, switch
     plt.figure(figsize=(20,5))
     plt.violinplot(all_data, showmeans=True)
     plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation=70)
+    plt.yscale(yscale)
     plt.ylabel(attr)
     plt.savefig('{}violin_all.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
@@ -233,7 +234,7 @@ if __name__ == '__main__':
 
 
 
-    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder )
+    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='log' )
 
 
 
