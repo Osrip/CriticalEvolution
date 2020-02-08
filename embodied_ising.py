@@ -209,8 +209,19 @@ class ising:
         self.r = self.r % 360
 
         # UPDATE VELOCITY - Motor neuron s.[-self.Msize1:]
-        self.v += (np.sum(self.s[-self.Msize1:]) / 2) * settings['dv_max'] * settings['dt']
-        # TODO: Negative values for velocity????
+        if settings['motor_neuron_acceleration']:
+            self.v += (np.sum(self.s[-self.Msize1:]) / 2) * settings['dv_max'] * settings['dt']
+        else:
+            v_new = (np.sum(self.s[-self.Msize1:]) / 2) * settings['v_max']
+            v_new_largest = v_new + settings['dv_max'] * settings['dt']
+            v_new_lowest = v_new - settings['dv_max'] * settings['dt']
+            if v_new > v_new_largest:
+                v_new = v_new_largest
+            if v_new < v_new_lowest:
+                v_new = v_new_lowest
+
+            self.v = v_new
+
 
         if self.v < 0:
             self.v = 0

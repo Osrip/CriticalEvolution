@@ -44,6 +44,8 @@ def create_settings():
     settings['dr_max'] = 90  # max rotational speed      (degrees per second)
     settings['v_max'] = args.v_max #999  # 0.5 max velocity              (units per second)
     settings['dv_max'] = 0.05  # max acceleration (+/-)    (units per second^2)
+
+    settings['motor_neuron_acceleration'] = args.acc_motor
     
     settings['x_min'] = 0.0  # arena eastern border
     settings['x_max'] = 8.0  # arena western border
@@ -177,6 +179,8 @@ def parse():
     parser.add_argument('-tt', '--thermal', dest='thermal_time', type=int,
                         help='Number of thermal steps in each ising network')
     parser.add_argument('-n', '--name', dest='savename', help='Optional name for the folder')
+    parser.add_argument('-vmo', '--v_motor', action='store_false', dest='acc_motor',
+                        help='Activates speed as motor neuron output instead of acceleration')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
@@ -184,7 +188,7 @@ def parse():
                         loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
-                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5, diff_init_betas=None)
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5, diff_init_betas=None, acc_motor=True)
     args = parser.parse_args()
     return args
 
