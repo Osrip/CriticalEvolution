@@ -6,6 +6,7 @@ import matplotlib.pylab as plt
 from os import makedirs, path
 import seaborn as sns
 import os
+import pandas as pd
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -70,7 +71,17 @@ def add_folder_name(sets, folder):
         new_sets.append(new_set)
     return new_sets
 
-def plot(trained_sets, switched_sets, attr, labes, trained_folder=None, switched_folder=None, auto_load=True,
+def create_DF(all_data, labels, sims_per_label=4):
+    columns = []
+    for label in labels:
+        for i in range(sims_per_label):
+            columns.append(label + str(i))
+    df = pd.DataFrame(all_data, columns=columns)
+    return df, columns
+
+
+
+def plot(trained_sets, switched_sets, attr, labels, trained_folder=None, switched_folder=None, auto_load=True,
          yscale='linear', ylim=None, save_addition='', xlim=None):
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
@@ -106,6 +117,8 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder=None, switched
             data.append(trained_vals_concat)
             data.append(switched_vals_concat)
 
+
+
         # plt.boxplot(data)
         # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
         # plt.show()
@@ -135,6 +148,23 @@ def plot(trained_sets, switched_sets, attr, labes, trained_folder=None, switched
     plt.xlim(xlim)
     plt.savefig('{}violin_all{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
+
+    fig, ax = plt.subplots()
+
+    for i, d in enumerate(all_data):
+        noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
+        ax.scatter(noisy_x[0, :], d, alpha=0.2, s=0.1)
+
+    ax.set_xticks(np.arange(32))
+    ax.set_yscale('log')
+
+    plt.xticks(np.arange(1, len(labels) * 4 + 1, 4), labels, rotation=70)
+    plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    plt.show()
+
+
+    # names, df = create_DF(all_data, labels)
+    # sns.violinplot(data = df)
 
 def which(trained_sim, switched_sets, two_dim = True):
     if two_dim:
@@ -168,6 +198,13 @@ def load_switched_sets_sorted(switched_folder, trained_sets):
             switched_set.append(sim_name)
     return sort_switched_sets(trained_sets, switched_set, two_dim = False)
 
+def sort_sets(order_list, sets):
+    '''sort sets according to order given in order list.
+    :param order_list: list of ints, where each int gives place in new order
+    '''
+    ordered_sets = [x for _, x in sorted(zip(order_list, sets))]
+    #ordered_labels = [x for _, x in sorted(zip(order_list, labels))]
+    return ordered_sets
 
 
 if __name__ == '__main__':
@@ -180,6 +217,7 @@ if __name__ == '__main__':
     #attr = 'food'
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
+
     trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
                     'sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',
                     'sim-20200121-213321-ser_-cfg_2000_100_-b_1_-nmb',
@@ -197,7 +235,13 @@ if __name__ == '__main__':
                      'sim-20200121-213524-ser_-f_10_-cfg_2000_100_-b_10_-nmb',
                      'sim-20200121-213537-ser_-f_10_-cfg_2000_100_-b_10_-nmb_-a_200_1999_2190'
                      ]]
+
     switched_sets = load_switched_sets_sorted(switched_folder, trained_sets)
+
+    # new_order_trained_sets = [,,0]
+    # new_order_switched_sets = [0,,1 ]
+    # switched_sets =
+
     # switched_sets = [['sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-a_5_-l_sim-20200121-213347-ser_-cfg_2000_100_-b_1_-nmb_-a_200_1999_2190',
     #                 'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
     #                 'sim-20200130-205401-ser_-b_1_-f_10_-r_200_-li_1999_-l_sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',
@@ -237,8 +281,8 @@ if __name__ == '__main__':
 
 
 
-    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='linear', ylim=None,
-         save_addition='_noextrema', xlim=None)
+    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='log', ylim=None,
+         save_addition='_logstuff', xlim=None)
 
 
 
