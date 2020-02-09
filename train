@@ -44,7 +44,7 @@ def create_settings():
     settings['r_max'] = 720
     settings['dr_max'] = 90  # max rotational speed      (degrees per second)
     settings['v_max'] = args.v_max #999  # 0.5 max velocity              (units per second)
-    settings['dv_max'] = 0.05  # max acceleration (+/-)    (units per second^2)
+    settings['dv_max'] = args.a_max #  0.05  # max acceleration (+/-)    (units per second^2)
 
     settings['motor_neuron_acceleration'] = args.acc_motor
     
@@ -86,7 +86,7 @@ def create_settings():
     else:
         settings['LoadIsings'] = True
     #Seasons
-    settings['seasons'] = not args.no_seasons #BOO; Activates seasons
+    settings['seasons'] = args.seasons #BOO; Activates seasons
     settings['years_per_iteration'] = args.years_per_iteration #INT amount of seasonal changes per iteration
     settings['min_food_winter'] = args.min_food_winter #  0.5 #FLOAT [0,1]; relative decimation of food in winter
     settings['chg_food_gen'] = args.chg_food_gen
@@ -154,7 +154,7 @@ def parse():
                         help='Filename of previously saved simulation in save folder. Specify iteration using -li')
     parser.add_argument('-li', '--loadi', type=str, dest='loaditer',
                         help='Iteration of previously saved simulation that is loaded. Only use in combination with -l')
-    parser.add_argument('-ns', '--nseas', action='store_true', dest='no_seasons', help='Deactivates seasons')
+    parser.add_argument('-s', '--seas', action='store_true', dest='seasons', help='activates seasons')
     parser.add_argument('-mf', '--min_food', dest='min_food_winter', type=float,
                         help='[0,1] Minimal amount of food in winter relative to max_food (food_num)')
     parser.add_argument('-ypi', dest='years_per_iteration', type=float,
@@ -174,6 +174,7 @@ def parse():
     parser.add_argument('-vmi', '--v_min', dest='v_min', type=float,
                         help='''Min speed of agents. Up until this speed agents do not use energy for movement when 
                         energy model is switched on''')
+    parser.add_argument('-ama', '--a_max', dest='a_max', type=float, help='Maximal acceleration of an agent')
     parser.add_argument('-cfg', '--chg_food_gen', dest='chg_food_gen', nargs='+', type=int,
                         help='''Expects a blank separated list of len 2 X Y. At generation X change num_food to Y
                         num_food: maximal number of food when seasons active''')
@@ -186,10 +187,11 @@ def parse():
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
-                        loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, no_seasons=False,
+                        loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
-                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5, diff_init_betas=None, acc_motor=True)
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=5, diff_init_betas=None, acc_motor=True,
+                        a_max=0.05)
     args = parser.parse_args()
     return args
 
