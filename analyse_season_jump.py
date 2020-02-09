@@ -17,15 +17,19 @@ def extract_attr(isings_list, attr):
 
 def load_trained_vals(trained_sim_name, attr, n_last_gens = 100):
     load_gens_trained = detect_all_isings(trained_sim_name)
-    load_gens_trained = load_gens_trained[-(n_last_gens + 1):]
+    load_gens_trained = load_gens_trained[-(n_last_gens):]
     trained_isings_list = load_isings_from_list(trained_sim_name, load_gens_trained)
     trained_vals = extract_attr(trained_isings_list, attr)
     # trained_avg = np.avg(trained_vals)
     # trained_std = np.std(trained_vals)
     return trained_vals
 
-def load_switched_vals(switched_sim_name, attr):
-    switched_isings_list = load_isings(switched_sim_name)
+def load_switched_vals(switched_sim_name, attr, n_last_gens = 100):
+    # load_gens_switched = detect_all_isings(switched_sim_name)
+    # load_gens_switched = load_gens_switched[-(n_last_gens + 1):]
+    # switched
+    #switched_isings_list = load_isings(switched_sim_name)
+
     switched_vals = extract_attr(switched_isings_list, attr)
     # switched_avg = np.avg(switched_vals)
     # switched_std = np.std(switched_vals)
@@ -46,7 +50,8 @@ def load_plot_data(trained_sim_names, switched_sim_names, attr):
 
     all_switched_vals = []
     for switched_sim_name in switched_sim_names:
-        all_switched_vals.append(load_switched_vals(switched_sim_name, attr))
+        #all_switched_vals.append(load_switched_vals(switched_sim_name, attr))
+        all_switched_vals.append(load_trained_vals(switched_sim_name, attr))
     # switched_avg = np.avg(all_switched_vals)
     # switched_std = np.std(all_switched_vals)
 
@@ -76,7 +81,10 @@ def create_DF(all_data, labels, sims_per_label=4):
     for label in labels:
         for i in range(sims_per_label):
             columns.append(label + str(i))
-    df = pd.DataFrame(all_data, columns=columns)
+    all_data = np.array([np.array(data) for data in all_data])
+    all_data = np.asarray(all_data)
+    all_data = np.stack(all_data, axis=0)
+    df = pd.DataFrame(all_data, index=columns)
     return df, columns
 
 
@@ -127,6 +135,8 @@ def plot(trained_sets, switched_sets, attr, labels, trained_folder=None, switche
     if not path.exists(savefolder):
         makedirs(savefolder)
     np.savez(npz_name, all_data=all_data, data=data)
+
+
     plt.boxplot(data, showmeans=True)
     plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
     plt.ylabel(attr)
@@ -163,8 +173,12 @@ def plot(trained_sets, switched_sets, attr, labels, trained_folder=None, switche
     plt.show()
 
 
-    # names, df = create_DF(all_data, labels)
-    # sns.violinplot(data = df)
+    df, names = create_DF(all_data, labels)
+    plt.figure(figsize=(25, 5))
+    chart = sns.violinplot(data=df.transpose(), width=0.8, inner='quartile', scale='width', linewidth=0.01) #inner='quartile'
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    plt.show()
 
 def which(trained_sim, switched_sets, two_dim = True):
     if two_dim:
@@ -282,7 +296,7 @@ if __name__ == '__main__':
 
 
     plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='log', ylim=None,
-         save_addition='_logstuff', xlim=None)
+         save_addition='_points', xlim=None, auto_load=False)
 
 
 
