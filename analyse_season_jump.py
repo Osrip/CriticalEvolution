@@ -91,8 +91,10 @@ def create_DF(all_data, labels, sims_per_label=4):
 
 
 
-def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_folder=None, switched_folder=None, auto_load=True,
-         yscale='linear', ylim=None, save_addition='', xlim=None):
+def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_folder=None, switched_folder=None,
+         auto_load=False, yscale='linear', ylim=None, save_addition='', xlim=None):
+    #for some reason auto_load stopped working, did not look for bug yet
+
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
         switched_sets = add_folder_name(switched_sets, switched_folder)
@@ -138,22 +140,31 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
         makedirs(savefolder)
     np.savez(npz_name, all_data=all_data, data=data)
 
+    df, names = create_DF(all_data, labels)
+    df = reorder_df(df, new_order_labels)
+    all_data_reordered = df_to_nested_list(df)
 
-    plt.boxplot(data, showmeans=True)
-    plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
-    plt.ylabel(attr)
-    plt.savefig('{}boxplot.png'.format(savefolder), dpi=200, bbox_inches='tight')
+    plt.figure(figsize=(25, 5))
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01)  # inner='quartile'
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.savefig('{}violin_df_neworder{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
-    plt.boxplot(all_data, showmeans=True)
-    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation='vertical')
+    # plt.boxplot(data, showmeans=True)
+    # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
+    # plt.ylabel(attr)
+    # plt.savefig('{}boxplot.png'.format(savefolder), dpi=200, bbox_inches='tight')
+    # plt.show()
+
+    plt.boxplot(all_data_reordered, showmeans=True)
+    plt.xticks(np.arange(1, len(new_order_labels)*4 + 1, 4), new_order_labels, rotation='vertical')
     plt.ylabel(attr)
     plt.savefig('{}boxplot_all.png'.format(savefolder), dpi=200, bbox_inches='tight')
     plt.show()
 
-    plt.figure(figsize=(20,5))
-    plt.violinplot(all_data, showmeans=True, showextrema=False)
-    plt.xticks(np.arange(1, len(labels)*4 + 1, 4), labels, rotation=70)
+    plt.figure(figsize=(20, 5))
+    plt.violinplot(all_data_reordered, showmeans=True, showextrema=False)
+    plt.xticks(np.arange(1, len(new_order_labels)*4 + 1, 4), new_order_labels, rotation=70)
     plt.yscale(yscale)
     plt.ylabel(attr)
     plt.ylim(ylim)
@@ -163,19 +174,19 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
 
     fig, ax = plt.subplots()
 
-    for i, d in enumerate(all_data):
+    for i, d in enumerate(all_data_reordered):
         noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
         ax.scatter(noisy_x[0, :], d, alpha=0.2, s=0.1)
 
     ax.set_xticks(np.arange(32))
     ax.set_yscale('log')
 
-    plt.xticks(np.arange(1, len(labels) * 4 + 1, 4), labels, rotation=70)
+    plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
     plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
 
-    df, names = create_DF(all_data, labels)
+
 
     plt.figure(figsize=(25, 5))
     chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01) #inner='quartile'
@@ -183,13 +194,26 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
     plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
-    df = reorder_df(df, new_order_labels)
 
-    plt.figure(figsize=(25, 5))
-    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01)  # inner='quartile'
-    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
-    plt.savefig('{}violin_df_neworder{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
-    plt.show()
+
+    # fig, ax = plt.subplots()
+    # for i, s in enumerate(df):
+    #     d = df[s].tolist()
+    #     noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
+    #     ax.scatter(noisy_x[0, :], d, alpha=0.2, s=0.1)
+    # ax.set_xticks(np.arange(32))
+    # ax.set_yscale('log')
+    #
+    # plt.xticks(np.arange(1, len(labels) * 4 + 1, 4), labels, rotation=70)
+    # plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    # plt.show()
+
+def df_to_nested_list(df):
+    df = copy.deepcopy(df)
+    out_list = []
+    for col in df:
+        out_list.append(df[col].tolist())
+    return out_list
 
 def which(trained_sim, switched_sets, two_dim = True):
     if two_dim:
