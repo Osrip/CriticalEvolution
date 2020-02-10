@@ -7,6 +7,7 @@ from os import makedirs, path
 import seaborn as sns
 import os
 import pandas as pd
+import copy
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -85,11 +86,12 @@ def create_DF(all_data, labels, sims_per_label=4):
     all_data = np.asarray(all_data)
     all_data = np.stack(all_data, axis=0)
     df = pd.DataFrame(all_data, index=columns)
+    df = df.transpose()
     return df, columns
 
 
 
-def plot(trained_sets, switched_sets, attr, labels, trained_folder=None, switched_folder=None, auto_load=True,
+def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_folder=None, switched_folder=None, auto_load=True,
          yscale='linear', ylim=None, save_addition='', xlim=None):
     if not trained_folder is None:
         trained_sets = add_folder_name(trained_sets, trained_folder)
@@ -174,10 +176,19 @@ def plot(trained_sets, switched_sets, attr, labels, trained_folder=None, switche
 
 
     df, names = create_DF(all_data, labels)
+
     plt.figure(figsize=(25, 5))
-    chart = sns.violinplot(data=df.transpose(), width=0.8, inner='quartile', scale='width', linewidth=0.01) #inner='quartile'
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01) #inner='quartile'
     chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
     plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    plt.show()
+
+    df = reorder_df(df, new_order_labels)
+
+    plt.figure(figsize=(25, 5))
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01)  # inner='quartile'
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.savefig('{}violin_df_neworder{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
 def which(trained_sim, switched_sets, two_dim = True):
@@ -220,6 +231,19 @@ def sort_sets(order_list, sets):
     #ordered_labels = [x for _, x in sorted(zip(order_list, labels))]
     return ordered_sets
 
+def reorder_df(df, new_order_labels):
+    old_cols = df.columns.tolist()
+    new_cols = []
+    for new_label in new_order_labels:
+        for old_col in old_cols:
+            if new_label in old_col:
+                new_cols.append(old_col)
+    df_new = copy.deepcopy(df)
+    df_new = df_new[new_cols]
+    return df_new
+
+
+
 
 if __name__ == '__main__':
     #Sort labels according to order of trained sets!!!!!
@@ -229,8 +253,14 @@ if __name__ == '__main__':
     attr = 'avg_energy'
     #attr = 'avg_velocity'
     #attr = 'food'
+
+    #labels in order of trained sets
     labels = ['b1 summer', 'b1 switched to winter', 'b10 summer', 'b10 switched to winter',
                            'b1 winter', 'b1 switched to summer', 'b10 winter', 'b10 switched to summer']
+
+    #labels in wanted plot order
+    new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
+              'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
 
     trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
                     'sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',
@@ -295,7 +325,7 @@ if __name__ == '__main__':
 
 
 
-    plot(trained_sets, switched_sets, attr, labels, trained_folder, switched_folder, yscale='log', ylim=None,
+    plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_folder, switched_folder, yscale='log', ylim=None,
          save_addition='_points', xlim=None, auto_load=False)
 
 
