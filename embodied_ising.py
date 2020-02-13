@@ -558,6 +558,31 @@ class ising:
             deltaB = np.abs(np.random.normal(1, settings['sigB']))
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
 
+    def reset_state(self, settings):
+
+        # randomize internal state (not using self.random_state since it also randomizes sensors)
+        self.s = np.random.random(size=self.size) * 2 - 1
+        # randomize position (not using self.randomize_position function since it also randomizes velocity)
+        self.xpos = uniform(settings['x_min'], settings['x_max'])  # position (x)
+        self.ypos = uniform(settings['y_min'], settings['y_max'])  # position (y)
+
+        self.dv = 0
+        self.v = 0
+
+        self.ddr = 0
+        self.dr = 0
+
+        self.food = 0
+        self.fitness = 0
+
+        if settings['energy_model']:
+            self.energies = []  # Clear .energies, that .avg_energy is calculated from with each iteration
+            self.energy = settings['initial_energy']  # Setting initial energy
+
+            self.avg_energy = 0
+            self.all_velocity = 0
+            self.avg_velocity = 0
+
 
 class food():
     def __init__(self, settings):
@@ -694,11 +719,11 @@ def extract_plot_information(isings, foods, settings):
 
 
 def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
-
-    if settings['energy_model']:
-        for I in isings:
-            I.energies = []  # Clear .energies, that .avg_energy is calculated from with each iteration
-            I.energy = settings['initial_energy']  # Setting initial energy
+    [ising.reset_state(settings) for ising in isings]
+    # if settings['energy_model']:
+    #     for I in isings:
+    #         I.energies = []  # Clear .energies, that .avg_energy is calculated from with each iteration
+    #         I.energy = settings['initial_energy']  # Setting initial energy
 
     T = settings['TimeSteps']
     for I in isings:
@@ -1021,6 +1046,8 @@ def HomeostaticGradient(isings, foods, settings, folder, rep):
         # I.dvar[~I.maskh] = 0
         I.dJ[~I.maskJ] = 0
 
+
+
 def EvolutionLearning(isings, foods, settings, Iterations = 1):
     '''
     Called by "train"
@@ -1136,6 +1163,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             '''
 
             isings = evolve(settings, isings, rep)
+
+
     return sim_name
 
 def handle_total_timesteps(folder, settings, save_value = None):
@@ -1270,6 +1299,7 @@ def food_fitness(isings):
     return fitnessN, fitness
 
 def evolve(settings, I_old, gen):
+    [ising.reset_state(settings) for ising in I_old]
     size = settings['size']
     nSensors = settings['nSensors']
     nMotors = settings['nMotors']
