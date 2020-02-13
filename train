@@ -2,7 +2,7 @@
 
 from embodied_ising import ising
 from embodied_ising import food
-from embodied_ising import CriticalLearning, EvolutionLearning
+from embodied_ising import EvolutionLearning
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt

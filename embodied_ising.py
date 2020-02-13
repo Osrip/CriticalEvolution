@@ -161,9 +161,7 @@ class ising:
         self.s[2] = np.tanh(random_dorg) * 2 - 1
 
     def randomize_position(self, settings):
-        '''
-        Only used in TimeEvolve2
-        '''
+
         self.xpos = uniform(settings['x_min'], settings['x_max'])  # position (x)
         self.ypos = uniform(settings['y_min'], settings['y_max'])  # position (y)
 
@@ -884,79 +882,6 @@ def GlauberStepParallel(i, s, h, J, Beta, size):
 
 
 
-def collect_result(result):
-    global results
-    results.append(result)
-
-
-# Dynamical Critical Learning Algorithm for poising units in a critical state
-def HomeostaticGradient(isings, foods, settings, folder, rep):
-    T = settings['TimeSteps']
-    for I in isings:
-        I.m = np.zeros(I.size)
-        I.c = np.zeros((I.size, I.size))
-        I.C = np.zeros((I.size, I.size))
-        # I.var = np.zeros(I.size)
-
-        I.position = np.zeros((2, T))
-
-    # Main simulation loop:
-    if settings['plot'] == True:
-        plt.clf()
-        plt.ion()
-        fig, ax = plt.subplots()
-        # fig.set_size_inches(15, 10)
-    # start_time = time.time()
-    for t in range(T):
-        # print('Time = ' + str(t))
-        # PLOT SIMULATION FRAME
-        if settings['plot'] == True and (t % settings['frameRate']) == 0:
-            plot_frame(settings, folder, fig, ax, isings, foods, t, rep)
-            plt.pause(1e-5)
-            plt.draw()
-            plt.cla()
-
-        # check_eat_food(settings, isings, foods)
-        # calc_closest_food(isings, foods)
-        interact(settings, isings, foods)
-
-        for I in isings:
-            I.SequentialGlauberStep(settings)
-            I.position[:, t] = [I.xpos, I.ypos]
-            I.m += I.s
-
-            for iS in range(I.size):
-                I.c[iS, iS + 1:] += I.s[iS] * I.s[iS + 1:]
-                # I.c[iS, iS] += I.s[iS] ** 2
-    # print('Time Elapsed: ' + str(int(time.time() - start_time)))
-
-        # print(isings[0].position[:,t])
-
-    # CALCULATE CORRELATIONS AND MEAN ACTIVATIONS TO GET: dh, dJ
-    for I in isings:
-
-        I.m /= T
-        I.c /= T
-
-        for iS in range(I.size):
-            I.C[iS, iS + 1:] = I.c[iS, iS + 1:] - I.m[iS] * I.m[iS + 1:]
-            # I.var[iS] = I.c[iS, iS] - I.m[iS] ** 2
-
-        # resort correlations C1 to match the order of that of the actual C
-        # TODO: Does this actually work the way it's supposed to?
-        # TODO: Multiply by the sign?
-        # TODO: frustrated critical ising models?
-        I.sort_critical_correlations()
-
-        I.dh = I.m1 - I.m
-        I.dJ = I.C1 - I.C
-        # I.dvar = I.var - 1
-
-        I.dh[~I.maskh] = 0
-        # I.dvar[~I.maskh] = 0
-        I.dJ[~I.maskJ] = 0
-
-
 
 def EvolutionLearning(isings, foods, settings, Iterations = 1):
     '''
@@ -1279,15 +1204,6 @@ def save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
     #     pickle_out.close()
 
 
-def mutation_rate(isings):
-    for I in isings:
-
-        hmutation = np.abs(I.dh[I.maskh])
-        Jmutation = np.abs(I.dJ[I.maskJ])
-
-    hmutation = np.mean(hmutation)
-    Jmutation = np.mean(Jmutation)
-    return hmutation, Jmutation
 
 def sigmoid(x):
     y = 1/(1 + np.exp(-x))
@@ -1297,35 +1213,7 @@ def logit(x):
     y = np.log(x / (1 - x))
     return y
 
-def check_eat_food(settings, isings, foods):
-    '''
-    Seems not to be used for anything
-    '''
-    for food in foods:
-        for I in isings:
 
-            food_org_dist = dist(I.xpos, I.ypos, food.xpos, food.ypos)
-
-            # EAT/RESPAWN FOOD
-            if food_org_dist <= 0.075:
-                I.fitness += food.energy
-                food.respawn(settings)
-
-        # RESET DISTANCE AND HEADING TO NEAREST FOOD SOURCE
-        I.d_food = I.maxRange
-        I.r_food = 0
-
-def calc_closest_food(isings, foods):
-    for food in foods:
-        for I in isings:
-
-            # CALCULATE DISTANCE TO SELECTED FOOD PARTICLE
-            food_org_dist = dist(I.xpos, I.ypos, food.xpos, food.ypos)
-
-            # DETERMINE IF THIS IS THE CLOSEST FOOD PARTICLE
-            if food_org_dist < I.d_food:
-                I.d_food = food_org_dist
-                I.r_food = calc_heading(I, food)
 
 def seasons_func(food_max, food_min, t, year_t):
     curr_t = (t % year_t)
@@ -1423,14 +1311,17 @@ def interact(settings, isings, foods):
 
         I.org_sens = org_sensor[i]
 
+#  TODO: Record mutation rate
+# def mutation_rate(isings):
+#     '''Record mutation rate for future plotting'''
+#     for I in isings:
+#
+#         hmutation = np.abs(I.dh[I.maskh])
+#         Jmutation = np.abs(I.dJ[I.maskJ])
+#
+#     hmutation = np.mean(hmutation)
+#     Jmutation = np.mean(Jmutation)
+#     return hmutation, Jmutation
 
 
-
-def update_ising(settings, I, t):
-    I.SequentialUpdate(settings)
-    I.position[:, t] = [I.xpos, I.ypos]
-    I.m += I.s
-
-    for iS in range(I.size):
-        I.c[iS, iS + 1:] += I.s[iS] * I.s[iS + 1:]
 
