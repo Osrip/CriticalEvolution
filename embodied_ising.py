@@ -682,10 +682,6 @@ def extract_plot_information(isings, foods, settings):
 
 def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
     [ising.reset_state(settings) for ising in isings]
-    # if settings['energy_model']:
-    #     for I in isings:
-    #         I.energies = []  # Clear .energies, that .avg_energy is calculated from with each iteration
-    #         I.energy = settings['initial_energy']  # Setting initial energy
 
     T = settings['TimeSteps']
     for I in isings:
@@ -693,15 +689,11 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
 
     # Main simulation loop:
     if settings['plot'] == True:
-        #plt.clf()
-        # plt.ion()
+
         fig, ax = plt.subplots()
         #fig.set_size_inches(15, 10)
         isings_all_timesteps = []
         foods_all_timesteps = []
-        #artists_all_TS = np.zeros(T)
-        #artist_list = []
-
 
 
     '''
@@ -725,17 +717,6 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
             isings_info, foods_info = extract_plot_information(isings, foods, settings)
             isings_all_timesteps.append(isings_info)
             foods_all_timesteps.append(foods_info)
-            #plotting.design_figure(settings, fig, ax)
-            #plotting.initial_plot(isings, foods, settings, ax)
-            #artist_list.append(plotting.create_artists_append(isings, foods, settings))
-
-            #artists_all_TS.append(ax.artists))
-            #artists_all_TS[t] = copy.deepcopy(ax.artists)
-            #ax.cla()
-
-        '''
-        can optimize interact with matrix calculations instead of loops
-        '''
 
         interact(settings, isings, foods)
 
@@ -746,9 +727,9 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
             for I in isings:
                 I.position[:, t] = [I.xpos, I.ypos]
         else:
-            '''
-            parallelization here
-            '''
+
+            #parallelization here
+
             if settings['ANN']:
                 I.ANNUpdate(settings)
 
@@ -816,7 +797,6 @@ def parallelizedSequGlauberSteps(isings, settings, asynchronous = False):
             s_list = pool.map_async(parallelizedSequGlauberStep, vars_list)
             pool.close()
             pool.join()
-
 
 
 def parallelizedSequGlauberStep(pass_vars):
@@ -934,8 +914,6 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 total_timesteps = handle_total_timesteps(folder, settings)
 
 
-
-
             if settings['save_data']:
                 if settings['energy_model']:
                     # Clear I.energies in isings_copy before saving
@@ -973,11 +951,6 @@ def handle_total_timesteps(folder, settings, save_value = None):
     pickle.dump(total_timesteps, pickle_out)
     pickle_out.close()
     return total_timesteps
-
-
-
-
-
 
 
 def food_fitness(isings):
@@ -1152,16 +1125,6 @@ def save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
     pickle_out = open(filenameI, 'wb')
     pickle.dump(isings, pickle_out)
     pickle_out.close()
-
-    # pickle_out = open(filenameS, 'wb')
-    #
-    # if type(mutationrate) is not type(None):
-    #     pickle.dump((fitness_stat, (mutationh, mutationh ** 2), (mutationJ, mutationJ ** 2), fitC, fitm), pickle_out)
-    #     pickle_out.close()
-    # else:
-    #     pickle.dump(fitness_stat, pickle_out)
-    #     pickle_out.close()
-
 
 
 def sigmoid(x):
