@@ -121,7 +121,6 @@ class ising:
         self.v = 0.0
         self.generation = 0
 
-
         self.assign_critical_values(settings)
 
 
@@ -181,14 +180,14 @@ class ising:
             self.dy = self.v * sin(radians(self.r)) * settings['dt']
 
 
-    '''
-    NOT USED
-    # Set random bias to sets of units of the system
-    def random_fields(self, max_weights=None):
-        if max_weights is None:
-            max_weights = self.max_weights
-        self.h[self.Ssize:] = max_weights * (np.random.rand(self.size - self.Ssize) * 2 - 1)
-    '''
+
+    # NOT USED
+    # # Set random bias to sets of units of the system
+    # def random_fields(self, max_weights=None):
+    #     if max_weights is None:
+    #         max_weights = self.max_weights
+    #     self.h[self.Ssize:] = max_weights * (np.random.rand(self.size - self.Ssize) * 2 - 1)
+
     # Set random connections to sets of units of the system
     def random_wiring(self, max_weights=None):  # Set random values for h and J
         if max_weights is None:
@@ -199,7 +198,6 @@ class ising:
                     self.J[i, j] = (np.random.rand(1) * 2 - 1) * self.max_weights
 
     def Move(self, settings):
-
         # print(self.s[-2:])
         # TODO: velocity coeffecient that can be mutated?
         # UPDATE HEADING - Motor neuron s.[-self.Msize:self.Msize1]
@@ -400,6 +398,7 @@ class ising:
         # self.maskJtriu = np.triu(self.maskJ)
 
     def assign_critical_values(self, settings):
+        # TODO: Get rid of this!! Only used in critical learning. It is used for (def evolve) crossover, that is why error occurrs when this is not implemented
         # LOAD ISING CORRELATIONS
         # filename = 'correlations-ising2D-size400.npy'
         # Cdist = np.load(filename)
