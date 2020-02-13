@@ -412,42 +412,6 @@ class ising:
                 ind = np.random.randint(len(Cdist))
                 self.C1[ii, jj] = Cdist[ind]
 
-    # re-sort the assigned correlations from the critical ising model so that their order matches the order of the
-    # actual correlations
-    def sort_critical_correlations(self):
-        c = self.C
-        x = np.arange(np.prod(c.shape)).reshape(c.shape)[self.maskJ]  # index vector
-        c = c[self.maskJ]
-
-        c1 = self.C1[self.maskJ]
-
-        orderc = np.argsort(c)
-        orderc1 = np.argsort(c1)
-
-        C1_new = np.zeros((self.size, self.size))
-
-        # loop through index vector and re-sort assigned correlations to match order of actual correlations
-        # for iEdge, index in enumerate(x):
-        #     i_index = int(np.floor(index / self.size))
-        #     j_index = int(index % self.size)
-        #
-        #     condition = np.subtract(orderc1, orderc[iEdge]) == 0
-        #     # C1_index = int(np.extract(condition, orderc1))
-        #     # C1_new[i_index, j_index] = c1[C1_index]
-        #
-        #     C1_new[i_index, j_index] = c1[condition]
-        #     # C1_new[i_index, j_index] = c1[orderc1[condition]]
-
-        for i, iEdge in enumerate(orderc):
-            index = x[iEdge]
-            i_index = int(np.floor(index / self.size))
-            j_index = int(index % self.size)
-
-            # condition = np.subtract(orderc1, orderc[i]) == 0
-
-            C1_new[i_index, j_index] = c1[orderc1[i]]
-
-        self.C1 = C1_new
 
     # mutate the connectivity matrix of an organism by stochastically adding/removing an edge
     def mutate(self, settings):
@@ -781,15 +745,10 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
             boid_update(isings, settings)
             for I in isings:
                 I.position[:, t] = [I.xpos, I.ypos]
-
-        
         else:
             '''
             parallelization here
             '''
-            
-                
-            
             if settings['ANN']:
                 I.ANNUpdate(settings)
 
