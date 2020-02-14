@@ -150,34 +150,41 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
     df = reorder_df(df, new_order_labels)
     all_data_reordered = df_to_nested_list(df)
 
-    plt.figure(figsize=(25, 5))
-    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01)  # inner='quartile'
-    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
-    df.mean().plot(kind='scatter', s=10, c='black')
-    plt.savefig('{}violin_df_neworder{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
-    plt.show()
+    # plt.figure(figsize=(25, 5))
+    # chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.01)  # inner='quartile'
+    # chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    # df.mean().plot(style='*')
+    # plt.savefig('{}violin_df_neworder{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    # plt.show()
 
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
               '#17becf']
     violin_colors = create_violin_colors(colors)
 
-
+    plt.figure(figsize=(25, 5))
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
+                           palette=violin_colors)  # inner='quartile'
+    df.mean().plot(style='_', c='black', ms=30)
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    plt.show()
 
     fig, ax = plt.subplots()
     col_i = 0
     for i, d in enumerate(all_data_reordered):
-
         color = colors[col_i]
         noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
-        ax.scatter(noisy_x[0, :], d, alpha=0.2, s=0.3, c=color)
-        if (i+1) % 4 == 0:
+        ax.scatter(noisy_x[0, :], d, alpha=0.6, s=0.01, c=color)
+        if (i + 1) % 4 == 0:
             col_i += 1
-    ax.set_xticks(np.arange(32))
-    ax.set_yscale('log')
-    plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
-    plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
-    plt.show()
 
+    mean_series = df.mean()
+    mean_series.plot(style='_', c='black', ms=7)
+    plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    ax.set_xticks(np.arange(32))
+    ax.set_yscale(yscale)
+    plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
+    plt.show()
     # plt.boxplot(data, showmeans=True)
     # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
     # plt.ylabel(attr)
@@ -205,11 +212,7 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
 
 
 
-    plt.figure(figsize=(25, 5))
-    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05, palette=violin_colors) #inner='quartile'
-    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
-    plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
-    plt.show()
+
 
 
 
@@ -307,6 +310,8 @@ if __name__ == '__main__':
     new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
               'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
 
+    #To list all files in a certain folder in windows command shell: dir /B > filelist.txt
+
     trained_sets = [['sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
@@ -316,6 +321,7 @@ if __name__ == '__main__':
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_3_-r_200_-ser_-f_10_-n_3same',
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_4_-r_200_-ser_-f_10_-n_4same'],
                     ['sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
+                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_4_-r_200_-ser_-f_100_-n_4same'],
                     ['sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_10_-n_1_-r_200_-ser_-f_10_-n_1same',

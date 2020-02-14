@@ -121,7 +121,7 @@ class ising:
         self.v = 0.0
         self.generation = 0
 
-        self.assign_critical_values(settings)
+        #self.assign_critical_values(settings) (attribute ising.C1)
 
 
         if not settings['BoidOn']:
@@ -383,6 +383,7 @@ class ising:
         numHNeurons = self.size - self.Ssize - self.Msize
         perms = list(combinations(range(self.Ssize, self.Ssize + numHNeurons), 2))
         numDisconnectedEdges = len(list(combinations(range(settings['numDisconnectedNeurons']), 2)))
+        # settings['numDisconnectedNeurons'] how many hidden neurons are disconnenced fromeach other
 
         for i in range(0, numDisconnectedEdges):
             nrand = np.random.randint(len(perms))
@@ -396,20 +397,6 @@ class ising:
             # self.maskJ[jIndex, iIndex] = False
 
         # self.maskJtriu = np.triu(self.maskJ)
-
-    def assign_critical_values(self, settings):
-        # TODO: Get rid of this!! Only used in critical learning. It is used for (def evolve) crossover, that is why error occurrs when this is not implemented
-        # LOAD ISING CORRELATIONS
-        # filename = 'correlations-ising2D-size400.npy'
-        # Cdist = np.load(filename)
-        Cdist = settings['Cdist']
-
-        self.m1 = np.zeros(self.size)
-        self.C1 = np.zeros((self.size, self.size))
-        for ii in range(self.size):
-            for jj in range(max(ii + 1, self.Ssize), self.size):
-                ind = np.random.randint(len(Cdist))
-                self.C1[ii, jj] = Cdist[ind]
 
 
     # mutate the connectivity matrix of an organism by stochastically adding/removing an edge
@@ -470,10 +457,10 @@ class ising:
                 self.J[ii, jj] = 0
 
                 # TODO: is this a good way of making the code multi-purpose?
-                try:
-                    self.C1[ii, jj] = 0
-                except NameError:
-                    pass
+                # try:
+                #     self.C1[ii, jj] = 0
+                # except NameError:
+                #     pass'
 
             else:
                 print('Connectivity Matrix Empty! Mutation Blocked.')
@@ -490,10 +477,10 @@ class ising:
                 self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
                 # I.J[ii, jj] = np.random.uniform(np.min(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) / 2,
                 #                                 np.max(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) * 2)
-                try:
-                    self.C1[ii, jj] = settings['Cdist'][np.random.randint(0, len(settings['Cdist']))]
-                except NameError:
-                    pass
+                # try:
+                #     self.C1[ii, jj] = settings['Cdist'][np.random.randint(0, len(settings['Cdist']))]
+                # except NameError:
+                #     pass
 
             else:  # if connectivity matrix is full, just change an already existing edge
                 i, j = np.nonzero(connected)
@@ -1013,10 +1000,10 @@ def evolve(settings, I_old, gen):
         '''
         only important with critical learning
         '''
-        try:
-            I_new[-1].C1 = I_sorted[random_index].C1
-        except NameError:
-            pass
+        # try:
+        #     I_new[-1].C1 = I_sorted[random_index].C1
+        # except NameError:
+        #     pass
 
         # MUTATE SOMETIMES
         if np.random.random() < settings['mutationRateDup']:

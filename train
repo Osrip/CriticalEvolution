@@ -87,7 +87,7 @@ def create_settings():
         settings['LoadIsings'] = True
     #Seasons
     settings['seasons'] = args.seasons #BOO; Activates seasons
-    settings['years_per_iteration'] = args.years_per_iteration #INT amount of seasonal changes per iteration
+    settings['years_per_iteration'] = args.years_per_iteration #Float amount of seasonal changes per iteration
     settings['min_food_winter'] = args.min_food_winter #  0.5 #FLOAT [0,1]; relative decimation of food in winter
     settings['chg_food_gen'] = args.chg_food_gen
     

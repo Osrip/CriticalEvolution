@@ -97,8 +97,9 @@ def create_settings():
 
     settings['plot_pipeline'] = args.plot_pipeline
     settings['repeat'] = args.repeat
+    settings['motor_neuron_acceleration'] = True
 
-    
+
     Iterations = args.iterations
 
 
@@ -145,7 +146,7 @@ def parse():
     parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
     parser.add_argument('-l','--load', type=str, dest = 'loadfile',
                         help='Filename of previously saved simulation in save folder. Specify iteration using -li')
-    parser.add_argument('-li', '--loadi', type=str, dest='loaditer',
+    parser.add_argument('-li', '--loadi', type=int, dest='loaditer',
                         help='Iteration of previously saved simulation that is loaded. Only use in combination with -l')
     parser.add_argument('-ns', '--nseas', action='store_true', dest='no_seasons', help='Deactivates seasons')
     parser.add_argument('-mf', '--min_food', dest='min_food_winter', type=float,
@@ -213,7 +214,7 @@ def run(settings):
 
     # --- POPULATE THE ENVIRONMENT WITH ORGANISMS ----------+
     if settings['LoadIsings']:
-        loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + settings['iter'] + ']-isings.pickle'
+        loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + str(settings['iter']) + ']-isings.pickle'
 
         startstr = 'Loading simulation:' + loadfile + ' (' + str(settings['TimeSteps']) + \
                    ' timesteps) x (' + str(Iterations) + ' iterations)'
