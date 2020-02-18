@@ -940,11 +940,12 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             isings = evolve(settings, isings, rep)
 
         #Refreshing of plots
-        if rep % settings['refresh_plot'] == 0 and (not settings['refresh_plot'] is 0):
-            try:
-                automatic_plotting.main(sim_name)
-            except Exception:
-                print('Something went wrong when refreshing plot at generation{}'.format(rep))
+        if not settings['refresh_plot'] is 0:
+            if rep % settings['refresh_plot'] == 0:
+                try:
+                    automatic_plotting.main(sim_name)
+                except Exception:
+                    print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
 
     return sim_name
