@@ -27,6 +27,7 @@ import os
 import pickle
 import time
 from shutil import copyfile
+import automatic_plotting
 #import random
 #from tqdm import tqdm
 
@@ -745,6 +746,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
         #plotting.animate_plot(artist_list, settings, ax, fig)
         # try:
         plotting.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
+
         # except Exception:
         #     print('There occurred an error during animation...the simulation keeps going')
 
@@ -925,6 +927,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 else:
                     save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, rep)
 
+
         count += 1
 
         if rep % settings['evolution_rate'] == 0:
@@ -935,6 +938,13 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             '''
 
             isings = evolve(settings, isings, rep)
+
+        #Refreshing of plots
+        if rep % settings['refresh_plot'] == 0 and (not settings['refresh_plot'] is 0):
+            try:
+                automatic_plotting.main(sim_name)
+            except Exception:
+                print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
 
     return sim_name
