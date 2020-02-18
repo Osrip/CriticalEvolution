@@ -237,7 +237,7 @@ def df_to_nested_list(df):
 
 def which(trained_sim, switched_sets, two_dim = True, trained_also_simulated_again = True):
     if trained_also_simulated_again:
-        start = trained_sim.find('-li_sim')+4
+        start = trained_sim.find('-l_sim')+4
         end = start + 19
         trained_sim = trained_sim[start:end]
     if two_dim:
@@ -295,8 +295,8 @@ def reorder_df(df, new_order_labels):
 
 if __name__ == '__main__':
     #Sort labels according to order of trained sets!!!!!
-    trained_folder = '3rd_run_same_season/'
-    switched_folder = '3rd_run_switched_season/'
+    trained_folder = '4th_run_same_season/'
+    switched_folder = '4th_run_switched_season/'
 
     attr = 'avg_energy'
     #attr = 'avg_velocity'
@@ -312,22 +312,23 @@ if __name__ == '__main__':
 
     #To list all files in a certain folder in windows command shell: dir /B > filelist.txt
 
-    trained_sets = [['sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_100_-n_4_-r_200_-ser_-f_100_-n_4same'],
-                    ['sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_1_-r_200_-ser_-f_10_-n_1same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_2_-r_200_-ser_-f_10_-n_2same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_3_-r_200_-ser_-f_10_-n_3same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_10_-f_10_-n_4_-r_200_-ser_-f_10_-n_4same'],
-                    ['sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
-                     'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_100_-n_4_-r_200_-ser_-f_100_-n_4same'],
-                    ['sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_10_-n_1_-r_200_-ser_-f_10_-n_1same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_10_-n_2_-r_200_-ser_-f_10_-n_2same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_10_-n_3_-r_200_-ser_-f_10_-n_3same',
-                    'sim-20200212-163345-li_sim-20200209-124814-ser_-b_1_-f_10_-n_4_-r_200_-ser_-f_10_-n_4same']]
+    trained_sets =  [['sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_100_-n_4_-r_200_-ser_-f_100_-n_4same'],
+                    ['sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_10_-n_1_-r_200_-ser_-f_10_-n_1same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_10_-n_2_-r_200_-ser_-f_10_-n_2same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_10_-n_3_-r_200_-ser_-f_10_-n_3same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_10_-f_10_-n_4_-r_200_-ser_-f_10_-n_4same'],
+                    ['sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_100_-n_1_-r_200_-ser_-f_100_-n_1same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_100_-n_2_-r_200_-ser_-f_100_-n_2same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_100_-n_3_-r_200_-ser_-f_100_-n_3same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_100_-n_4_-r_200_-ser_-f_100_-n_4same'],
+                    ['sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_10_-n_1_-r_200_-ser_-f_10_-n_1same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_10_-n_2_-r_200_-ser_-f_10_-n_2same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_10_-n_3_-r_200_-ser_-f_10_-n_3same',
+                    'sim-20200214-180611-l_sim-20200209-124814-ser_-b_1_-f_10_-n_4_-r_200_-ser_-f_10_-n_4same']]
+
 
     # trained_sets = [['sim-20200121-213309-ser_-cfg_2000_100_-b_1_-nmb',
     #                 'sim-20200121-213313-ser_-cfg_2000_100_-b_1_-nmb',

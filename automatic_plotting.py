@@ -19,7 +19,7 @@ def main(sim_name, load_isings_list=True):
     except Exception:
         print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
-    plot_var_tuples = [('generation', 'avg_energy')]
+    plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food')]
     try:
         plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
     except Exception:
@@ -67,7 +67,12 @@ def plot_all_in_folder(folder_name):
             main(sim_name)
 
 if __name__ == '__main__':
-    sim_name ='sim-20200206-195842-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test_-bs_0.1_1_10' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
-    main(sim_name)
+    #sim_name ='sim-20200206-195842-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test_-bs_0.1_1_10' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    sim_names = ['sim-20200209-124814-ser_-b_10_-f_100_-n_1',
+                'sim-20200209-124814-ser_-b_10_-f_10_-n_1',
+                'sim-20200209-124814-ser_-b_1_-f_100_-n_1',
+                'sim-20200209-124814-ser_-b_1_-f_10_-n_1']
+    for sim_name in sim_names:
+        main(sim_name)
     #plot_all_in_folder('seasons_training_one_season')
 
