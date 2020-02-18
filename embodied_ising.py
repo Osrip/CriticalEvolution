@@ -26,6 +26,7 @@ import sys
 import os
 import pickle
 import time
+from shutil import copyfile
 #import random
 #from tqdm import tqdm
 
@@ -110,7 +111,7 @@ class ising:
 
         self.d_food = self.maxRange  # distance to nearest food
         self.r_food = 0  # orientation to nearest food
-        self.org_sens = 0 # directional, 1/distance ** 2 weighted organism sensor
+        #self.org_sens = 0 # directional, 1/distance ** 2 weighted organism sensor
         self.fitness = 0
         self.energy = 0.0
         self.food = 0
@@ -267,7 +268,8 @@ class ising:
         # self.s[1] = np.tanh(np.log10(self.radius / (self.d_food ** 2 + 1e-6)))  # self.d_food goes from 0 to ~
         # self.s[2] = np.tanh(np.log10(self.org_sens + 1e-10))
         self.s[1] = np.tanh(self.radius / (self.d_food ** 2 + 1e-6))*2 - 1  # self.d_food goes from 0 to ~
-        self.s[2] = np.tanh((self.org_sens))*2 - 1
+        #self.s[2] = np.tanh((self.org_sens))*2 - 1
+        self.s[2] = np.tanh(self.v)
         # print(self.s[0:3])
     
     # Execute step of the Glauber algorithm to update the state of one unit
@@ -549,6 +551,11 @@ class food():
 # ------------------------------------------------------------------------------+
 # ------------------------------------------------------------------------------+
 
+def save_code(folder):
+    src = 'embodied_ising.py'
+    dst = folder + src
+    copyfile(src, dst)
+
 
 def dist(x1, y1, x2, y2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
@@ -826,7 +833,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             os.makedirs(folder + 'figs')
 
             #save settings dicitionary
-            save_settings(folder, settings)
+        save_settings(folder, settings)
+        save_code(folder)
 
 
     total_timesteps = 0 #  Total amount of time steps, needed for bacterial seasons
@@ -1191,11 +1199,12 @@ def interact(settings, isings, foods):
     theta_mat_food = np.where(theta_mat_food > 180, theta_mat_food - 360, theta_mat_food)
 
     # calculate org sensor
-    org_sensor = np.where(np.abs(theta_mat_org) > 90, 0, np.cos(np.deg2rad(theta_mat_org)))
-    org_radius = np.array([I.radius for I in isings]).reshape(len(Ipos), 1)
-    org_sensor = (org_sensor * org_radius) / (dist_mat_org + dist_mat_org.T + 1e-6) ** 2
-    np.fill_diagonal(org_sensor, 0)
-    org_sensor = np.sum(org_sensor, axis=1)
+
+    # org_sensor = np.where(np.abs(theta_mat_org) > 90, 0, np.cos(np.deg2rad(theta_mat_org)))
+    # org_radius = np.array([I.radius for I in isings]).reshape(len(Ipos), 1)
+    # org_sensor = (org_sensor * org_radius) / (dist_mat_org + dist_mat_org.T + 1e-6) ** 2
+    # np.fill_diagonal(org_sensor, 0)
+    # org_sensor = np.sum(org_sensor, axis=1)
 
 
     for i, I in enumerate(isings):
@@ -1217,7 +1226,10 @@ def interact(settings, isings, foods):
             '''
             foods[foodInd].respawn(settings)
 
-        I.org_sens = org_sensor[i]
+        #I.org_sens = org_sensor[i]
+
+
+
 
 #  TODO: Record mutation rate
 # def mutation_rate(isings):
