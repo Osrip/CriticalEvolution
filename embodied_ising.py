@@ -60,6 +60,8 @@ class ising:
 
         self.maxRange = sqrt((settings['x_max'] - settings['x_min']) ** 2 +
                              (settings['y_max'] - settings['y_min']) ** 2)
+        self.v_max = settings['v_max']
+        self.food_num_env = settings['food_num']
 
         self.randomize_state()
         self.xpos = 0.0 #Position
@@ -157,8 +159,11 @@ class ising:
         random_dfood = np.random.rand() * self.maxRange
         self.s[1] = np.tanh(self.radius / (random_dfood ** 2 + 1e-6)) * 2 - 1
 
-        random_dorg = np.random.rand() * self.maxRange
-        self.s[2] = np.tanh(random_dorg) * 2 - 1
+        random_v = np.random.rand() * self.v_max
+        self.s[2] = np.tanh(random_v)
+
+        random_energy = np.random.rand() * self.food_num_env
+        self.s[3] = np.tanh(random_energy)
 
     def randomize_position(self, settings):
 
@@ -270,6 +275,7 @@ class ising:
         self.s[1] = np.tanh(self.radius / (self.d_food ** 2 + 1e-6))*2 - 1  # self.d_food goes from 0 to ~
         #self.s[2] = np.tanh((self.org_sens))*2 - 1
         self.s[2] = np.tanh(self.v)
+        self.s[3] = np.tanh(self.energy)
         # print(self.s[0:3])
     
     # Execute step of the Glauber algorithm to update the state of one unit

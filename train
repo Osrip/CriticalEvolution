@@ -62,8 +62,8 @@ def create_settings():
     settings['frameRate'] = 1
     settings['animation_fps'] = args.fps
     
-    settings['size'] = 10
-    settings['nSensors'] = 3
+    settings['size'] = 11
+    settings['nSensors'] = 4
     settings['nMotors'] = 4
     settings['learningrate'] = 0.01  # 0.01
     # how many hidden neurons are not connected to each other
