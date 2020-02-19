@@ -414,11 +414,11 @@ class ising:
          3 Mutations happening at once:
         CONNECTIVITY Mutations:
         One of these things happen
-        - A new edge is removed (according to sparsity settingsmore or less likely)
+        - A new edge is removed (according to sparsity settings more or less likely)
         - or added (if no adding is possible some random edge gets new edge weight)
 
         EDGE MUTATIONS
-        currently in an edge mutation means, that the whole adge weight is replaced by a randomly generated weight
+        currently in an edge mutation means, that the whole edge weight is replaced by a randomly generated weight
         
 
         BETA Mutations
