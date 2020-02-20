@@ -1059,7 +1059,7 @@ def evolve(settings, I_old, gen):
             # folded normal distribution
             deltaB = np.abs( np.random.normal(1, settings['sigB']) )
 
-            Beta_new = ( (crossover_weight * org_1.Beta) + \
+            Beta_new = ((crossover_weight * org_1.Beta) + \
                             ((1 - crossover_weight) * org_2.Beta) ) * deltaB
         else:
             Beta_new = org_1.Beta
