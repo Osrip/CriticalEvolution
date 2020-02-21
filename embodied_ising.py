@@ -5,6 +5,7 @@ import numpy as np
 import operator
 from itertools import combinations, product
 import matplotlib as mpl
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import copy
@@ -434,7 +435,7 @@ class ising:
         # number of (dis)connected edges
         connected = copy.deepcopy(self.maskJ)
 
-        disconnected = ~connected
+        disconnected = ~connected #disconnected not connected
         np.fill_diagonal(disconnected, 0)
         disconnected = np.triu(disconnected)
 
@@ -445,18 +446,18 @@ class ising:
         disconnected[0:self.Ssize, -self.Msize:] = 0
         disconnected[0:self.Ssize, 0:self.Ssize] = 0
 
-        numEdges = np.sum(connected)
+        numEdges = np.sum(connected) #number of edges, that can actuall be disconnected (in beginning of simulatpn curr settings 3)
         # positive value means too many edges, negative value means too little
         edgeDiff = numEdges - (totalPossibleEdges - numDisconnectedEdges)
         # edgeDiff = numEdges - numDisconnectedEdges
 
         # TODO: investigate the empty connectivity matrix here
-        prob = sigmoid(edgeDiff)  # probability near 1 means random edge will be removed, near 0 means random edge added
+        prob = sigmoid(edgeDiff)  #for numDisconnectedNeurons=0 this means 0.5 --> equal probability of adding edge and removing edge # probability near 1 means random edge will be removed, near 0 means random edge added
         rand = np.random.rand()
 
         if prob >= rand:
             # remove random edge
-            i, j = np.nonzero(connected)
+            i, j = np.nonzero(connected) #Indecies of neurons connected by edges that can be disconnected
             if len(i) > 0:
                 randindex = np.random.randint(0, len(i))
                 ii = i[randindex]
@@ -475,6 +476,7 @@ class ising:
                 print('Connectivity Matrix Empty! Mutation Blocked.')
 
         else:
+            #looking for disconnected neurons that can be connected
             # add random edge
             i, j = np.nonzero(disconnected)
             if len(i) > 0:
@@ -492,6 +494,7 @@ class ising:
                 #     pass
 
             else:  # if connectivity matrix is full, just change an already existing edge
+                #This only happens, when alogorithm tries to add edge, but everything is connected
                 i, j = np.nonzero(connected)
 
                 randindex = np.random.randint(0, len(i))
@@ -499,6 +502,7 @@ class ising:
                 jj = j[randindex]
 
                 self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
+
 
         # MUTATE RANDOM EDGE
         i, j = np.nonzero(self.maskJ)
@@ -514,6 +518,7 @@ class ising:
         if settings['mutateB']:
             deltaB = np.abs(np.random.normal(1, settings['sigB']))
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
+            #biases GA pushing towards lower betas (artifical pressure to small betas)
 
     def reset_state(self, settings):
 
@@ -980,7 +985,7 @@ def food_fitness(isings):
     return fitnessN, fitness
 
 def evolve(settings, I_old, gen):
-    [ising.reset_state(settings) for ising in I_old]
+
     size = settings['size']
     nSensors = settings['nSensors']
     nMotors = settings['nMotors']
