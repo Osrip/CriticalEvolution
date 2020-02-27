@@ -8,6 +8,7 @@ import seaborn as sns
 import os
 import pandas as pd
 import copy
+from matplotlib.lines import Line2D
 
 def extract_attr(isings_list, attr):
     val_list = []
@@ -161,11 +162,20 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
               '#17becf']
     violin_colors = create_violin_colors(colors)
 
-    plt.figure(figsize=(25, 5))
+
+    # LEGEND
+
+    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
+
+
+    plt.figure(figsize=(25, 10))
     chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
                            palette=violin_colors)  # inner='quartile'
     df.mean().plot(style='_', c='black', ms=30)
     chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.yscale(yscale)
+    plt.gca().set_ylim(top=20)
+    plt.legend(handles=legend_elements)
     plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -180,10 +190,14 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
 
     mean_series = df.mean()
     mean_series.plot(style='_', c='black', ms=7)
-    plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+
     ax.set_xticks(np.arange(32))
     ax.set_yscale(yscale)
+    #plt.ylabel('median energy')
+    plt.ylabel(attr)
     plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
+    plt.legend(handles=legend_elements)
+    plt.savefig('{}scatter{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
     plt.show()
     # plt.boxplot(data, showmeans=True)
     # plt.xticks(np.arange(1, len(labels) + 1), labels, rotation='vertical')
@@ -201,6 +215,7 @@ def plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_fo
     plt.violinplot(all_data_reordered, showmeans=True, showextrema=False, widths=0.8)
     plt.xticks(np.arange(1, len(new_order_labels)*4 + 1, 4), new_order_labels, rotation=70)
     plt.yscale(yscale)
+    #plt.ylabel('median energy')
     plt.ylabel(attr)
     plt.ylim(ylim)
     plt.xlim(xlim)
@@ -298,9 +313,9 @@ if __name__ == '__main__':
     trained_folder = '4th_run_same_season/'
     switched_folder = '4th_run_switched_season/'
 
-    attr = 'avg_energy'
+    #attr = 'avg_energy'
     #attr = 'avg_velocity'
-    #attr = 'food'
+    attr = 'food'
 
     #labels in order of trained sets
     labels = ['b10 summer', 'b10 switched to winter', 'b10 winter', 'b10 switched to summer',
@@ -396,6 +411,7 @@ if __name__ == '__main__':
 
     plot(trained_sets, switched_sets, attr, labels, new_order_labels, trained_folder, switched_folder, yscale='linear', ylim=None,
          save_addition='_nolog', xlim=None, auto_load=False)
+    #yscale='symlog'
 
 
 

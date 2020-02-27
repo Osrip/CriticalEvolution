@@ -20,7 +20,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
 def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.13, autoLoad=True, x_lim=None,
-         y_lim=None, log=False, y_noise=False):
+         y_lim=None, xlog=False, ylog=False, y_noise=False, name_extension=''):
 
 
     loadfiles = [loadfile]#loadfiles = ['sim-20191114-000009_server']
@@ -64,8 +64,9 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0
         ax = plt.scatter(x_pars, y_pars, s = s, alpha = alpha, c=c)
         if y_noise:
             plt.ylim(1,1000)
-        if log:
+        if xlog:
             plt.xscale('log')
+        if ylog:
             plt.yscale('log')
         #TODO:colour acc to generation!!
     plt.xlim(x_lim)
@@ -76,7 +77,7 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0
     folder = 'save/' + loadfile
     savefolder = folder + '/figs/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
     savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
-        iter_list[-1]) + '.png'
+        iter_list[-1]) + name_extension + '.png'
     if not path.exists(savefolder):
         makedirs(savefolder)
 

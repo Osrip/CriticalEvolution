@@ -62,7 +62,7 @@ def create_settings():
     settings['frameRate'] = 1
     settings['animation_fps'] = args.fps
     
-    settings['size'] = 20 #Total number of neurons in NN
+    settings['size'] = 12 #Total number of neurons in NN
     settings['nSensors'] = 4
     settings['nMotors'] = 4
     settings['learningrate'] = 0.01  # 0.01
