@@ -874,7 +874,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if settings['energy_model']:
 
             for I in isings:
-                I.avg_energy = np.median(I.energies)  # Average or median better?
+                I.avg_energy = np.mean(I.energies)  # Average or median better?
                 I.avg_velocity = I.all_velocity / settings['TimeSteps']
             eat_rate = np.average([I.avg_energy for I in isings])
 
