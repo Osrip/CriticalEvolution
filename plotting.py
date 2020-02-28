@@ -26,7 +26,7 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
     if settings['server_mode']:
         plt.rcParams['animation.ffmpeg_path'] = '/data-uwks159/home/jprosi/ffmpeg-4.2.1-linux-64/ffmpeg'
         #'/usr/local/bin/ffmpeg'
-    else:
+    elif settings['laptop_mode']:
         plt.rcParams['animation.ffmpeg_path'] = "D:/Program Files/ffmpeg-20191217-bd83191-win64-static/bin/ffmpeg.exe"
 
     if settings['LoadIsings']:
