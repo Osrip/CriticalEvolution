@@ -214,5 +214,5 @@ if __name__ == '__main__':
     #TODO: add something that detetcts .npz file and skips loading isings in that case
 
     main(loadfile, settings, isings_list, plot_var_x, plot_var_y, plot_var_c, autoLoad=False, x_lim=None, y_lim=None)
-    #TODO: Evt. PCA oder decision trees um herauszufinden welche eigenschaften wichtig sind für hohe avg energy?
+    #TODO: Evt. PCA oder decision trees um herauszufinden welche eigenschaften wichtig sind fuer hohe avg energy?
 
