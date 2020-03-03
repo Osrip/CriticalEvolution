@@ -93,7 +93,7 @@ def create_settings():
     settings['chg_food_gen'] = args.chg_food_gen
     
     settings['parallel_computing'] = False #BOO
-    settings['cores'] = 4 #INT if 0 number is determined automatically
+    settings['cores'] = 12 #INT if 0 number is determined automatically
     
     settings['energy_model'] = not args.no_ener_mod #BOO
     settings['v_min'] = args.v_min  # FLOAT [0,1)

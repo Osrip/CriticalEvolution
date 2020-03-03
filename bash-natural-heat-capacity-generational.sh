@@ -10,7 +10,7 @@ gens=(save/$sim/isings/*)
 # $(seq 101) ::: \
 # ${gens[@]}
 
-parallel --bar --eta -j14 "python3 compute-natural-heat-capacity-generational $sim {1} {2}" ::: \
+parallel --bar --eta -j30 "python3 compute-natural-heat-capacity-generational $sim {1} {2}" ::: \
 $(seq 101) ::: \
 0 500 100 1500 1999
 #0 1000 1999 3000 3999
