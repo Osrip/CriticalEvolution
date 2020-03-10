@@ -29,6 +29,8 @@ import pickle
 import time
 from shutil import copyfile
 import automatic_plotting
+from numba import jit
+import math
 #import random
 #from tqdm import tqdm
 
@@ -281,7 +283,7 @@ class ising:
         # print(self.s[0:3])
     
     # Execute step of the Glauber algorithm to update the state of one unit
-    
+
     def GlauberStep(self, i=None):
         '''
         Utilizes: self.s, self.h, self.J
@@ -349,19 +351,34 @@ class ising:
 
 
     # Update all states of the system without restricted influences
-    def SequentialGlauberStep(self, settings):
-        thermalTime = int(settings['thermalTime'])
 
-        self.UpdateSensors(settings) # update sensors at beginning
+    def SequentialGlauberStepFastHelper(self, settings):
+        thermalTime = int(settings['thermalTime'])
+        self.UpdateSensors(settings)
+        perms_list = np.array([np.random.permutation(range(self.Ssize, self.size)) for j in range(thermalTime)])
+        random_vars = np.random.rand(thermalTime, len(range(self.Ssize, self.size))) #[np.random.rand() for i in perms]
+        self.s = SequentialGlauberStepFast(thermalTime, perms_list, random_vars, self.s, self.h, self.J, self.Beta)
+        self.Move(settings)
+
+
+
+
+
+    def SequentialGlauberStep(self, settings, thermal_time):
+        thermalTime = int(thermal_time)
+
+        self.UpdateSensors(settings)  # update sensors at beginning
 
         # update all other neurons a bunch of times
         for j in range(thermalTime):
             perms = np.random.permutation(range(self.Ssize, self.size))
             #going through all neuron exceot sensors in random permutations
             for i in perms:
-                self.GlauberStep(i)
+                #self.GlauberStep(i)
+                rand = np.random.rand()
+                GlauberStepFast(i, rand, self.s, self.h, self.J, self.Beta)
 
-        self.Move(settings) # move organism at end
+        self.Move(settings)  # move organism at end
 
 
     # Update all states of the system without restricted influences
@@ -544,6 +561,63 @@ class ising:
             self.avg_energy = 0
             self.all_velocity = 0
             self.avg_velocity = 0
+
+
+#
+# @jit(nopython=True)
+# def SequentialGlauberStepFast(thermalTime, perms, random_vars, s, h, J, Beta):
+#     for j in range(thermalTime):
+#         for ind, i in enumerate(perms):
+#             rand = random_vars[ind]
+#             GlauberStepFast(i, rand, s, h, J, Beta)
+#
+# @jit(nopython=True)
+# def GlauberStepFast(i, rand, s, h, J, Beta ):
+#     '''
+#     Utilizes: self.s, self.h, self.J
+#     Modifies: self.s
+#     '''
+#
+#     eDiff = 2 * s[i] * (h[i] + np.dot(J[i, :] + J[:, i], s))
+#     #deltaE = E_f - E_i = -2 E_i = -2 * - SUM{J_ij*s_i*s_j}
+#     #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
+#
+#     if Beta * eDiff < np.log(1.0 / rand - 1):
+#         #transformed  P = 1/(1+e^(deltaE* Beta)
+#         s[i] = -s[i] # TODO return s!!!!!!!
+
+# @jit(nopython=True)
+# def SequentialGlauberStepFast(thermalTime, perms_list, random_vars_list, s, h, J, Beta):
+#     for j in range(thermalTime):
+#         perms = perms_list[j]
+#         random_vars = random_vars_list[j]
+#         for ind, i in enumerate(perms):
+#             rand = random_vars[ind]
+#             eDiff = 2 * s[i] * (h[i] + np.dot(J[i, :] + J[:, i], s))
+#             #deltaE = E_f - E_i = -2 E_i = -2 * - SUM{J_ij*s_i*s_j}
+#             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
+#
+#             if Beta * eDiff < np.log(1.0 / rand - 1):
+#                 #transformed  P = 1/(1+e^(deltaE* Beta)
+#                 s[i] = -s[i]
+#     return s
+
+@jit(nopython=True)
+def SequentialGlauberStepFast(thermalTime, perms_list, random_vars, s, h, J, Beta):
+    for i in range(thermalTime):
+        perms = perms_list[i]
+        for j, perm in enumerate(perms):
+            rand = random_vars[i, j]
+            eDiff = 2 * s[perm] * (h[perm] + np.dot(J[perm, :] + J[:, perm], s))
+            #deltaE = E_f - E_i = -2 E_i = -2 * - SUM{J_ij*s_i*s_j}
+            #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
+
+            if Beta * eDiff < np.log(1.0 / rand - 1):   #using math instead of numpy
+                #transformed  P = 1/(1+e^(deltaE* Beta)
+                s[perm] = -s[perm]
+
+    return s
+
 
 
 class food():
@@ -742,9 +816,8 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
                 if settings['parallel_computing']:
                     parallelizedSequGlauberSteps(isings, settings)
                 else:
-                    for I in isings:
-                        I.SequentialGlauberStep(settings)
-                
+                    [I.SequentialGlauberStepFastHelper(settings) for I in isings]
+
             
             
     if settings['plot']:
