@@ -30,6 +30,8 @@ import time
 from shutil import copyfile
 import automatic_plotting
 from numba import jit
+from numba import njit
+from numba.typed import List
 import math
 #import random
 #from tqdm import tqdm
@@ -646,7 +648,95 @@ def save_code(folder):
 def dist(x1, y1, x2, y2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-def pdistance_pairwise(x0, x1, dimensions, food=False):
+#@jit(nopython=True)
+def pdistance_pairwise_helperl(x0, x1, dimensions, food=False):
+    '''
+    Parameters
+    ----------
+    x0, x1:
+        (vectorized) list of coordinates. Can be N-dimensional. e.g. x0 = [[0.5, 2.], [1.1, 3.8]].
+
+    dimensions:
+        size of the bounding box, array of length N. e.g. [8., 8.], [xmax - xmin, ymax - ymin].
+
+    food:
+        boolean signifying if the distance calculations are between organisms or between organisms and food. In the
+        latter case we don't need to compare it both ways around, in the former, theta_mat is a non-symmetric matrix.
+
+    Returns
+    -------
+
+    dist_mat:
+        upper triangle matrix of pairwise distances accounting for periodic boundaries
+
+    theta_mat:
+        full matrix of angles between each position accounting for periodic boundaries
+    '''
+
+
+    # get all unique pairs combinations
+    N1 = len(x0)
+    N2 = len(x1)
+
+    if food:
+        combo_index = np.array(list(product(np.arange(N1), np.arange(N2))))
+    else:
+        if not len(x0) == len(x1):
+            raise Exception('x0.shape[0] not equal to x1.shape[0] when comparing organisms.')
+        combo_index = np.array(list(combinations(np.arange(N1), 2)))
+        # numba_list = List()
+        # [numba_list.append(x) for x in combo_index]
+        # combo_index = numba_list
+
+    Ii = np.array([x0[i[0]] for i in combo_index])
+    Ij = np.array([x1[i[1]] for i in combo_index])
+
+    dist_mat, theta_mat = pdistance_pairwise_fast(x0, x1, dimensions, combo_index, Ii, Ij, food)
+
+    return dist_mat, theta_mat
+
+@jit(nopython=True)
+def pdistance_pairwise_fast(x0, x1, dimensions, combo_index, Ii, Ij, food):
+    N1 = len(x0)
+    N2 = len(x1)
+
+
+
+    # calculate distances accounting for periodic boundaries
+    # delta = np.abs(Ipostiled_seq - Ipostiled)
+    delta = Ij - Ii
+    delta = np.where(np.abs(delta) > 0.5 * dimensions, delta - np.sign(delta)*dimensions, delta)
+
+    dist_vec = np.sqrt((delta ** 2).sum(axis=-1))
+    theta_vec_ij = np.degrees(np.arctan2(delta[:, 1], delta[:, 0]))  # from org i to org j
+    if not food:
+        theta_vec_ji = np.degrees(np.arctan2(-delta[:, 1], -delta[:, 0]))  # from org j to org i
+
+    if food:
+        dist_mat = dist_vec.reshape(N1, N2)
+    else:
+        dist_mat = np.zeros((N1, N2))
+    theta_mat = np.zeros((N1, N2))
+
+    #for ii, ind in enumerate(combo_index):
+    for ii in range(len(combo_index)):
+        ind = combo_index[ii]
+        i = ind[0]
+        j = ind[1]
+        # can leave this as upper triangle since it's symmetric
+        if not food:
+            dist_mat[i, j] = dist_vec[ii]
+        # need to get a full matrix since eventually these angles are not symmetric
+        theta_mat[i, j] = theta_vec_ij[ii]
+        # if comparing org-to-org angles, need the other direction as well
+        if not food:
+            theta_mat[j, i] = theta_vec_ji[ii]
+
+
+    return dist_mat, theta_mat
+
+
+def pdistance_pairwise_helper(x0, x1, dimensions, food=False):
     '''
     Parameters
     ----------
@@ -1280,8 +1370,8 @@ def interact(settings, isings, foods):
     dimensions = np.array([settings['x_max'] - settings['x_min'], settings['y_max'] - settings['y_min']])
     org_heading = np.array([I.r for I in isings]).reshape(len(Ipos), 1)
 
-    dist_mat_org, theta_mat_org = pdistance_pairwise(Ipos, Ipos, dimensions, food=False)
-    dist_mat_food, theta_mat_food = pdistance_pairwise(Ipos, foodpos, dimensions, food=True)
+    dist_mat_org, theta_mat_org = pdistance_pairwise_helper(Ipos, Ipos, dimensions, food=False)
+    dist_mat_food, theta_mat_food = pdistance_pairwise_helper(Ipos, foodpos, dimensions, food=True)
 
     # calculate agent-agent and agent-food angles
     theta_mat_org = theta_mat_org - org_heading
