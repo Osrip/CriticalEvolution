@@ -136,7 +136,7 @@ def parse():
                         help='''Number of food particles. Serves as largest number of food particles when seasons are 
                         activated''')
     parser.add_argument('-s', '--save', dest='save_data', action='store_false', help="Don't save data of simulation")
-    parser.add_argument('-plt', '--plot', dest='plot_pipeline', action='store_true',
+    parser.add_argument('-noplt', '--noplot', dest='plot_pipeline', action='store_false',
                         help='Run Plotting pipeline at end of simulation')
     parser.add_argument('-g', '--gen', type=int, dest='iterations', help='Number of generations in simulation')
     parser.add_argument('-t', '--ts', type=int, dest='time_steps',
