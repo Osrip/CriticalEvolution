@@ -31,8 +31,10 @@ from shutil import copyfile
 import automatic_plotting
 from numba import jit
 from numba import njit
-from numba.typed import List
+
 import math
+from os import listdir
+from os.path import isfile, join
 #import random
 #from tqdm import tqdm
 
@@ -639,8 +641,17 @@ class food():
 # ------------------------------------------------------------------------------+
 # ------------------------------------------------------------------------------+
 
-def save_code(folder):
-    src = 'embodied_ising.py'
+def save_whole_project(folder):
+    cwd = os.getcwd()
+    onlyfiles = [f for f in listdir(cwd) if isfile(join(cwd, f))]
+    save_folder = folder + 'code/'
+    for file in onlyfiles:
+        save_code(save_folder, file)
+
+
+
+def save_code(folder, filename):
+    src = filename
     dst = folder + src
     copyfile(src, dst)
 
@@ -921,11 +932,14 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             os.makedirs(folder + 'isings')
             os.makedirs(folder + 'stats')
             os.makedirs(folder + 'figs')
+            os.makedirs(folder + 'code')
 
             #save settings dicitionary
         save_settings(folder, settings)
-        save_code(folder)
-
+        try:
+            save_whole_project(folder)
+        except Exception:
+            print('Could not create backup copy of code')
 
     total_timesteps = 0 #  Total amount of time steps, needed for bacterial seasons
     if settings['seasons']:
