@@ -359,9 +359,8 @@ class ising:
     def SequentialGlauberStepFastHelper(self, settings):
         thermalTime = int(settings['thermalTime'])
         self.UpdateSensors(settings)
-        perms_list = np.array([np.random.permutation(range(self.Ssize, self.size)) for j in range(thermalTime)])
-        random_vars = np.random.rand(thermalTime, len(range(self.Ssize, self.size))) #[np.random.rand() for i in perms]
-        self.s = SequentialGlauberStepFast(thermalTime, perms_list, random_vars, self.s, self.h, self.J, self.Beta)
+
+        self.s = SequentialGlauberStepFast(thermalTime, self.s, self.h, self.J, self.Beta, self.Ssize, self.size)
         self.Move(settings)
 
 
@@ -607,16 +606,20 @@ class ising:
 #     return s
 
 @jit(nopython=True)
-def SequentialGlauberStepFast(thermalTime, perms_list, random_vars, s, h, J, Beta):
+def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
+    all_neurons_except_sens = np.arange(Ssize, size)
+    #perms_list = np.array([np.random.permutation(np.arange(Ssize, size)) for j in range(thermalTime)])
+    random_vars = np.random.rand(thermalTime, len(all_neurons_except_sens)) #[np.random.rand() for i in perms]
     for i in range(thermalTime):
-        perms = perms_list[i]
+        #perms = perms_list[i]
+        perms = np.random.permutation(np.arange(Ssize, size))
         for j, perm in enumerate(perms):
             rand = random_vars[i, j]
             eDiff = 2 * s[perm] * (h[perm] + np.dot(J[perm, :] + J[:, perm], s))
             #deltaE = E_f - E_i = -2 E_i = -2 * - SUM{J_ij*s_i*s_j}
             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
 
-            if Beta * eDiff < np.log(1.0 / rand - 1):   #using math instead of numpy
+            if Beta * eDiff < np.log(1.0 / rand - 1):
                 #transformed  P = 1/(1+e^(deltaE* Beta)
                 s[perm] = -s[perm]
 
