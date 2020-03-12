@@ -37,6 +37,7 @@ from os import listdir
 from os.path import isfile, join
 #import random
 #from tqdm import tqdm
+from pympler import tracker
 
 
 
@@ -951,7 +952,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     if (settings['seasons'] and (settings['years_per_iteration'] < 1)) and not (settings['loadfile'] is ''):
         time_steps = handle_total_timesteps(folder, settings)
 
-
+    tr = tracker.SummaryTracker()
     count = 0
     for rep in range(Iterations):
         ''' 
@@ -1023,6 +1024,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                         I.energies = []
 
                     save_sim(folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
+                    del isings_copy
                 else:
                     save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, rep)
 
@@ -1046,7 +1048,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 except Exception:
                     print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
-
+        tr.print_diff()
     return sim_name
 
 def handle_total_timesteps(folder, settings, save_value = None):
