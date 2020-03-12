@@ -7,8 +7,8 @@ from os import path, makedirs
 
 import pickle
 
-loadfile = 'learn_only'
-gen = 0
+loadfile = 'sim-20200303-204124-ref_500_-b_1_-li_1999_-g_4000_-l_sim-20200221-191932-ser_-b_1_-a_50_100_250_500_1500_1999_-n_12_neuuron_inst_of_20_-a_500_1000_1500_2000_3000_3999_-n_12_neurons'
+gen = 2999
 
 def random_senses():
     # r_food = np.random.uniform(-180, 180)

@@ -13,9 +13,10 @@ def dec2bin(num,num_digits):
     frmt += 'b}'
     return frmt.format(num)
 
-loadfile = 'sim-20191009-154930'
-gen = 3999
+loadfile = 'sim-20200303-204124-ref_500_-b_1_-li_1999_-g_4000_-l_sim-20200221-191932-ser_-b_1_-a_50_100_250_500_1500_1999_-n_12_neuuron_inst_of_20_-a_500_1000_1500_2000_3000_3999_-n_12_neurons'
+gen = 2999
 motor = 'dr'
+#motor = ''
 
 plt.rc('text', usetex=True)
 font = {'family': 'serif', 'size': 15, 'serif': ['computer modern roman']}
@@ -33,7 +34,9 @@ fontsize = 20
 d = np.dtype([('MV', 'f8'), ('MR', 'f8'), ('CMV', 'f8'), ('CMR', 'f8')])
 data = np.zeros((R, numAgents, Nsens), dtype=d)
 
-folder = 'save/' + loadfile + '/Motor_Response_' + motor + '/gen_' + str(gen) + '/'
+#folder = 'save/' + loadfile + '/Motor_Response_' + motor + '/gen_' + str(gen) + '/'
+folder = 'save/' + loadfile + '/Motor_Response' + '/gen_' + str(gen) + '/'
+# TODO: Changed this to make it work
 
 for sensInd in np.arange(1, Nsens):
     file = 'MR-' + 'Nsens_' + str(Nsens) + \
@@ -113,8 +116,9 @@ ax[0, 1].set_title(r'$d\omega$')
 ax[1, 0].set_title(r'$\sigma^2(dv)$')
 ax[1, 1].set_title(r'$\sigma^2(d\omega)$')
 
-manager = plt.get_current_fig_manager()
-manager.resize(*manager.window.maxsize())
+# manager = plt.get_current_fig_manager()
+# manager.resize(*manager.window.maxsize())
+# TODO: commented this out to make it work
 
 #
 # for i in range(2):
