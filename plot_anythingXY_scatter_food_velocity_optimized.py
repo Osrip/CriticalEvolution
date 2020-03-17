@@ -83,7 +83,12 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0
     if saveFigBool:
         plt.savefig(savefilename, bbox_inches='tight', dpi=500)
 
+
     plt.show()
+    #  Trying to fix memory leak with this:
+    plt.cla()
+    plt.clf()
+    plt.close('all')
 
 
 

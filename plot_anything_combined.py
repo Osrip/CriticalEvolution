@@ -135,7 +135,12 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
         savemsg = 'Saving ' + savefilename
         print(savemsg)
 
+
     plt.show()
+    #  Trying to fix memory leak with this:
+    plt.cla()
+    plt.clf()
+    plt.close('all')
 
 def upper_tri_masking(A):
     m = A.shape[0]

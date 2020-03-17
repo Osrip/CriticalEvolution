@@ -30,6 +30,10 @@ def main(sim_name, load_isings_list=True):
     except Exception:
         print('Could not create food velocity scatter plot')
 
+    #  Trying to fix memory leak:
+    del isings_list
+    del settings
+
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
     #  TODO: Animation dies not work for some reasone when called from here but does work when it is called itself... WHY???
 

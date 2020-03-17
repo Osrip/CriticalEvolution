@@ -84,6 +84,7 @@ def animate_plot(all_artists, settings, ax, fig):
     #ani.save(savepath, writer=writer, dpi = 100)
     mpl.verbose.set_level("helpful") #<-- This error occured in FuncAnimate when savepath did not exist yet
     ani.save(savepath, writer=writer)
+    del ani
     print('Animation successfully saved at {}'.format(savepath))
 
 
