@@ -61,7 +61,6 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
 
 def plot_all_in_folder(folder_name):
     '''
-
     :param folder_name: Has to be a sub_folder of save/
     :return:
     '''

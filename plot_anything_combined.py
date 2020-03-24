@@ -141,6 +141,7 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
     plt.cla()
     plt.clf()
     plt.close('all')
+    ax.clear()
 
 def upper_tri_masking(A):
     m = A.shape[0]
