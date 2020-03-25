@@ -64,8 +64,8 @@ def create_settings():
     settings['frameRate'] = 1
     settings['animation_fps'] = args.fps
     
-    settings['size'] = 12 #Total number of neurons in NN
-    settings['nSensors'] = 4
+    settings['size'] = 11 #Total number of neurons in NN
+    settings['nSensors'] = 3
     settings['nMotors'] = 4
     settings['learningrate'] = 0.01  # 0.01
     # how many hidden neurons are not connected to each other
@@ -198,8 +198,8 @@ def parse():
                         loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=False, chg_food_gen=None,
-                        years_per_iteration=1, min_food_winter=0.1, thermal_time=3, diff_init_betas=None, acc_motor=True,
-                        a_max=0.05, refresh_plot=50, laptop_mode=False)
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
+                        a_max=0.05, refresh_plot=1000, laptop_mode=False)
     args = parser.parse_args()
     return args
 
