@@ -1049,6 +1049,11 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
         #tr.print_diff()
+    # Plot at
+    if settings['refresh_plot'] == 0:
+        automatic_plotting.main(sim_name)
+    elif (not rep % settings['refresh_plot'] == 0) or
+        automatic_plotting.main(sim_name)
     return sim_name
 
 def handle_total_timesteps(folder, settings, save_value = None):
