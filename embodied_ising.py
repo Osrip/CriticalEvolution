@@ -35,6 +35,7 @@ from numba import njit
 import math
 from os import listdir
 from os.path import isfile, join
+import subprocess
 #import random
 #from tqdm import tqdm
 #from pympler import tracker
@@ -1044,7 +1045,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if not settings['refresh_plot'] is 0:
             if rep % settings['refresh_plot'] == 0:
                 try:
-                    automatic_plotting.main(sim_name)
+                    #automatic_plotting.main(sim_name)
+                    os.system('python3 automatic_plotting.py {}'.format(sim_name))
+                    #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
                 except Exception:
                     print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
@@ -1052,9 +1055,13 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     # Plot simulation at end even is refresh is inactive, but only if refresh has not already done that
     if settings['plot_pipeline']:
         if settings['refresh_plot'] == 0:
-            automatic_plotting.main(sim_name)
+            #automatic_plotting.main(sim_name)
+            os.system('python3 automatic_plotting.py {}'.format(sim_name))
+            #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
         elif (not rep % settings['refresh_plot'] == 0):
-            automatic_plotting.main(sim_name)
+            #automatic_plotting.main(sim_name)
+            os.system('python3 automatic_plotting.py {}'.format(sim_name))
+            #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
     return sim_name
 
 def handle_total_timesteps(folder, settings, save_value = None):

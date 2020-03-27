@@ -6,6 +6,7 @@ from automatic_plot_helper import load_isings
 import plot_anything_combined
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
+import sys
 
 
 import plot_anythingXY_scatter_animation
@@ -71,8 +72,9 @@ def plot_all_in_folder(folder_name):
             main(sim_name)
 
 if __name__ == '__main__':
-    sim_name ='3rd_4th_run_figures_training_runs_examples/sim-20200209-124814-ser_-b_10_-f_100_-n_1' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
-    main(sim_name)
+    #first and only argument is sim_name
+    #sim_name ='3rd_4th_run_figures_training_runs_examples/sim-20200209-124814-ser_-b_10_-f_100_-n_1' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
+    main(sys.argv[1])
     # sim_names = ['sim-20200209-124814-ser_-b_10_-f_100_-n_1',
     #             'sim-20200209-124814-ser_-b_10_-f_10_-n_1',
     #             'sim-20200209-124814-ser_-b_1_-f_100_-n_1',
