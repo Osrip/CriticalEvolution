@@ -3,6 +3,7 @@ import matplotlib as mpl
 mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
+from automatic_plot_helper import detect_all_isings
 import plot_anything_combined
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
@@ -11,7 +12,10 @@ import sys
 
 import plot_anythingXY_scatter_animation
 
-def main(sim_name, load_isings_list=True):
+def main(sim_name, load_isings_list=True, final=False):
+    '''
+    final defines whether this is the final/ last generation of simulation is plotted
+    '''
     settings = load_settings(sim_name)
     if load_isings_list:
         isings_list = load_isings(sim_name)
@@ -30,6 +34,14 @@ def main(sim_name, load_isings_list=True):
                                                              alpha=0.05, autoLoad=False)
     except Exception:
         print('Could not create food velocity scatter plot')
+    if final:
+        try:
+            gen_nums = detect_all_isings(sim_name)
+            generations = [0, gen_nums[-1]]
+            cores = 5
+            compute_plot_heat_capacity(sim_name, generations, 5)
+        except Exception:
+            print('Could not compute and plot heat capacity')
 
     #  Trying to fix memory leak:
     del isings_list
@@ -59,6 +71,9 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
     for plot_var in plot_vars:
         plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
 
+def compute_plot_heat_capacity(sim_name, generation_list, cores):
+    os.system('bash ')
+
 
 def plot_all_in_folder(folder_name):
     '''
@@ -70,6 +85,8 @@ def plot_all_in_folder(folder_name):
         if 'sim-' in sim_name:
             sim_name = sim_name.replace('save/', '')
             main(sim_name)
+
+
 
 if __name__ == '__main__':
     #first and only argument is sim_name
