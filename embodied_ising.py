@@ -1043,7 +1043,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
         #Refreshing of plots
         if not settings['refresh_plot'] is 0:
-            if rep % settings['refresh_plot'] == 0:
+            if rep % settings['refresh_plot'] == 0 and rep != 0:
                 try:
                     #automatic_plotting.main(sim_name)
                     #  WRONGLY ALSO ACTIVATED final_true on purpose

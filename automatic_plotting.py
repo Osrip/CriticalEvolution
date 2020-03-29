@@ -3,8 +3,7 @@ import matplotlib as mpl
 mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
-from automatic_plot_helper import detect_all_isings
-from automatic_plot_helper import list_to_blank_seperated_str
+import compute_and_plot_heat_capacity_automatic
 import plot_anything_combined
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
@@ -36,13 +35,10 @@ def main(sim_name, load_isings_list=True, final=False):
     except Exception:
         print('Could not create food velocity scatter plot')
     if final:
-        try:
-            gen_nums = detect_all_isings(sim_name)
-            generations = [0, gen_nums[-1]]
-            cores = 5
-            compute_plot_heat_capacity(sim_name, generations, 5)
-        except Exception:
-            print('Could not compute and plot heat capacity')
+        #try:
+        compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
+        #except Exception:
+        #    print('Could not compute and plot heat capacity')
 
     #  Trying to fix memory leak:
     del isings_list
@@ -72,9 +68,7 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
     for plot_var in plot_vars:
         plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
 
-def compute_plot_heat_capacity(sim_name, generation_list, cores):
-    gens_str = list_to_blank_seperated_str(generation_list)
-    os.system('bash bash-heat-capacity-generational-automatic.sh {} {} {}'.format(sim_name, gens_str, cores))
+
 
 
 def plot_all_in_folder(folder_name):
