@@ -16,6 +16,7 @@ if len(argv) < 2:
     print("Usage: " + argv[0] + " <size> + <bind>")
     bind = 0
 else:
+
     bind = int(argv[1])
 
 R = 10

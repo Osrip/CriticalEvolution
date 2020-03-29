@@ -15,7 +15,9 @@ if len(argv) < 3:
     # loadfile = 'sim-20180131-145412'
     # bind = 0
     # iterNum = 0
+print('ARGGG', argv)
 loadfile = str(argv[1]) #
+print('halllllloooo', argv[2])
 bind = int(argv[2]) #beta index
 iterNum = int(argv[3]) #Generation numbers
 
