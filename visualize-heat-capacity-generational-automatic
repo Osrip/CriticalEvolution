@@ -6,7 +6,7 @@ import matplotlib
 from os import path, makedirs
 
 # TODO: make these scripts take these as params
-loadfile = 'auto'
+loadfile = 'sim-20200327-215421-g_8000_-b_10_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors'
 folder = 'save/' + loadfile
 # iter_gen = np.arange(0, 2000, 250)
 # iter_gen = np.append(iter_gen, 1999)

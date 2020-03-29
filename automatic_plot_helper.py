@@ -76,3 +76,10 @@ def load_isings_from_list(loadfile, iter_list):
 
         isings_list.append(isings)
     return isings_list
+
+def list_to_blank_seperated_str(list):
+    out_str = ''
+    for en in list:
+        out_str += str(en) + ' '
+    out_str = out_str[:-1]
+    return out_str

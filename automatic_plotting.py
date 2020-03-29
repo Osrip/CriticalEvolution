@@ -4,6 +4,7 @@ mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
 from automatic_plot_helper import detect_all_isings
+from automatic_plot_helper import list_to_blank_seperated_str
 import plot_anything_combined
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
@@ -20,7 +21,7 @@ def main(sim_name, load_isings_list=True, final=False):
     if load_isings_list:
         isings_list = load_isings(sim_name)
     try:
-        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list = isings_list, autoLoad=False)
+        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
     except Exception:
         print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
@@ -72,7 +73,8 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
         plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
 
 def compute_plot_heat_capacity(sim_name, generation_list, cores):
-    os.system('bash ')
+    gens_str = list_to_blank_seperated_str(generation_list)
+    os.system('bash bash-heat-capacity-generational-automatic.sh {} {} {}'.format(sim_name, gens_str, cores))
 
 
 def plot_all_in_folder(folder_name):
@@ -89,9 +91,16 @@ def plot_all_in_folder(folder_name):
 
 
 if __name__ == '__main__':
-    #first and only argument is sim_name
+    '''
+    first argument sim_name
+    second argument 'final_true' in case it is final run 'final_false' otherwise
+    '''
+
     #sim_name ='3rd_4th_run_figures_training_runs_examples/sim-20200209-124814-ser_-b_10_-f_100_-n_1' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
-    main(sys.argv[1])
+    final = False
+    if sys.argv[2] == 'final_true':
+        final = True
+    main(sys.argv[1], final=final)
     # sim_names = ['sim-20200209-124814-ser_-b_10_-f_100_-n_1',
     #             'sim-20200209-124814-ser_-b_10_-f_10_-n_1',
     #             'sim-20200209-124814-ser_-b_1_-f_100_-n_1',

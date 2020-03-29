@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #EXAMPLE INPUT:
-#bash bash-heat-capacity-generational_automatic.sh "sim-20200327-215417-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors" "0 3000" 5
+#bash bash-heat-capacity-generational-automatic.sh "sim-20200327-215417-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors" "0 3000" 5
 
 
 #echo "Choose a simulation: "

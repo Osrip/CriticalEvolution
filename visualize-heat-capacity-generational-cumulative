@@ -12,7 +12,7 @@ from os import path, makedirs
 # beta-1/sim-20180511-163319
 # beta-10/sim-20180512-105824
 # beta-0-1/sim-20180512-105719
-loadfile = 'merged_bact_seasons\sim-20200123-212807-ser_-b_0.1_-ypi_0.02_-mf_0.1_-a_0_50_75_87_100_500_525_1000_1025_1975_1987_1999_-n_bact_seasons'
+loadfile = 'sim-20200327-215421-g_8000_-b_10_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors'
 folder = 'save/' + loadfile
 saveFigBool = True
 # iter_gen = np.arange(0, 2000, 250)
@@ -21,7 +21,8 @@ saveFigBool = True
 # iter_gen = [0, 1, 2, 5, 10, 20, 50, 100, 250, 1000, 1999]
 # iter_gen = [0, 1, 2, 5, 10, 20, 50, 100, 250, 1000, 1999,
 #             2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
-iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2300, 2500, 2800, 3100, 3400, 3700, 3990]
+#iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2300, 2500, 2800, 3100, 3400, 3700, 3990]
+iter_gen = [0, 4000]
 
 
 
@@ -29,7 +30,7 @@ R = 5
 Nbetas = 101
 betas = 10 ** np.linspace(-1, 1, Nbetas)
 numAgents = 50
-size = 10
+size = 12
 # selected = np.linspace(0, len(iter_list) - 1, 4)
 selected = [0, 1000, 2000, 3000, 3999]
 selected = [int(i) for i in selected]

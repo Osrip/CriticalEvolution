@@ -15,9 +15,9 @@ if len(argv) < 3:
     # loadfile = 'sim-20180131-145412'
     # bind = 0
     # iterNum = 0
-print('ARGGG', argv)
+
 loadfile = str(argv[1]) #
-print('halllllloooo', argv[2])
+
 bind = int(argv[2]) #beta index
 iterNum = int(argv[3]) #Generation numbers
 
@@ -69,7 +69,7 @@ for rep in range(R):
         agentNum += 1
 
 # print(np.mean(C, 0))
-folder = 'save/' + loadfile + '/C_' + str(iterNum) + '/'
+folder = 'save/' + loadfile + '/C' + '/C_' + str(iterNum) + '/'
 file = 'C-size_' + str(size) + '-Nbetas_' + \
        str(Nbetas) + '-bind_' + str(bind) + '.npy'
 filename = folder + file
