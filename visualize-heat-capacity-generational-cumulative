@@ -27,7 +27,7 @@ iter_gen = [0, 4000]
 
 
 R = 5
-Nbetas = 101
+Nbetas = 102
 betas = 10 ** np.linspace(-1, 1, Nbetas)
 numAgents = 50
 size = 12

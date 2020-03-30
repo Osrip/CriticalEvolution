@@ -25,7 +25,8 @@ iterNum = int(argv[3]) #Generation numbers
 R = 1 # Number of Repetitions
 mode = 'MonteCarlo'
 
-Nbetas = 101
+#Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
+Nbetas = 102
 betas = 10 ** np.linspace(-1, 1, Nbetas)
 loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 

@@ -25,7 +25,7 @@ def main(sim_name, settings, generation_list):
     iter_gen = generation_list
 
     R = 10
-    Nbetas = 101
+    Nbetas = 102
     betas = 10 ** np.linspace(-1, 1, Nbetas)
     numAgents = settings['pop_size']
     size = settings['size']
