@@ -274,6 +274,8 @@ class ising:
         self.ypos = (self.ypos + settings['y_max']) % settings['y_max']
 
     def UpdateSensors(self, settings):
+        # self.s refers to the neuron state, which for sensor neurons is sensor input
+
         # self.s[0] = sigmoid(self.r_food / 180)
         # self.s[1] = sigmoid(self.d_food)
 
