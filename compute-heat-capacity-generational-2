@@ -59,10 +59,14 @@ for rep in range(R):
         I.Beta = betaVec[bind]
         I.randomize_state()
         for t in range(int(T / 10)):
+            #  thermal time steps to get ANN to equilibrium
             I.DreamSensorGlauberStep()
 
         for t in range(T):
+            #  thermal time steps, where Ennergy is recorded
             I.DreamSensorGlauberStep()
+            ### Add these 3 lines o embodied ising for natural heat capacity
+
             E = -(np.dot(I.s, I.h) + np.dot(np.dot(I.s, I.J), I.s))
             Em += E / float(T)
             E2m += E ** 2 / float(T)
