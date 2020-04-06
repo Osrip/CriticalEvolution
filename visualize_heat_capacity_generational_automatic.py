@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from os import path, makedirs
 from automatic_plot_helper import load_settings
-
+import os
 
 
 
@@ -22,13 +22,17 @@ def main(sim_name, settings, generation_list):
     # iter_gen = [0, 250, 500, 750, 1000, 1250, 1500, 1750, 1999,
     #            2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
     #iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2300, 2500, 2800, 3100, 3400, 3700, 3990]
-    iter_gen = generation_list
+
 
     R = 10
     Nbetas = 102
     betas = 10 ** np.linspace(-1, 1, Nbetas)
     numAgents = settings['pop_size']
     size = settings['size']
+
+    if generation_list is None:
+        generation_list = automatic_generation_generation_list(folder + '/C')
+    iter_gen = generation_list
 
     C = np.zeros((R, numAgents, Nbetas, len(iter_gen)))
 
@@ -97,9 +101,27 @@ def main(sim_name, settings, generation_list):
         # plt.show()
         # plt.pause(0.1)
 
+def automatic_generation_generation_list(C_folder):
+    C_gen_folders = [f.path for f in os.scandir(C_folder) if f.is_dir()]
+    generation_list = get_generations(C_gen_folders)
+    return generation_list
+
+def get_generations(C_gen_folders):
+    generation_list = []
+    for C_gen_folder in C_gen_folders:
+        if RepresentsInt(C_gen_folder.split('_')[-1]) is True:
+            generation_list.append(C_gen_folder.split('_')[-1])
+    return generation_list
+
+def RepresentsInt(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 if __name__ == '__main__':
     sim_name = 'sim-20200327-215421-g_8000_-b_10_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors'
     generation_list = [0, 4000]
     settings = load_settings(sim_name)
-    main(sim_name, settings, generation_list)
+    main(sim_name, settings, None)
