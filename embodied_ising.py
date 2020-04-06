@@ -171,7 +171,9 @@ class ising:
         random_v = np.random.rand() * self.v_max
         self.s[2] = np.tanh(random_v)
 
-        random_energy = np.random.rand() * self.food_num_env
+        #random_energy = np.random.rand() * self.food_num_env
+        # TODO: Make this more flexible!
+        random_energy = np.random.rand() * 12
         self.s[3] = np.tanh(random_energy)
 
     def randomize_position(self, settings):
