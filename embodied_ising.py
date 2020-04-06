@@ -1,5 +1,4 @@
-
-
+import compute_and_plot_heat_capacity_automatic
 import plotting
 import numpy as np
 import operator
@@ -1047,6 +1046,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if not settings['refresh_plot'] is 0:
             if rep % settings['refresh_plot'] == 0 and rep != 0:
                 try:
+                    if settings['refresh_plot'] - rep == 0:
+                        # During first refresh plot, compute heat capacity of gen 0
+                        compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0])
+
                     #automatic_plotting.main(sim_name)
                     #  WRONGLY ALSO ACTIVATED final_true on purpose
                     os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
@@ -1060,6 +1063,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if settings['refresh_plot'] == 0:
             #automatic_plotting.main(sim_name)
             os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
         elif (not rep % settings['refresh_plot'] == 0):
             #automatic_plotting.main(sim_name)
