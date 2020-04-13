@@ -171,8 +171,8 @@ class ising:
         random_v = np.random.rand() * self.v_max
         self.s[2] = np.tanh(random_v)
 
-        #random_energy = np.random.rand() * self.food_num_env
-        # TODO: Make this more flexible!
+        # random_energy = np.random.rand() * self.food_num_env
+        # TODO: Make this more flexible!!
         random_energy = np.random.rand() * 12
         self.s[3] = np.tanh(random_energy)
 
@@ -545,7 +545,8 @@ class ising:
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
             #biases GA pushing towards lower betas (artifical pressure to small betas)
 
-    def reset_state(self, settings):
+    def \
+            reset_state(self, settings):
 
         # randomize internal state (not using self.random_state since it also randomizes sensors)
         # TODO !!! THIS LINE SEEMS TO BE RESPONSIBLE FOR CHANGING HEAT CAPACITY PLOTS !!!
