@@ -83,3 +83,49 @@ def list_to_blank_seperated_str(list):
         out_str += str(en) + ' '
     out_str = out_str[:-1]
     return out_str
+
+
+
+def load_isings_attributes_from_list(loadfile, iter_list, attribute):
+    '''
+    Load isings pickle files specified in iter_list and return them as list
+    :param loadfile : simulation name
+    :param iter_list : list of ints
+    :param attribute
+
+
+    '''
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    isings_attribute_list = []
+
+    # list including all differnet properties in lists
+
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            isings = pickle.load(open(filename, 'rb'))
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        isings_attribute_list.append(attribute_from_isings(isings, attribute))
+
+    return isings_attribute_list
+
+def attribute_from_isings(isings, attribute):
+    '''
+    Returns a list of attributes (numerated by organisms) from isings list
+    '''
+
+    #attribute_list = [exec('I.{}'.format(attribute)) for I in isings]
+    #exec('attribute_list = [I.{} for I in isings]'.format(attribute))
+    attribute_list = []
+    for I in isings:
+        exec('attribute_list.append(I.{})'.format(attribute))
+
+    return attribute_list
+

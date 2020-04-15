@@ -800,7 +800,7 @@ def extract_plot_information(isings, foods, settings):
 
 
 
-def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
+def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens):
     [ising.reset_state(settings) for ising in isings]
 
     T = settings['TimeSteps']
@@ -815,10 +815,13 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
         isings_all_timesteps = []
         foods_all_timesteps = []
 
-    if (rep % settings['natural_heat_capacity_Nth_gen'] == 0) and (settings['natural_heat_capacity_Nth_gen'] != 0):
+    #  This switches on natural heat capacity calculations
+    if rep in nat_heat_gens:
         calc_heat_cap_boo = True
     else:
         calc_heat_cap_boo = False
+
+
     '''
     !!! iterating through timesteps
     '''
@@ -841,12 +844,14 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
             isings_all_timesteps.append(isings_info)
             foods_all_timesteps.append(foods_info)
 
-        if calc_heat_cap_boo:
-            prepare_natural_heat_capacity(settings, isings)
+
 
         interact(settings, isings, foods)
 
-
+        # Before normal thermalization, prepare_natural_heat_capacity does dream-state thermalization with different
+        # beta values and calculates heat-capacity
+        if calc_heat_cap_boo:
+            prepare_natural_heat_capacity(settings, isings)
             
         
         if settings['BoidOn']:
@@ -935,7 +940,7 @@ def prepare_natural_heat_capacity(settings, isings):
         for j, new_beta in enumerate(beta_vec):
             I_d.beta = new_beta
             I_d.SequentialGlauberStepFastHelper(settings)
-            int_energy = calculate_internal_energy(I_d)
+            int_energy = calculate_internal_energy(I_d.s, I_d.h, I_d.J)
             int_energy_vec[j] = int_energy
         if len(I_n.cumulative_int_energy_vec) != 0:
             I_n.cumulative_int_energy_vec += int_energy_vec
@@ -961,12 +966,12 @@ def create_beta_facs(settings):
 
 
 #@jit(nopython=True)
-def calculate_internal_energy(I):
+def calculate_internal_energy(s, h, J):
     '''
     Returns
     internal_energy:  internal energy of ising neural network
     '''
-    internal_energy = -(np.dot(I.s, I.h) + np.dot(np.dot(I.s, I.J), I.s))
+    internal_energy = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
     # Em += E / float(T)
     # E2m += E ** 2 / float(T)
     #C = I.Beta ** 2 * (E2m - E ** 2) / I.size
@@ -1063,6 +1068,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     if (settings['seasons'] and (settings['years_per_iteration'] < 1)) and not (settings['loadfile'] is ''):
         time_steps = handle_total_timesteps(folder, settings)
 
+    # Creating array, which includes all generations for which natural heat capacity shall be calculated
+    nat_heat_gens = create_save_nat_heat_gens(settings, Iterations, folder)
+
     #tr = tracker.SummaryTracker()
     count = 0
     for rep in range(Iterations):
@@ -1076,7 +1084,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         else:
             settings['plot'] = False
 
-        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps)
+
+
+        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens)
         if settings['energy_model']:
 
             for I in isings:
@@ -1191,6 +1201,26 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
     return sim_name
+
+def create_save_nat_heat_gens(settings, Iterations, folder):
+    '''
+    Creating array, that determines for which generations natural heat capacity is calculated
+    '''
+    if settings['natural_heat_capacity_Nth_gen'] != 0:
+        nat_heat_gens = np.arange(Iterations)[::settings['natural_heat_capacity_Nth_gen']]
+    else:
+        nat_heat_gens = np.array([])
+
+    if settings['save_data']:
+        pickle_out = open('{}generations_nat_heat_capacity_calculated.pickle'.format(folder), 'wb')
+        pickle.dump(nat_heat_gens, pickle_out)
+        pickle_out.close()
+
+        with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
+            for gen in nat_heat_gens:
+                f.write('{}\n'.format(gen))
+
+    return nat_heat_gens
 
 def handle_total_timesteps(folder, settings, save_value = None):
     #if count > 0 or (settings['loadfile'] is ''):
