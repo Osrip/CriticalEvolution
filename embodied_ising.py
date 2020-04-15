@@ -133,6 +133,15 @@ class ising:
         self.v = 0.0
         self.generation = 0
 
+        ###Attributes required for heat capacity calculation###
+        #  Those two vectors include the internal energy of the organism with different altered betas
+        self.cumulative_int_energy_vec = np.array([])
+        self.cumulative_int_energy_vec_quad = np.array([])
+        #  This vector includes the factors that the vbeta value has been altered with
+        self.beta_vec = np.array([])
+        #  This vector includes all heat capacity values of the organism with different altered beta values
+        self.heat_capacity_vec = np.array([])
+
         #self.assign_critical_values(settings) (attribute ising.C1)
 
 
@@ -565,6 +574,12 @@ class ising:
         self.food = 0
         self.fitness = 0
 
+        # cumulative internal energies, every entry in array represents cumulated int energies for one beta value
+        self.cumulative_int_energy_vec = np.array([])
+        self.cumulative_int_energy_vec_quad = np.array([])
+        self.beta_vec = np.array([])
+
+
         if settings['energy_model']:
             self.energies = []  # Clear .energies, that .avg_energy is calculated from with each iteration
             self.energy = settings['initial_energy']  # Setting initial energy
@@ -800,7 +815,10 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
         isings_all_timesteps = []
         foods_all_timesteps = []
 
-
+    if (rep % settings['natural_heat_capacity_Nth_gen'] == 0) and (settings['natural_heat_capacity_Nth_gen'] != 0):
+        calc_heat_cap_boo = True
+    else:
+        calc_heat_cap_boo = False
     '''
     !!! iterating through timesteps
     '''
@@ -823,7 +841,11 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
             isings_all_timesteps.append(isings_info)
             foods_all_timesteps.append(foods_info)
 
+        if calc_heat_cap_boo:
+            prepare_natural_heat_capacity(settings, isings)
+
         interact(settings, isings, foods)
+
 
             
         
@@ -844,7 +866,8 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps = 0):
                 else:
                     [I.SequentialGlauberStepFastHelper(settings) for I in isings]
 
-            
+    if calc_heat_cap_boo:
+        calculate_natural_heat_capacity(isings, T)
             
     if settings['plot']:
         #plotting.animate_plot(artist_list, settings, ax, fig)
@@ -869,6 +892,87 @@ def parallelSequGlauberStep(I, settings):
     I.SequentialGlauberStep()
     return I
 '''
+
+########## Functions for heat capacity calculations ##############
+
+def calculate_natural_heat_capacity(isings, time_steps):
+    '''
+    Calculate the heat capacity at the end of every generation, utuliozing the ising attribute vectors created by
+    repare_natural_heat_capacity()
+
+    Input:
+    time_steps: amount of total time steps. Used to create mean from cumulative vectors
+    '''
+    for I in isings:
+        heat_capacity_vec = np.zeros(len(I.beta_vec))
+        for j, (beta, e_mean, e2_mean) in enumerate(zip(I.beta_vec, I.cumulative_int_energy_vec, I.cumulative_int_energy_vec_quad)):
+
+            # Heat capacity calculation
+            heat_capacity = beta ** 2 * (e2_mean - e_mean ** 2) / time_steps
+            heat_capacity_vec[j] = heat_capacity
+
+        I.heat_capacity_vec = heat_capacity_vec
+
+
+
+
+
+def prepare_natural_heat_capacity(settings, isings):
+    '''
+    Creates two vectors containing the internal energy of each ising with different beta values for each organism
+    Those vectors are saved as the organism's attribute and are created every time step
+    At the end of every generation they are required to calculate the heat capüacity
+    '''
+
+    # isings in dream state, that beat calculations are done with
+    dream_isings = copy.deepcopy(isings)
+    # Creating log space of betas
+    beta_facs = create_beta_facs(settings)
+
+    for I_d, I_n in zip(dream_isings, isings):
+        beta_vec = beta_facs * I_d.Beta
+        int_energy_vec = np.zeros(len(beta_facs))
+        for j, new_beta in enumerate(beta_vec):
+            I_d.beta = new_beta
+            I_d.SequentialGlauberStepFastHelper(settings)
+            int_energy = calculate_internal_energy(I_d)
+            int_energy_vec[j] = int_energy
+        if len(I_n.cumulative_int_energy_vec) != 0:
+            I_n.cumulative_int_energy_vec += int_energy_vec
+            I_n.cumulative_int_energy_vec_quad += int_energy_vec**2
+        else:
+            I_n.cumulative_int_energy_vec = int_energy_vec
+            I_n.cumulative_int_energy_vec_quad = int_energy_vec**2
+
+        I_n.beta_vec = beta_vec
+
+    del dream_isings
+
+def create_beta_facs(settings):
+    '''
+    Returns:
+    beta_facs: array of beta factors, that is used to modify beta value for heat_capacity calculation
+    '''
+    props = settings['natural_heat_capacity_beta_fac_props']
+    # Creating log space of betas
+    beta_facs = 10 ** np.linspace(props[0], props[1], props[2])
+    return beta_facs
+
+
+
+#@jit(nopython=True)
+def calculate_internal_energy(I):
+    '''
+    Returns
+    internal_energy:  internal energy of ising neural network
+    '''
+    internal_energy = -(np.dot(I.s, I.h) + np.dot(np.dot(I.s, I.J), I.s))
+    # Em += E / float(T)
+    # E2m += E ** 2 / float(T)
+    #C = I.Beta ** 2 * (E2m - E ** 2) / I.size
+    return internal_energy
+
+
 def parallelizedSequGlauberSteps(isings, settings, asynchronous = False):
 
     if not asynchronous:
@@ -1024,16 +1128,28 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
 
             if settings['save_data']:
-                if settings['energy_model']:
-                    # Clear I.energies in isings_copy before saving
-                    isings_copy = deepcopy(isings)
-                    for I in isings_copy:
-                        I.energies = []
 
-                    save_sim(folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
-                    del isings_copy
-                else:
-                    save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, rep)
+                isings_copy = deepcopy(isings)
+                #  Delete unnecessary information before saving isings to cut down on memory
+                for I in isings_copy:
+                    I.energies = []
+                    I.cumulative_int_energy_vec = np.array([])
+                    I.cumulative_int_energy_vec_quad = np.array([])
+                    #I.beta_vec = np.array([])
+
+                save_sim(folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
+                del isings_copy
+
+                # if settings['energy_model']:
+                #     # Clear I.energies in isings_copy before saving
+                #     isings_copy = deepcopy(isings)
+                #     for I in isings_copy:
+                #         I.energies = []
+                #
+                #     save_sim(folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
+                #     del isings_copy
+                # else:
+                #     save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, rep)
 
 
         count += 1
