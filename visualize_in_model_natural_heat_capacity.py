@@ -47,7 +47,8 @@ def plot_all_possible_gens(sim_name):
     load_and_plot(sim_name, all_heat_capacity_gens)
 
 def load_gens_with_heat_cap(sim_name):
-    dir = 'save/{}/generations_nat_heat_capacity_calculated.pickle'.format(sim_name)
+    #dir = 'save/{}/generations_nat_heat_capacity_calculated.pickle'.format(sim_name)
+    dir = 'save/{}/nat_heat_capacity_data/generations_nat_heat_capacity_calculated.pickle'.format(sim_name)
     file = open(dir, 'rb')
     all_heat_capacity_gens = pickle.load(file)
     file.close()

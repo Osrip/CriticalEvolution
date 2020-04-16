@@ -800,7 +800,7 @@ def extract_plot_information(isings, foods, settings):
 
 
 
-def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens):
+def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs):
     [ising.reset_state(settings) for ising in isings]
 
     T = settings['TimeSteps']
@@ -851,7 +851,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
         # Before normal thermalization, prepare_natural_heat_capacity does dream-state thermalization with different
         # beta values and calculates heat-capacity
         if calc_heat_cap_boo:
-            prepare_natural_heat_capacity(settings, isings)
+            prepare_natural_heat_capacity(settings, isings, beta_facs)
             
         
         if settings['BoidOn']:
@@ -922,23 +922,24 @@ def calculate_natural_heat_capacity(isings, time_steps):
 
 
 
-def prepare_natural_heat_capacity(settings, isings):
+def prepare_natural_heat_capacity(settings, isings, beta_facs):
     '''
     Creates two vectors containing the internal energy of each ising with different beta values for each organism
     Those vectors are saved as the organism's attribute and are created every time step
     At the end of every generation they are required to calculate the heat capüacity
     '''
 
-    # isings in dream state, that beat calculations are done with
+    # isings in dream state, that beat calculations are done with, so we don't influence actual simulation with our measurements
     dream_isings = copy.deepcopy(isings)
     # Creating log space of betas
-    beta_facs = create_beta_facs(settings)
+    #beta_facs = create_beta_facs(settings)
 
     for I_d, I_n in zip(dream_isings, isings):
         beta_vec = beta_facs * I_d.Beta
         int_energy_vec = np.zeros(len(beta_facs))
         for j, new_beta in enumerate(beta_vec):
             I_d.beta = new_beta
+            # TODO: Do Thermalization before measuring heat capacity (probably yes) ... Sensors are updated in there
             I_d.SequentialGlauberStepFastHelper(settings)
             int_energy = calculate_internal_energy(I_d.s, I_d.h, I_d.J)
             int_energy_vec[j] = int_energy
@@ -953,7 +954,7 @@ def prepare_natural_heat_capacity(settings, isings):
 
     del dream_isings
 
-def create_beta_facs(settings):
+def create_beta_facs(settings, folder):
     '''
     Returns:
     beta_facs: array of beta factors, that is used to modify beta value for heat_capacity calculation
@@ -961,6 +962,17 @@ def create_beta_facs(settings):
     props = settings['natural_heat_capacity_beta_fac_props']
     # Creating log space of betas
     beta_facs = 10 ** np.linspace(props[0], props[1], props[2])
+
+    if settings['save_data']:
+        pickle_out = open('{}/nat_heat_capacity_data/beta_facs.pickle'.format(folder), 'wb')
+        pickle.dump(beta_facs, pickle_out)
+        pickle_out.close()
+
+        with open(folder + 'beta_facs.csv', 'w') as f:
+            for beta_fac in beta_facs:
+                f.write('{}\n'.format(beta_fac))
+        f.close()
+
     return beta_facs
 
 
@@ -1068,8 +1080,11 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     if (settings['seasons'] and (settings['years_per_iteration'] < 1)) and not (settings['loadfile'] is ''):
         time_steps = handle_total_timesteps(folder, settings)
 
+    ### Preparing stuff for natural heat capacity calculation
     # Creating array, which includes all generations for which natural heat capacity shall be calculated
     nat_heat_gens = create_save_nat_heat_gens(settings, Iterations, folder)
+    beta_facs = create_beta_facs(settings, folder)
+
 
     #tr = tracker.SummaryTracker()
     count = 0
@@ -1086,7 +1101,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
 
 
-        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens)
+        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs)
         if settings['energy_model']:
 
             for I in isings:
@@ -1211,14 +1226,18 @@ def create_save_nat_heat_gens(settings, Iterations, folder):
     else:
         nat_heat_gens = np.array([])
 
+    save_dir = '{}nat_heat_capacity_data'.format(folder)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     if settings['save_data']:
-        pickle_out = open('{}generations_nat_heat_capacity_calculated.pickle'.format(folder), 'wb')
+        pickle_out = open('{}/generations_nat_heat_capacity_calculated.pickle'.format(save_dir), 'wb')
         pickle.dump(nat_heat_gens, pickle_out)
         pickle_out.close()
 
         with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
             for gen in nat_heat_gens:
                 f.write('{}\n'.format(gen))
+        f.close()
 
     return nat_heat_gens
 
