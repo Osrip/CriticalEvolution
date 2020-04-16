@@ -8,7 +8,7 @@ def main(sim_name, settings, generations = None):
     if generations is None:
         gen_nums = detect_all_isings(sim_name)
         generations = [gen_nums[-1]]
-    cores = 3
+    cores = 7
     compute_plot_heat_capacity(sim_name, generations, cores, settings)
 
 def compute_plot_heat_capacity(sim_name, generation_list, cores, settings):

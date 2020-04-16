@@ -912,14 +912,14 @@ def calculate_natural_heat_capacity(isings, time_steps):
     '''
     for I in isings:
         heat_capacity_vec = np.zeros(len(I.beta_vec))
-        for j, (beta, e_cum, e2_cum) in enumerate(zip(I.beta_vec, I.cumulative_int_energy_vec, I.cumulative_int_energy_vec_quad)):
+        for j, (e_cum, e2_cum) in enumerate(zip(I.cumulative_int_energy_vec, I.cumulative_int_energy_vec_quad)):
             # TODO: does mean calculation work?
             e_mean = e_cum / time_steps
             e2_mean = e2_cum / time_steps
 
             # Heat capacity calculation
             # TODO: Why is this divided by network size? Not in paper formula!
-            heat_capacity = beta ** 2 * (e2_mean - e_mean ** 2) / I.size
+            heat_capacity = I.Beta ** 2 * (e2_mean - e_mean ** 2) / I.size
             heat_capacity_vec[j] = heat_capacity
 
         I.heat_capacity_vec = heat_capacity_vec
