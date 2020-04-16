@@ -38,7 +38,7 @@ import subprocess
 #import random
 #from tqdm import tqdm
 #from pympler import tracker
-
+import visualize_in_model_natural_heat_capacity
 
 
 # ------------------------------------------------------------------------------+
@@ -800,7 +800,7 @@ def extract_plot_information(isings, foods, settings):
 
 
 
-def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs):
+def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo):
     [ising.reset_state(settings) for ising in isings]
 
     T = settings['TimeSteps']
@@ -816,10 +816,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
         foods_all_timesteps = []
 
     #  This switches on natural heat capacity calculations
-    if rep in nat_heat_gens:
-        calc_heat_cap_boo = True
-    else:
-        calc_heat_cap_boo = False
+
 
 
     '''
@@ -873,6 +870,11 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
 
     if calc_heat_cap_boo:
         calculate_natural_heat_capacity(isings, T)
+        #try:
+
+        # except Exception:
+        #     print('Could not create plots for natural heat capacity for generation {}'.format(rep))
+
             
     if settings['plot']:
         #plotting.animate_plot(artist_list, settings, ax, fig)
@@ -910,10 +912,14 @@ def calculate_natural_heat_capacity(isings, time_steps):
     '''
     for I in isings:
         heat_capacity_vec = np.zeros(len(I.beta_vec))
-        for j, (beta, e_mean, e2_mean) in enumerate(zip(I.beta_vec, I.cumulative_int_energy_vec, I.cumulative_int_energy_vec_quad)):
+        for j, (beta, e_cum, e2_cum) in enumerate(zip(I.beta_vec, I.cumulative_int_energy_vec, I.cumulative_int_energy_vec_quad)):
+            # TODO: does mean calculation work?
+            e_mean = e_cum / time_steps
+            e2_mean = e2_cum / time_steps
 
             # Heat capacity calculation
-            heat_capacity = beta ** 2 * (e2_mean - e_mean ** 2) / time_steps
+            # TODO: Why is this divided by network size? Not in paper formula!
+            heat_capacity = beta ** 2 * (e2_mean - e_mean ** 2) / I.size
             heat_capacity_vec[j] = heat_capacity
 
         I.heat_capacity_vec = heat_capacity_vec
@@ -944,8 +950,8 @@ def prepare_natural_heat_capacity(settings, isings, beta_facs):
             int_energy = calculate_internal_energy(I_d.s, I_d.h, I_d.J)
             int_energy_vec[j] = int_energy
         if len(I_n.cumulative_int_energy_vec) != 0:
-            I_n.cumulative_int_energy_vec += int_energy_vec
-            I_n.cumulative_int_energy_vec_quad += int_energy_vec**2
+            I_n.cumulative_int_energy_vec = I_n.cumulative_int_energy_vec + int_energy_vec
+            I_n.cumulative_int_energy_vec_quad = I_n.cumulative_int_energy_vec_quad + int_energy_vec**2
         else:
             I_n.cumulative_int_energy_vec = int_energy_vec
             I_n.cumulative_int_energy_vec_quad = int_energy_vec**2
@@ -1056,6 +1062,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     s = sys.argv[1:]
     command_input = '_'.join([str(elem) for elem in s])
     sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S") + command_input
+
+    settings['sim_name'] = sim_name
+
     folder = 'save/' + sim_name  + '/'
     if settings['save_data'] == True:#
 
@@ -1099,9 +1108,13 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         else:
             settings['plot'] = False
 
+        #  This switches on heat capacity calculation
+        if rep in nat_heat_gens:
+            calc_heat_cap_boo = True
+        else:
+            calc_heat_cap_boo = False
 
-
-        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs)
+        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo)
         if settings['energy_model']:
 
             for I in isings:
@@ -1175,6 +1188,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 #     del isings_copy
                 # else:
                 #     save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, rep)
+
+            if calc_heat_cap_boo:
+                visualize_in_model_natural_heat_capacity.load_and_plot(settings['sim_name'], [rep])
 
 
         count += 1
