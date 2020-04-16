@@ -559,7 +559,7 @@ class ising:
 
         # randomize internal state (not using self.random_state since it also randomizes sensors)
         # TODO !!! THIS LINE SEEMS TO BE RESPONSIBLE FOR CHANGING HEAT CAPACITY PLOTS !!!
-        # self.s = np.random.random(size=self.size) * 2 - 1
+        self.s = np.random.random(size=self.size) * 2 - 1
 
         # randomize position (not using self.randomize_position function since it also randomizes velocity)
         self.xpos = uniform(settings['x_min'], settings['x_max'])  # position (x)

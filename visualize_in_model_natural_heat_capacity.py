@@ -54,4 +54,8 @@ def load_gens_with_heat_cap(sim_name):
     return all_heat_capacity_gens
 
 if __name__ == '__main__':
-    plot_all_possible_gens('sim-20200415-215516-g_10_-t_50_-ref_0_-noplt_-c_gen_4')
+    sims = ['sim-20200416-003618-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003611-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003603-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-5_5_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003527-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003407-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003357-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003347-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003238-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003227-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003217-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_disabled']
+    for sim in sims:
+        plot_all_possible_gens(sim)
+    # sim = 'sim-20200416-003618-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled'
+    # plot_all_possible_gens(sim)
