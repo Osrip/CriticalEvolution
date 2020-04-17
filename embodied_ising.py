@@ -558,8 +558,11 @@ class ising:
             reset_state(self, settings):
 
         # randomize internal state (not using self.random_state since it also randomizes sensors)
-        # TODO !!! THIS LINE SEEMS TO BE RESPONSIBLE FOR CHANGING HEAT CAPACITY PLOTS !!!
-        self.s = np.random.random(size=self.size) * 2 - 1
+        # TODO !!! THIS LINE SEEMS TO BE RESPONSIBLE FOR CHANGING HEAT CAPACITY PLOTS !!! This creats floats, when states are supposed to be ints!
+        #  self.s = np.random.random(size=self.size) * 2 - 1
+
+        self.randomize_state()
+        # includes: #self.s = np.random.randint(0, 2, self.size) * 2 - 1
 
         # randomize position (not using self.randomize_position function since it also randomizes velocity)
         self.xpos = uniform(settings['x_min'], settings['x_max'])  # position (x)
@@ -983,7 +986,7 @@ def create_beta_facs(settings, folder):
 
 
 
-#@jit(nopython=True)
+@jit(nopython=True)
 def calculate_internal_energy(s, h, J):
     '''
     Returns
