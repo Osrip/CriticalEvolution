@@ -36,8 +36,8 @@ def main(sim_name, load_isings_list=True, final=False):
         print('Could not create food velocity scatter plot')
     if final:
         try:
-            pass
-            compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
+            if settings['cores'] != 0:
+                compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
 
         except Exception:
             print('Could not compute and plot heat capacity')
