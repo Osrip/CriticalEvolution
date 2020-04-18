@@ -92,6 +92,8 @@ def create_settings():
     settings['years_per_iteration'] = args.years_per_iteration #Float amount of seasonal changes per iteration
     settings['min_food_winter'] = args.min_food_winter #  0.5 #FLOAT [0,1]; relative decimation of food in winter
     settings['chg_food_gen'] = args.chg_food_gen
+
+    settings['abrupt_seasons_len'] = args.abrupt_seasons_len
     
     settings['parallel_computing'] = False #BOO
     settings['cores'] = 12 #INT if 0 number is determined automatically
@@ -167,6 +169,9 @@ def parse():
     parser.add_argument('-seas', '--seas', action='store_true', dest='seasons', help='activates seasons')
     parser.add_argument('-mf', '--min_food', dest='min_food_winter', type=float,
                         help='[0,1] Minimal amount of food in winter relative to max_food (food_num)')
+    parser.add_argument('-aseas_len', dest='abrupt_seasons_len', type=int,
+                        help='''Abrupt seasons - changes between summer and winter. Argument defines length of each 
+                        seasonin generations (int). When 0 abrupt seasons are switched off''')
     parser.add_argument('-ypi', dest='years_per_iteration', type=float,
                         help='''Number of years per generation when seasons is activated. When <0 one year is longer 
                         than an iteration''')
@@ -210,8 +215,8 @@ def parse():
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
-                        a_max=0.05, refresh_plot=1000, laptop_mode=False, natural_heat_capacity_Nth_gen=50,
-                        natural_heat_capacity_beta_fac_props=[-1, 1, 102])
+                        a_max=0.05, refresh_plot=1000, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
+                        natural_heat_capacity_beta_fac_props=[-1, 1, 102], abrupt_seasons_len=0)
     args = parser.parse_args()
     return args
 

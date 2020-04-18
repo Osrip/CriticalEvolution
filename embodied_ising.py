@@ -1092,6 +1092,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     if (settings['seasons'] and (settings['years_per_iteration'] < 1)) and not (settings['loadfile'] is ''):
         time_steps = handle_total_timesteps(folder, settings)
 
+    if settings['abrupt_seasons_len'] != 0:
+        abrupt_seasons_arr = create_abrupt_seasons_arr(settings, Iterations, folder)
+
     ### Preparing stuff for natural heat capacity calculation
     # Creating array, which includes all generations for which natural heat capacity shall be calculated
     nat_heat_gens = create_save_nat_heat_gens(settings, Iterations, folder)
@@ -1117,7 +1120,12 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         else:
             calc_heat_cap_boo = False
 
+        if settings['abrupt_seasons_len'] != 0:
+
+            foods = abrupt_seasons(settings, foods, rep, abrupt_seasons_arr)
+
         TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo)
+
         if settings['energy_model']:
 
             for I in isings:
@@ -1235,6 +1243,50 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
     return sim_name
+
+def abrupt_seasons(settings, foods, rep, abrupt_seasons_arr):
+    if abrupt_seasons_arr[rep]:
+        # summer food
+        wanted_food_len = settings['food_num']
+    else:
+        # winter food
+        wanted_food_len = int(settings['min_food_winter'] * settings['food_num'])
+
+    diff_food_len = wanted_food_len - len(foods)
+
+    if diff_food_len < 0:
+        for i in range(abs(diff_food_len)):
+            #rand = np.random.randint(0, len(foods)) Is randomness important here?
+            del foods[-1]
+    elif diff_food_len > 0:
+        for i in range(abs(diff_food_len)):
+            foods.append(food(settings))
+
+    # probably not even necessary to return foods as objects only referred to by pointers
+    return foods
+
+
+def create_abrupt_seasons_arr(settings, generations, folder):
+    season_len = settings['abrupt_seasons_len']
+    summer_boo = True
+    seasons_arr = []
+    for gen in range(generations):
+        if (gen % season_len == 0) and (gen != 0):
+            #change season
+            summer_boo = not summer_boo
+        seasons_arr.append(summer_boo)
+
+    save_dir = '{}'.format(folder)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    if settings['save_data']:
+        pickle_out = open('{}/abrupt_seasons_boos.pickle'.format(save_dir), 'wb')
+        pickle.dump(seasons_arr, pickle_out)
+        pickle_out.close()
+    return np.array(seasons_arr)
+
+
+
 
 def create_save_nat_heat_gens(settings, Iterations, folder):
     '''
