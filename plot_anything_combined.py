@@ -13,6 +13,7 @@ import pickle
 from os import makedirs, path
 from automatic_plot_helper import detect_all_isings
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import load_isings
 import os
 import sys
 '''
@@ -128,13 +129,14 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
     if not path.exists(savefolder):
         makedirs(savefolder)
 
+    # TODO:THIS line is temporary!!!
+    plt.xlim((0, 50))
     if saveFigBool:
         plt.savefig(savefilename, bbox_inches='tight', dpi=300)
         # plt.close()
 
         savemsg = 'Saving ' + savefilename
         print(savemsg)
-
 
     plt.show()
     #  Trying to fix memory leak with this:
@@ -210,5 +212,6 @@ if __name__ == '__main__':
 
     loadfile = sys.argv[1]
     plot_var = sys.argv[2] #plot_var = 'v'
-    main(loadfile, plot_var)
+    isings_list = [load_isings(loadfile)]
+    main(loadfile, plot_var, isings_lists=isings_list)
 

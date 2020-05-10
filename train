@@ -110,7 +110,7 @@ def create_settings():
     settings['natural_heat_capacity_Nth_gen'] = args.natural_heat_capacity_Nth_gen
     # natural heat capacity beta factor distribution properties, last three linspace arguments
     #10 ** np.linspace(low_lim, high_lim, num_betas)
-    settings['natural_heat_capacity_beta_fac_props'] = args.natural_heat_capacity_beta_fac_props # [-1, 1, 102]
+    settings['natural_heat_capacity_beta_fac_props'] = args.natural_heat_capacity_beta_fac_props  # [-1, 1, 102]
     settings['cores'] = args.cores
 
     
@@ -214,7 +214,7 @@ def parse():
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
-                        loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
+                        loadfile='', loaditer=1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
                         server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
