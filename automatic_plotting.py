@@ -34,6 +34,8 @@ def main(sim_name, load_isings_list=True, final=False):
                                                              alpha=0.05, autoLoad=False)
     except Exception:
         print('Could not create food velocity scatter plot')
+
+    del isings_list
     if final:
         try:
             if settings['cores'] != 0:
@@ -43,7 +45,7 @@ def main(sim_name, load_isings_list=True, final=False):
             print('Could not compute and plot heat capacity')
 
     #  Trying to fix memory leak:
-    del isings_list
+
     del settings
 
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)

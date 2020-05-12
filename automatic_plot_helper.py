@@ -4,6 +4,10 @@ import os
 import sys
 import numpy as np
 import pickle
+import psutil
+from pathlib import Path
+import time
+import warnings
 
 def detect_all_isings(sim_name):
     '''
@@ -31,11 +35,14 @@ def load_settings(loadfile):
     settings = pickle.load(open(curdir + load_settings, 'rb'))
     return settings
 
-def load_isings(loadfile):
+def load_isings(loadfile, wait_for_memory = True):
     '''
     Load all isings pickle files and return them as list
     :param loadfile : simulation name
     '''
+    if wait_for_memory:
+        wait_for_enough_memory(loadfile)
+
     iter_list = detect_all_isings(loadfile)
     settings = load_settings(loadfile)
     numAgents = settings['pop_size']
@@ -56,12 +63,15 @@ def load_isings(loadfile):
         isings_list.append(isings)
     return isings_list
 
-def load_isings_from_list(loadfile, iter_list):
+def load_isings_from_list(loadfile, iter_list, wait_for_memory = True):
     '''
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
     :param iter_list : list of ints
     '''
+    if wait_for_memory:
+        wait_for_enough_memory(loadfile)
+
     settings = load_settings(loadfile)
     numAgents = settings['pop_size']
     isings_list = []
@@ -133,4 +143,32 @@ def attribute_from_isings(isings, attribute):
 
     return attribute_list
 
-pass
+def wait_for_enough_memory(sim_name):
+    '''
+    Stops program until enough memory is available to load in all ising files
+    '''
+
+    root_directory = Path('save/{}/isings'.format(sim_name))
+    size_isings_folder = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
+
+    memory_data = psutil.virtual_memory()
+    available_memory = memory_data.available
+    total_system_memory = memory_data.active
+
+    if total_system_memory < size_isings_folder:
+        raise warnings.warn("Your system's memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
+    else:
+        waited_seconds = 0
+        while available_memory < size_isings_folder:
+            time.sleep(10)
+            waited_seconds += 10
+            if waited_seconds > 1200:
+                warnings.warn('''After 20 minutes there is still not enough memory available for plotting,
+                 trying to plot now anyways hoping for enough swap space.''')
+                break
+
+
+
+
+
+
