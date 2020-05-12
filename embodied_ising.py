@@ -1219,9 +1219,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if not settings['refresh_plot'] is 0:
             if rep % settings['refresh_plot'] == 0 and rep != 0:
                 try:
-                    if settings['refresh_plot'] - rep == 0:
-                        # During first refresh plot, compute heat capacity of gen 0
-                        compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0])
+
 
                     #automatic_plotting.main(sim_name)
                     #  WRONGLY ALSO ACTIVATED final_true on purpose
@@ -1229,6 +1227,23 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
                 except Exception:
                     print('Something went wrong when refreshing plot at generation{}'.format(rep))
+
+
+        # Calculate and plot dream heat capacity
+        if not settings['dream_heat_capacity'] is 0:
+            if rep % settings['dream_heat_capacity'] == 0 and rep != 0:
+                #try:
+                if settings['dream_heat_capacity'] - rep == 0:
+                    # During first refresh plot, compute heat capacity of gen 0
+                    compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0])
+
+                #automatic_plotting.main(sim_name)
+                #  WRONGLY ALSO ACTIVATED final_true on purpose
+
+                compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
+                #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
+            # except Exception:
+            #     print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
 
         #tr.print_diff()
     # Plot simulation at end even is refresh is inactive, but only if refresh has not already done that
@@ -1242,6 +1257,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             #automatic_plotting.main(sim_name)
             os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
+
+
+
+
     return sim_name
 
 def abrupt_seasons(settings, foods, rep, abrupt_seasons_arr):
