@@ -588,8 +588,8 @@ class ising:
         self.cumulative_int_energy_vec_quad = np.array([])
         self.beta_vec = np.array([])
 
-        #  List of list For every time step the input value of every sensor is saved
-        self.all_recorded_inputs = [[]]
+
+        self.all_recorded_inputs = []  #  List of arrays For every time step the input value of every sensor is saved
 
 
 
@@ -863,7 +863,9 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
                 all_recorded_inputs = I.all_recorded_inputs
                 #  TODO: does this work as intended?:
                 recorded_input = I.s[:num_sensors]
+
                 all_recorded_inputs.append(recorded_input)
+
                 I.all_recorded_inputs = all_recorded_inputs
 
 
@@ -921,6 +923,8 @@ def parallelSequGlauberStep(I, settings):
     I.SequentialGlauberStep()
     return I
 '''
+
+
 
 ########## Functions for heat capacity calculations ##############
 
