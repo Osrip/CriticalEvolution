@@ -4,16 +4,20 @@ from automatic_plot_helper import load_settings
 import visualize_heat_capacity_generational_automatic
 import os
 
-def main(sim_name, settings, generations = None):
+def main(sim_name, settings, generations = None, recorded = False):
     if generations is None:
         gen_nums = detect_all_isings(sim_name)
         generations = [gen_nums[-1]]
     cores = settings['cores']
-    compute_plot_heat_capacity(sim_name, generations, cores, settings)
+    compute_plot_heat_capacity(sim_name, generations, cores, settings, recorded)
 
-def compute_plot_heat_capacity(sim_name, generation_list, cores, settings):
+def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded):
     gens_str = list_to_blank_seperated_str(generation_list)
-    os.system('bash bash-heat-capacity-generational-automatic.sh {} "{}" {}'.format(sim_name, gens_str, cores))
+    if recorded:
+        os.system('bash bash-heat-capacity-generational-automatic-recorded.sh {} "{}" {}'
+                  .format(sim_name, gens_str, cores))
+    else:
+        os.system('bash bash-heat-capacity-generational-automatic.sh {} "{}" {}'.format(sim_name, gens_str, cores))
     visualize_heat_capacity_generational_automatic.main(sim_name, settings, None)
 
 if __name__ == '__main__':

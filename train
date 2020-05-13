@@ -106,6 +106,7 @@ def create_settings():
     settings['plot_pipeline'] = args.plot_pipeline
     settings['refresh_plot'] = args.refresh_plot
     settings['dream_heat_capacity'] = args.dream_heat_capacity
+    settings['recorded_heat_capacity'] = args.recorded_heat_capacity
 
     # natural heat capacity is calculated for every nth generation, if 0 no heat capacity is calculated
     settings['natural_heat_capacity_Nth_gen'] = args.natural_heat_capacity_Nth_gen
@@ -209,7 +210,11 @@ def parse():
     parser.add_argument('-dream_c', '--dream_heat_cap_gen', dest='dream_heat_capacity', type=int,
                         help='''Every nth generation that dream heat capacity is calculated and plotted. 
                         If 0 dream heat capacity is never calculated and plotted''')
-    parser.add_argument('-c_gen', '--heat_cap_gen', dest='natural_heat_capacity_Nth_gen', help='''natural heat capacity 
+    parser.add_argument('-rec_c', '--recorded_heat_cap_gen', dest='recorded_heat_capacity', type=int, help='''
+                        Every nth generation that recorded heat capacity is calculated and plotted. 
+                        If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
+                        input values are recorded during the simulation and subsequently used to calculate heat cap''')
+    parser.add_argument('-nat_c', '--natural_heat_cap_gen', dest='natural_heat_capacity_Nth_gen', help='''natural heat capacity 
                         is calculated for every nth generation, if 0 no heat capacity is calculated''', type=int)
     parser.add_argument('-c_props', '--heat_cap_beta_props', dest='natural_heat_capacity_beta_fac_props', nargs='+',
                         type=int, help='''natural heat capacity beta factor distribution properties, last three linspace

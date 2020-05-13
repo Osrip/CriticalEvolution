@@ -51,6 +51,10 @@ settings = {}
 class ising:
     # Initialize the network
     def __init__(self, settings, netsize, Nsensors=2, Nmotors=2, name=None):
+        '''
+        For more attributes look at function reset_state, which is run at the start of every generation
+        More attributes are initialized there
+        '''
         # Create ising model
         self.size = netsize
         self.Ssize = Nsensors  # Number of sensors
@@ -298,6 +302,9 @@ class ising:
         #self.s[2] = np.tanh((self.org_sens))*2 - 1
         self.s[2] = np.tanh(self.v)
         self.s[3] = np.tanh(self.energy)
+
+        # TODO: define number of sensors here:
+        #settings['nSensors'] = 4
         # print(self.s[0:3])
     
     # Execute step of the Glauber algorithm to update the state of one unit
@@ -554,8 +561,7 @@ class ising:
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
             #biases GA pushing towards lower betas (artifical pressure to small betas)
 
-    def \
-            reset_state(self, settings):
+    def reset_state(self, settings):
 
         # randomize internal state (not using self.random_state since it also randomizes sensors)
         # TODO !!! THIS LINE SEEMS TO BE RESPONSIBLE FOR CHANGING HEAT CAPACITY PLOTS !!! This creats floats, when states are supposed to be ints!
@@ -581,6 +587,10 @@ class ising:
         self.cumulative_int_energy_vec = np.array([])
         self.cumulative_int_energy_vec_quad = np.array([])
         self.beta_vec = np.array([])
+
+        #  List of list For every time step the input value of every sensor is saved
+        self.all_recorded_inputs = [[]]
+
 
 
         if settings['energy_model']:
@@ -803,7 +813,8 @@ def extract_plot_information(isings, foods, settings):
 
 
 
-def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo):
+def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo,
+               record):
     [ising.reset_state(settings) for ising in isings]
 
     T = settings['TimeSteps']
@@ -844,9 +855,17 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
             isings_all_timesteps.append(isings_info)
             foods_all_timesteps.append(foods_info)
 
-
-
         interact(settings, isings, foods)
+
+        if record:
+            num_sensors = settings['nSensors']
+            for I in isings:
+                all_recorded_inputs = I.all_recorded_inputs
+                #  TODO: does this work as intended?:
+                recorded_input = I.s[:num_sensors]
+                all_recorded_inputs.append(recorded_input)
+                I.all_recorded_inputs = all_recorded_inputs
+
 
         # Before normal thermalization, prepare_natural_heat_capacity does dream-state thermalization with different
         # beta values and calculates heat-capacity
@@ -1126,7 +1145,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             foods = abrupt_seasons(settings, foods, rep, abrupt_seasons_arr)
 
-        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo)
+        record = set_record_boo(rep, settings)
+
+        TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo,
+                   record)
 
         if settings['energy_model']:
 
@@ -1217,35 +1239,12 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             isings = evolve(settings, isings, rep)
 
+
+        #### PLOTTING PIPELINE ####
+        plotting_pipeline(rep, sim_name, settings)
         #Refreshing of plots
-        if not settings['refresh_plot'] is 0:
-            if rep % settings['refresh_plot'] == 0 and rep != 0:
-                try:
 
 
-                    #automatic_plotting.main(sim_name)
-                    #  WRONGLY ALSO ACTIVATED final_true on purpose
-                    os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
-                    #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
-                except Exception:
-                    print('Something went wrong when refreshing plot at generation{}'.format(rep))
-
-
-        # Calculate and plot dream heat capacity
-        if not settings['dream_heat_capacity'] is 0:
-            if rep % settings['dream_heat_capacity'] == 0 and rep != 0:
-                #try:
-                if settings['dream_heat_capacity'] - rep == 0:
-                    # During first refresh plot, compute heat capacity of gen 0
-                    compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0])
-
-                #automatic_plotting.main(sim_name)
-                #  WRONGLY ALSO ACTIVATED final_true on purpose
-
-                compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
-                #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
-            # except Exception:
-            #     print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
 
         #tr.print_diff()
     # Plot simulation at end even is refresh is inactive, but only if refresh has not already done that
@@ -1264,6 +1263,66 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
 
     return sim_name
+
+def set_record_boo(rep, settings):
+    '''
+    This function sets the record boolean either True or False.  A True Record boolean leads to the sensor inputs to
+    be saved as an attribute in each ising object.
+    This function has to be placed into EvolutionLearning().
+    '''
+    record = False
+    if rep == 0:
+        record = True
+    if not settings['recorded_heat_capacity'] is 0:
+        if rep % settings['recorded_heat_capacity'] == 0 and rep != 0:
+            record = True
+    return record
+
+def plotting_pipeline(rep, sim_name, settings):
+    '''
+    Runs plotting and heat capacity calculation modules
+    This function has to be placed into EvolutionLearning(), more precisely into the for loop that loops through the time steps
+    (time step is given by the variable rep)
+    '''
+
+    if not settings['refresh_plot'] is 0:
+        if rep % settings['refresh_plot'] == 0 and rep != 0:
+            try:
+
+
+                #automatic_plotting.main(sim_name)
+                #  WRONGLY ALSO ACTIVATED final_true on purpose
+                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+                #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
+            except Exception:
+                print('Something went wrong when refreshing plot at generation{}'.format(rep))
+
+
+        # Calculate and plot dream heat capacity
+    if not settings['dream_heat_capacity'] is 0:
+        if rep % settings['dream_heat_capacity'] == 0 and rep != 0:
+            try:
+                if settings['dream_heat_capacity'] - rep == 0:
+                    # During first refresh plot, compute heat capacity of gen 0
+                    compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0], recorded=False)
+
+                compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=False)
+
+            except Exception:
+                print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
+
+    if not settings['recorded_heat_capacity'] is 0:
+        if rep % settings['recorded_heat_capacity'] == 0 and rep != 0:
+            try:
+                if settings['recorded_heat_capacity'] - rep == 0:
+                    # During first refresh plot, compute heat capacity of gen 0
+                    compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0], recorded=True)
+
+                compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=True)
+
+            except Exception:
+                print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
+
 
 def abrupt_seasons(settings, foods, rep, abrupt_seasons_arr):
     if abrupt_seasons_arr[rep]:
