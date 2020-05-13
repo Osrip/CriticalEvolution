@@ -922,6 +922,8 @@ def calculate_natural_heat_capacity(isings, time_steps):
 
             # Heat capacity calculation
             # TODO: Why is this divided by network size? Not in paper formula!
+            # Answer: He probably did that because the more neurons the higher the networks energy.
+            # I.Beta alsready includes b_k * b_g the multiplication has been done for the inidividuals already
             heat_capacity = I.Beta ** 2 * (e2_mean - e_mean ** 2) / I.size
             heat_capacity_vec[j] = heat_capacity
 
