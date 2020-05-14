@@ -21,9 +21,11 @@ def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recor
     visualize_heat_capacity_generational_automatic.main(sim_name, settings, None)
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200513-230505-g_5_-t_40_-ref_0_-nat_c_0_-dream_c_0_-rec_c_2_-n_test'#'sim-20200327-220128-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_3_sensors'
-    cores = 3
-    generation_list = [0, 200, 500, 1000, 2000, 4000, 6000, 7999]
+    sim_name = 'sim-20200514-013839-g_5_-t_2000_-ref_0_-nat_c_0_-dream_c_0_-rec_c_2_-c_15_-n_long_test'#'sim-20200327-220128-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_3_sensors'
     settings = load_settings(sim_name)
-    compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded = True)
+    main(sim_name, settings, recorded=True)
+    # cores = 3
+    # generation_list = [0, 200, 500, 1000, 2000, 4000, 6000, 7999]
+    # settings = load_settings(sim_name)
+    # compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded=True)
 

@@ -98,9 +98,9 @@ def initialize_sensors_from_record_randomize_remaining(I):
         I.s[i] = chosen_sens_inputs[i]
 
     I.s = s
-    # if not len(chosen_sens_inputs) == I.size:
-    #     raise Exception('''For some reason the number of sensors that
-    #     recorded values exist for is different from the sensor size saved in the settings''')
+    if not len(chosen_sens_inputs) == I.Ssize:
+        raise Exception('''For some reason the number of sensors that
+        recorded values exist for is different from the sensor size saved in the settings''')
 
 # def from_list_of_arrs_to_arr(arr_list):
 #     return np.concatenate(arr_list, axis=0)
