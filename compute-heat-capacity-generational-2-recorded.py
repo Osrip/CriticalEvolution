@@ -89,7 +89,7 @@ def main():
 
     # print(np.mean(C, 0))
     # TODO: CHANGE THIS SO THERE IS NO CONFLICT WITH OTHER DREAM HEAT CAP CALCULATION
-    folder = 'save/' + loadfile + '/C' + '/C_' + str(iterNum) + '/'
+    folder = 'save/' + loadfile + '/C_recorded' + '/C_' + str(iterNum) + '/'
     file = 'C-size_' + str(size) + '-Nbetas_' + \
            str(Nbetas) + '-bind_' + str(bind) + '.npy'
     filename = folder + file

@@ -9,7 +9,11 @@ import os
 
 
 
-def main(sim_name, settings, generation_list):
+def main(sim_name, settings, generation_list, recorded):
+    '''
+    generation list can be set to None
+    recorded is a boolean defining whether we want to visualize recorded heat capacity or dream heat capacity
+    '''
 
     # TODO: make these scripts take these as params
     loadfile = sim_name
@@ -31,17 +35,26 @@ def main(sim_name, settings, generation_list):
     size = settings['size']
 
     if generation_list is None:
-        generation_list = automatic_generation_generation_list(folder + '/C')
+        if recorded:
+            generation_list = automatic_generation_generation_list(folder + '/C_recorded')
+        else:
+            generation_list = automatic_generation_generation_list(folder + '/C')
     iter_gen = generation_list
 
     C = np.zeros((R, numAgents, Nbetas, len(iter_gen)))
+
 
     print('Loading data...')
     for ii, iter in enumerate(iter_gen):
         #for bind in np.arange(0, 100):
         for bind in np.arange(1, 100):
-            filename = folder + '/C/C_' + str(iter) + '/C-size_' + str(size) + '-Nbetas_' + \
-                       str(Nbetas) + '-bind_' + str(bind) + '.npy'
+            if recorded:
+                #  Depending on whether we are dealing with recorded or dream heat capacity
+                filename = folder + '/C_recorded/C_' + str(iter) + '/C-size_' + str(size) + '-Nbetas_' + \
+                           str(Nbetas) + '-bind_' + str(bind) + '.npy'
+            else:
+                filename = folder + '/C/C_' + str(iter) + '/C-size_' + str(size) + '-Nbetas_' + \
+                           str(Nbetas) + '-bind_' + str(bind) + '.npy'
             C[:, :, bind, ii] = np.load(filename)
     print('Done.')
 
@@ -86,8 +99,10 @@ def main(sim_name, settings, generation_list):
         # for lh in leg.legendHandles:
         #     lh.set_alpha(1)
         #     lh.set_sizes(30)
-
-        savefolder = folder + '/figs/C/'
+        if recorded:
+            savefolder = folder + '/figs/C_recorded/'
+        else:
+            savefolder = folder + '/figs/C/'
         savefilename = savefolder + 'C-size_' + str(size) + '-Nbetas_' + \
                        str(Nbetas) + '-gen_' + str(iter) + '.png'
         if not path.exists(savefolder):
