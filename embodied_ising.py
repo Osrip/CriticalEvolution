@@ -651,6 +651,7 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
     random_vars = np.random.rand(thermalTime, len(all_neurons_except_sens)) #[np.random.rand() for i in perms]
     for i in range(thermalTime):
         #perms = perms_list[i]
+        #Prepare a matrix of random variables for later use
         perms = np.random.permutation(np.arange(Ssize, size))
         for j, perm in enumerate(perms):
             rand = random_vars[i, j]
