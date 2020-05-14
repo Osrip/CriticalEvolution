@@ -189,6 +189,9 @@ class ising:
         random_energy = np.random.rand() * 12
         self.s[3] = np.tanh(random_energy)
 
+
+
+
     def randomize_position(self, settings):
 
         self.xpos = uniform(settings['x_min'], settings['x_max'])  # position (x)
