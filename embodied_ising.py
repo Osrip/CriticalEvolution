@@ -930,7 +930,7 @@ def parallelSequGlauberStep(I, settings):
 
 
 
-########## Functions for heat capacity calculations ##############
+########## Functions for natural heat capacity calculations ##############
 
 def calculate_natural_heat_capacity(isings, time_steps):
     '''
@@ -951,6 +951,7 @@ def calculate_natural_heat_capacity(isings, time_steps):
             # Why is this divided by network size? Not in paper formula!
             # Answer: He probably did that because the more neurons the higher the networks energy.
             # I.Beta already includes b_k * b_g the multiplication has been done for the inidividuals already
+            #TODO is this correct?
             heat_capacity = I.Beta ** 2 * (e2_mean - e_mean ** 2) / I.size
             heat_capacity_vec[j] = heat_capacity
 
@@ -1289,10 +1290,12 @@ def set_record_boo(rep, settings):
 def plotting_pipeline(rep, sim_name, settings):
     '''
     Runs plotting and heat capacity calculation modules
-    This function has to be placed into EvolutionLearning(), more precisely into the for loop that loops through the time steps
+    This function has to be placed into EvolutionLearning()
+    , more precisely into the for loop that loops through the time steps
     (time step is given by the variable rep)
     '''
 
+    # Run automatic plotting pipeline, that plots multiple ising attributes
     if not settings['refresh_plot'] is 0:
         if rep % settings['refresh_plot'] == 0 and rep != 0:
             try:
@@ -1305,8 +1308,7 @@ def plotting_pipeline(rep, sim_name, settings):
             except Exception:
                 print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
-
-        # Calculate and plot dream heat capacity
+    # Calculate and plot dream heat capacity
     if not settings['dream_heat_capacity'] is 0:
         if rep % settings['dream_heat_capacity'] == 0 and rep != 0:
             try:
@@ -1319,6 +1321,7 @@ def plotting_pipeline(rep, sim_name, settings):
             except Exception:
                 print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
 
+    # Calculate and plot recorded heat capacity
     if not settings['recorded_heat_capacity'] is 0:
         if rep % settings['recorded_heat_capacity'] == 0 and rep != 0:
             try:

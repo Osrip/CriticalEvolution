@@ -63,7 +63,7 @@ def main():
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
             # Thermalosation to equilibrium before making energy measurements
-            I.s = SequentialGlauberStepFast(T/10, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, E, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
@@ -123,7 +123,13 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
     '''
     Energy calculation each thermal time step
     '''
-    all_neurons_except_sens = np.arange(Ssize, size)
+    # TODO: After figuring the effect of thermalize sensors out delete this shit, slows everything down!
+    thermalize_sensors = True
+
+    if thermalize_sensors:
+        all_neurons_except_sens = np.arange(0, size)
+    else:
+        all_neurons_except_sens = np.arange(Ssize, size)
     #perms_list = np.array([np.random.permutation(np.arange(Ssize, size)) for j in range(thermalTime)])
     random_vars = np.random.rand(thermalTime, len(all_neurons_except_sens)) #[np.random.rand() for i in perms]
 
@@ -133,7 +139,14 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
     for i in range(thermalTime):
         #perms = perms_list[i]
         #Prepare a matrix of random variables for later use
-        perms = np.random.permutation(np.arange(Ssize, size))
+
+        # TODO: In previous dream heat cap calculation, the sensors were thermalized as well, while here they remain to have their values
+        if thermalize_sensors:
+            perms = np.random.permutation(np.arange(0, size))
+            #np.random.permutation(size)
+        else:
+            perms = np.random.permutation(np.arange(Ssize, size))
+
         for j, perm in enumerate(perms):
             rand = random_vars[i, j]
             eDiff = 2 * s[perm] * (h[perm] + np.dot(J[perm, :] + J[:, perm], s))
@@ -152,14 +165,25 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
 
 @jit(nopython=True)
 def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
+    thermalize_sensors = True
+    if thermalize_sensors:
+        all_neurons_except_sens = np.arange(0, size)
+    else:
+        all_neurons_except_sens = np.arange(Ssize, size)
 
-    all_neurons_except_sens = np.arange(Ssize, size)
     #perms_list = np.array([np.random.permutation(np.arange(Ssize, size)) for j in range(thermalTime)])
     random_vars = np.random.rand(thermalTime, len(all_neurons_except_sens)) #[np.random.rand() for i in perms]
     for i in range(thermalTime):
         #perms = perms_list[i]
         #Prepare a matrix of random variables for later use
-        perms = np.random.permutation(np.arange(Ssize, size))
+
+        # TODO: In previous dream heat cap calculation, the sensors were thermalized as well, while here they remain to have their values
+        if thermalize_sensors:
+            perms = np.random.permutation(np.arange(0, size))
+            #perms = np.random.permutation(size)
+        else:
+            perms = np.random.permutation(np.arange(Ssize, size))
+
         for j, perm in enumerate(perms):
             rand = random_vars[i, j]
             eDiff = 2 * s[perm] * (h[perm] + np.dot(J[perm, :] + J[:, perm], s))
