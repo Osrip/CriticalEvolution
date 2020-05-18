@@ -15,7 +15,7 @@ def main():
     if len(argv) < 3:
         print("Usage: " + argv[0] + " <sim> + <bind> + <gen>")
         # loadfile = 'sim-20180131-145412'
-        # bind = 0
+        # bind = 0  POsition in BetaVec
         # iterNum = 0
 
     loadfile = str(argv[1])

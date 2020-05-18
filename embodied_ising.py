@@ -428,6 +428,7 @@ class ising:
 
     # update sensors using glauber steps (dream)
     def DreamSensorGlauberStep(self):
+        # As permutation over complete network together with sensor neurons are taken, sensor neurons are thermalized as well
         perms = np.random.permutation(self.size)
         for i in perms:
             self.GlauberStep(i)
@@ -897,7 +898,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
                     [I.SequentialGlauberStepFastHelper(settings) for I in isings]
 
     if calc_heat_cap_boo:
-        calculate_natural_heat_capacity(isings, T)
+        calculate_natural_heat_capacity(isings, T, beta_facs)
         #try:
 
         # except Exception:
@@ -932,7 +933,7 @@ def parallelSequGlauberStep(I, settings):
 
 ########## Functions for natural heat capacity calculations ##############
 
-def calculate_natural_heat_capacity(isings, time_steps):
+def calculate_natural_heat_capacity(isings, time_steps, beta_facs):
     '''
     Calculate the heat capacity at the end of every generation, utuliozing the ising attribute vectors created by
     repare_natural_heat_capacity()
@@ -951,8 +952,8 @@ def calculate_natural_heat_capacity(isings, time_steps):
             # Why is this divided by network size? Not in paper formula!
             # Answer: He probably did that because the more neurons the higher the networks energy.
             # I.Beta already includes b_k * b_g the multiplication has been done for the inidividuals already
-            #TODO is this correct?
-            heat_capacity = I.Beta ** 2 * (e2_mean - e_mean ** 2) / I.size
+            #TODO is this correct? (I.Beta * beta_facs[j]) ** 2
+            heat_capacity = (I.Beta * beta_facs[j]) ** 2 * (e2_mean - e_mean ** 2) / I.size
             heat_capacity_vec[j] = heat_capacity
 
         I.heat_capacity_vec = heat_capacity_vec
@@ -965,7 +966,7 @@ def prepare_natural_heat_capacity(settings, isings, beta_facs):
     '''
     Creates two vectors containing the internal energy of each ising with different beta values for each organism
     Those vectors are saved as the organism's attribute and are created every time step
-    At the end of every generation they are required to calculate the heat capüacity
+    At the end of every generation they are required to calculate the heat capacity
     '''
 
     # isings in dream state, that beat calculations are done with, so we don't influence actual simulation with our measurements
@@ -1029,7 +1030,7 @@ def calculate_internal_energy(s, h, J):
     return internal_energy
 
 
-def parallelizedSequGlauberSteps(isings, settings, asynchronous = False):
+def parallelizedSequGlauberSteps(isings, settings, asynchronous=False):
 
     if not asynchronous:
 

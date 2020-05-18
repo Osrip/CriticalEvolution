@@ -130,7 +130,7 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
         makedirs(savefolder)
 
     # TODO:THIS line is temporary!!!
-    plt.xlim((0, 50))
+    #plt.xlim((0, 50))
     if saveFigBool:
         plt.savefig(savefilename, bbox_inches='tight', dpi=300)
         # plt.close()
