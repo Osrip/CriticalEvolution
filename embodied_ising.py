@@ -1003,15 +1003,15 @@ def create_beta_facs(settings, folder):
     # Creating log space of betas
     beta_facs = 10 ** np.linspace(props[0], props[1], props[2])
 
-    if settings['save_data']:
-        pickle_out = open('{}/nat_heat_capacity_data/beta_facs.pickle'.format(folder), 'wb')
-        pickle.dump(beta_facs, pickle_out)
-        pickle_out.close()
+    #if settings['save_data']:
+    pickle_out = open('{}/nat_heat_capacity_data/beta_facs.pickle'.format(folder), 'wb')
+    pickle.dump(beta_facs, pickle_out)
+    pickle_out.close()
 
-        with open(folder + 'beta_facs.csv', 'w') as f:
-            for beta_fac in beta_facs:
-                f.write('{}\n'.format(beta_fac))
-        f.close()
+    with open(folder + 'beta_facs.csv', 'w') as f:
+        for beta_fac in beta_facs:
+            f.write('{}\n'.format(beta_fac))
+    f.close()
 
     return beta_facs
 
@@ -1220,7 +1220,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     I.cumulative_int_energy_vec_quad = np.array([])
                     #I.beta_vec = np.array([])
 
-                save_sim(folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
+                save_sim(settings, folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
                 del isings_copy
 
                 # if settings['energy_model']:
@@ -1246,8 +1246,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             Evolution via GA! According to evolution rate done every nth iteration
             Does every evolution event represent one generation?
             '''
-
-            isings = evolve(settings, isings, rep)
+            if not settings['switch_off_evolution']:
+                isings = evolve(settings, isings, rep)
 
 
         #### PLOTTING PIPELINE ####
@@ -1392,15 +1392,15 @@ def create_save_nat_heat_gens(settings, Iterations, folder):
     save_dir = '{}nat_heat_capacity_data'.format(folder)
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    if settings['save_data']:
-        pickle_out = open('{}/generations_nat_heat_capacity_calculated.pickle'.format(save_dir), 'wb')
-        pickle.dump(nat_heat_gens, pickle_out)
-        pickle_out.close()
+    #if settings['save_data']:
+    pickle_out = open('{}/generations_nat_heat_capacity_calculated.pickle'.format(save_dir), 'wb')
+    pickle.dump(nat_heat_gens, pickle_out)
+    pickle_out.close()
 
-        with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
-            for gen in nat_heat_gens:
-                f.write('{}\n'.format(gen))
-        f.close()
+    with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
+        for gen in nat_heat_gens:
+            f.write('{}\n'.format(gen))
+    f.close()
 
     return nat_heat_gens
 
@@ -1574,11 +1574,23 @@ def save_settings(folder, settings):
 
 
 
-def save_sim(folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
+def save_sim(settings, folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
 
 
-    filenameI = folder + 'isings/gen[' + str(gen) + ']-isings.pickle'
+    #  In case load_sim and switch_off_evolution is active, save simulation in folder of loaded sim
+    if (settings['loadfile'] != '') and settings['switch_off_evolution']:
+        # s = sys.argv[1:]
+        # command_input = '_'.join([str(elem) for elem in s])
+        dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods".format(settings['loadfile'], settings['iter'], settings['food_num'])
+        if not os.path.exists(dir_in_old_sim):
+            os.makedirs(dir_in_old_sim)
+
+        filenameI = "{}/gen[{}]-isings.pickle".format(dir_in_old_sim, gen) #  command_input
+    else:
+        filenameI = folder + 'isings/gen[' + str(gen) + ']-isings.pickle'
     filenameS = folder + 'stats/gen[' + str(gen) + ']-stats.pickle'
+
+
 
     if type(mutationrate) is not type(None):
         mutationh = mutationrate[0]
