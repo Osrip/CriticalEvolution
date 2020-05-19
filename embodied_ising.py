@@ -1003,15 +1003,15 @@ def create_beta_facs(settings, folder):
     # Creating log space of betas
     beta_facs = 10 ** np.linspace(props[0], props[1], props[2])
 
-    #if settings['save_data']:
-    pickle_out = open('{}/nat_heat_capacity_data/beta_facs.pickle'.format(folder), 'wb')
-    pickle.dump(beta_facs, pickle_out)
-    pickle_out.close()
+    if settings['save_data']:
+        pickle_out = open('{}/nat_heat_capacity_data/beta_facs.pickle'.format(folder), 'wb')
+        pickle.dump(beta_facs, pickle_out)
+        pickle_out.close()
 
-    with open(folder + 'beta_facs.csv', 'w') as f:
-        for beta_fac in beta_facs:
-            f.write('{}\n'.format(beta_fac))
-    f.close()
+        with open(folder + 'beta_facs.csv', 'w') as f:
+            for beta_fac in beta_facs:
+                f.write('{}\n'.format(beta_fac))
+        f.close()
 
     return beta_facs
 
@@ -1099,7 +1099,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
     settings['sim_name'] = sim_name
 
-    folder = 'save/' + sim_name  + '/'
+    if settings['save_subfolder'] != '':
+        folder = 'save/{}/{}/'.format(settings['save_subfolder'], sim_name)
+    else:
+        folder = 'save/' + sim_name  + '/'
     if settings['save_data'] == True:#
 
         if not os.path.exists(folder):
@@ -1208,6 +1211,18 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             if settings['seasons'] and (settings['years_per_iteration'] < 1):
                 total_timesteps = handle_total_timesteps(folder, settings)
+
+            if settings['switch_seasons_repeat_pipeline']:
+                isings_copy = deepcopy(isings)
+                #  Delete unnecessary information before saving isings to cut down on memory
+                for I in isings_copy:
+                    I.energies = []
+                    I.cumulative_int_energy_vec = np.array([])
+                    I.cumulative_int_energy_vec_quad = np.array([])
+                    #I.beta_vec = np.array([])
+
+                save_sim_season_pipeline(settings, folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
+                del isings_copy
 
 
             if settings['save_data']:
@@ -1390,17 +1405,18 @@ def create_save_nat_heat_gens(settings, Iterations, folder):
         nat_heat_gens = np.array([])
 
     save_dir = '{}nat_heat_capacity_data'.format(folder)
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    #if settings['save_data']:
-    pickle_out = open('{}/generations_nat_heat_capacity_calculated.pickle'.format(save_dir), 'wb')
-    pickle.dump(nat_heat_gens, pickle_out)
-    pickle_out.close()
 
-    with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
-        for gen in nat_heat_gens:
-            f.write('{}\n'.format(gen))
-    f.close()
+    if settings['save_data']:
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        pickle_out = open('{}/generations_nat_heat_capacity_calculated.pickle'.format(save_dir), 'wb')
+        pickle.dump(nat_heat_gens, pickle_out)
+        pickle_out.close()
+
+        with open(folder + 'generations_nat_heat_capacity_calculated.csv', 'w') as f:
+            for gen in nat_heat_gens:
+                f.write('{}\n'.format(gen))
+        f.close()
 
     return nat_heat_gens
 
@@ -1572,22 +1588,33 @@ def save_settings(folder, settings):
     pickle.dump(settings, pickle_out)
     pickle_out.close()
 
+def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
+    '''
+    Save simulation in loaded simulation folder for switch_season_repeat_pipeline
+    '''
+
+    # s = sys.argv[1:]
+    # command_input = '_'.join([str(elem) for elem in s])
+    if settings['repeat_pipeline_switched_boo'] is False:
+        switched_name_addition = 'same_season'
+    elif settings['repeat_pipeline_switched_boo'] is True:
+        switched_name_addition = 'switched_season'
+
+    dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods_{}".format(settings['loadfile'], settings['iter'],
+                                                                     settings['food_num'], switched_name_addition)
+    if not os.path.exists(dir_in_old_sim):
+        os.makedirs(dir_in_old_sim)
+
+    filenameI = "{}/gen[{}]-isings.pickle".format(dir_in_old_sim, gen) #  command_input
+
+    pickle_out = open(filenameI, 'wb')
+    pickle.dump(isings, pickle_out)
+    pickle_out.close()
 
 
 def save_sim(settings, folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
 
-
-    #  In case load_sim and switch_off_evolution is active, save simulation in folder of loaded sim
-    if (settings['loadfile'] != '') and settings['switch_off_evolution']:
-        # s = sys.argv[1:]
-        # command_input = '_'.join([str(elem) for elem in s])
-        dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods".format(settings['loadfile'], settings['iter'], settings['food_num'])
-        if not os.path.exists(dir_in_old_sim):
-            os.makedirs(dir_in_old_sim)
-
-        filenameI = "{}/gen[{}]-isings.pickle".format(dir_in_old_sim, gen) #  command_input
-    else:
-        filenameI = folder + 'isings/gen[' + str(gen) + ']-isings.pickle'
+    filenameI = folder + 'isings/gen[' + str(gen) + ']-isings.pickle'
     filenameS = folder + 'stats/gen[' + str(gen) + ']-stats.pickle'
 
 

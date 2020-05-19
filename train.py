@@ -40,6 +40,16 @@ def create_settings():
     settings['thermalTime'] = args.thermal_time
 
     settings['switch_off_evolution'] = args.switch_off_evolution
+
+    # In case settings['switch_off_evolution'] == True and settings['loadfile'] != '' isings objects are saved in folder of
+    # load simulation. In that case settings['switch_off_evolution'] has to be either positive or negative. According
+    # to whether the season has bee switched or not. This is then indicited by the ising folders name. This feature is important for
+    # switch_season_repeat_pipeline
+
+    settings['repeat_pipeline_switched_boo'] = None
+    settings['save_subfolder'] = ''
+    settings['switch_seasons_repeat_pipeline'] = False  #  This has to be activated For the repeat runs of switch_season_repeat_pipeline
+
     
     settings['evolution_toggle'] = False  # only toggles for CriticalLearning
     settings['evolution_rate'] = 1  # only with critical learning number of iterations to skip to kill/mate (gives more time to eat before evolution)
@@ -116,6 +126,8 @@ def create_settings():
     #10 ** np.linspace(low_lim, high_lim, num_betas)
     settings['natural_heat_capacity_beta_fac_props'] = args.natural_heat_capacity_beta_fac_props  # [-1, 1, 102]
     settings['cores'] = args.cores
+
+
 
 
 

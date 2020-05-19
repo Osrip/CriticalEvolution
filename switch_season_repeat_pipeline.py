@@ -14,11 +14,15 @@ def create_repeats(sim_name, settings):
     settings['loadfile'] = sim_name
     settings['iter'] = detect_all_isings(sim_name)[-1]
     settings['switch_off_evolution'] = True
+    settings['save_data'] = False
+    settings['switch_seasons_repeat_pipeline'] = True
+
 
     #  Number of repeats
     #Iterations = 200
     Iterations = 5
 
+    settings['repeat_pipeline_switched_boo'] = False
     train.run(settings, Iterations)
 
     #  switch seasons
@@ -27,6 +31,8 @@ def create_repeats(sim_name, settings):
     elif settings['food_num'] == 10:
         settings['food_num'] = 100
 
+
+    settings['repeat_pipeline_switched_boo'] = True
     train.run(settings, Iterations)
 
 def create_repeats_parallel(sim_name, settings):
