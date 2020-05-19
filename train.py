@@ -247,7 +247,7 @@ def parse():
 
 # --- MAIN ---------------------------------------------------------------------+
 
-def run(settings):
+def run(settings, Iterations):
 
 
 
@@ -310,7 +310,7 @@ def run(settings):
 if __name__ == '__main__':
     settings, Iterations = create_settings()
     t1 = time.time()
-    sim_name = run(settings)
+    sim_name = run(settings, Iterations)
     t2 = time.time()
     print('total time:', t2-t1)
     if settings['save_data'] and settings['plot_pipeline']:
