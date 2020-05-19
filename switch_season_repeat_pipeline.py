@@ -6,9 +6,11 @@ from automatic_plot_helper import detect_all_isings
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 def run_sim_and_create_repeats():
+    
     settings, Iterations = train.create_settings()
     sim_name = train.run(settings, Iterations)
     create_repeats(sim_name, settings)
+
 
 def create_repeats(sim_name, settings):
     settings['loadfile'] = sim_name
