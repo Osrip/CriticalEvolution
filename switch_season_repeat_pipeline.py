@@ -22,7 +22,8 @@ class RunCombi:
         elif food == 100:
             season_name = 'summer'
         else:
-            raise Exception('In the current impülementation of pipeline has to be either 10 or 100')
+            raise Exception('''In the current implementation of pipeline food_num has to be either 10 or 100 
+            (winter and summer)''')
 
 
         subfolder = 'b{}_{}'.format(beta, season_name)
@@ -42,6 +43,7 @@ def run_all_combinations():
     '''
     main function
     '''
+    #TODO Parallelize all combinations!
     settings, Iterations = train.create_settings()
     num_repeats = 5 #200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
@@ -99,10 +101,6 @@ def _run_process(process, settings):
     train.run(settings)
 
 
-
-
-
-#TODO: Wie übergebe ich settings/ argumente an die repeat simulationen und ändere dabei auch noch einige settings ( z.B. seasons)?
 
 def _parse_args():
     parser = argparse.ArgumentParser()
