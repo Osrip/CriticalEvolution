@@ -1101,6 +1101,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
     if settings['save_subfolder'] != '':
         folder = 'save/{}/{}/'.format(settings['save_subfolder'], sim_name)
+
     else:
         folder = 'save/' + sim_name  + '/'
     if settings['save_data'] == True:#
@@ -1592,7 +1593,7 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
     '''
     Save simulation in loaded simulation folder for switch_season_repeat_pipeline
     '''
-
+    # TODO: Fix where new ising files are saved
     # s = sys.argv[1:]
     # command_input = '_'.join([str(elem) for elem in s])
     if settings['repeat_pipeline_switched_boo'] is False:
@@ -1600,7 +1601,11 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
     elif settings['repeat_pipeline_switched_boo'] is True:
         switched_name_addition = 'switched_season'
 
-    dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods_{}".format(settings['loadfile'], settings['iter'],
+    # cut off current sim_name and replace it with loadfile (loaded sim)
+
+    loaded_sim_with_subfolders = '{}/{}'.format(settings['save_subfolder'], settings['loadfile'])
+
+    dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods_{}".format(loaded_sim_with_subfolders, settings['iter'],
                                                                      settings['food_num'], switched_name_addition)
     if not os.path.exists(dir_in_old_sim):
         os.makedirs(dir_in_old_sim)
