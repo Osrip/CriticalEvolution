@@ -137,7 +137,7 @@ def parse():
                                      controlled by a statistical neural net (ising model)
                                      ------Saving Animation from loaded simulation------
                                      Animating existing simulation for a certain generation:
-                                     python3 train -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
+                                     python3 train.py -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
                                      Animation will be saved in previous folder of simulation
                                      ------Switch off all plots------
                                      Use the following arguments: -ref 0 -noplt -nat_c 0 -dream_c 0 -rec_c 0

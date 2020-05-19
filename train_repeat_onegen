@@ -117,7 +117,7 @@ def parse():
                                      controlled by a statistical neural net (ising model)
                                      ------Practical examples------
                                      Animating existing simulation for a certain generation:
-                                     python train -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
+                                     python train.py -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
                                      Animation will be saved in previous folder of simulation
                                      ------Default values-----
                                      save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,

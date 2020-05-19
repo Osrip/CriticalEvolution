@@ -1090,7 +1090,7 @@ def GlauberStepParallel(i, s, h, J, Beta, size):
 
 def EvolutionLearning(isings, foods, settings, Iterations = 1):
     '''
-    Called by "train"
+    Called by "train.py"
     '''
     #Add command line input to folder name
     s = sys.argv[1:]

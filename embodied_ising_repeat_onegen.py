@@ -1008,7 +1008,7 @@ def HomeostaticGradient(isings, foods, settings, folder, rep):
 
 def EvolutionLearning(isings, foods, settings, Iterations = 1):
     '''
-    Called by "train"
+    Called by "train.py"
     '''
     #Add command line input to folder name
     s = sys.argv[1:]
