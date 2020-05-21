@@ -10,7 +10,7 @@ import ray
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 class RunCombi:
-    def __init__(self, settings, food, beta):
+    def __init__(self, settings, food, beta, same_repeat):
         '''
         This Class includes the properties of a certain simulation run
         '''
@@ -27,18 +27,21 @@ class RunCombi:
             raise Exception('''In the current implementation of pipeline food_num has to be either 10 or 100 
             (winter and summer)''')
 
-
-        subfolder = 'b{}_{}'.format(beta, season_name)
+        # This defines the same of the folder, that the run is saved in
+        subfolder = 'b{}_{}_{}'.format(beta, season_name, same_repeat)
         self.subfolder = subfolder
 
-def make_combinations(settings):
+def make_combinations(settings, same_repeats = 1):
     '''
     creates all combinations of runs
+    same_repeats: int - Defines how many times the simulation with same parameter is "repeated"
+    (for statistical significance)
     '''
     run_combis = []
     for beta in [0.1, 1]:
         for food in [100, 10]:
-            run_combis.append(RunCombi(settings, food, beta))
+            for repeat in range(same_repeats):
+                run_combis.append(RunCombi(settings, food, beta, repeat))
     return run_combis
 
 def run_all_combinations():
@@ -46,10 +49,13 @@ def run_all_combinations():
     main function
     '''
     #TODO Parallelize all combinations!
+
+    same_repeats = 4 # Number of times the same simulation is run
+
     settings, Iterations = train.create_settings()
     num_repeats = 5 #200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
-    run_combis = make_combinations(settings)
+    run_combis = make_combinations(settings, same_repeats)
 
     ray.init()
 
