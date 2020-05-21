@@ -53,9 +53,9 @@ def run_all_combinations():
 
     ray.init()
 
-    for run_combi in run_combis:
-        run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats)
 
+    ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    ray.get(ray_funcs)
 @ray.remote
 def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
     second_subfolder = run_combi.subfolder
