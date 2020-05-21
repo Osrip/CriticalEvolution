@@ -9,6 +9,7 @@ import ray
 
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
+
 class RunCombi:
     def __init__(self, settings, food, beta, same_repeat):
         '''
@@ -30,6 +31,10 @@ class RunCombi:
         # This defines the same of the folder, that the run is saved in
         subfolder = 'b{}_{}_{}'.format(beta, season_name, same_repeat)
         self.subfolder = subfolder
+        self.food = food
+        self.beta = beta
+        self.season = season_name
+
 
 def make_combinations(settings, same_repeats = 1):
     '''
@@ -38,30 +43,32 @@ def make_combinations(settings, same_repeats = 1):
     (for statistical significance)
     '''
     run_combis = []
-    for beta in [0.1, 1]:
-        for food in [100, 10]:
+    for food in [100, 10]:
+        for beta in [0.1, 1]:
             for repeat in range(same_repeats):
                 run_combis.append(RunCombi(settings, food, beta, repeat))
     return run_combis
+
 
 def run_all_combinations():
     '''
     main function
     '''
-    #TODO Parallelize all combinations!
+    # TODO Parallelize all combinations!
 
-    same_repeats = 4 # Number of times the same simulation is run
+    same_repeats = 4  # Number of times the same simulation is run
 
     settings, Iterations = train.create_settings()
-    num_repeats = 5 #200 # num repeats: the number of times last generation is repeated
+    num_repeats = 5  # 200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
     run_combis = make_combinations(settings, same_repeats)
 
     ray.init()
 
-
     ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
+
+
 @ray.remote
 def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
     second_subfolder = run_combi.subfolder
@@ -87,9 +94,8 @@ def create_repeats(sim_name, save_subfolder, settings, num_repeats):
     settings['save_data'] = False
     settings['switch_seasons_repeat_pipeline'] = True
 
-
     #  Number of repeats
-    #Iterations = 200
+    # Iterations = 200
     Iterations = num_repeats
 
     settings['repeat_pipeline_switched_boo'] = False
@@ -105,11 +111,13 @@ def create_repeats(sim_name, save_subfolder, settings, num_repeats):
     settings['repeat_pipeline_switched_boo'] = True
     train.run(settings, Iterations)
 
+
 def create_repeats_parallel(sim_name, settings):
     settings['loadfile'] = sim_name
     settings['iter'] = detect_all_isings(sim_name)[-1]
     pool = Pool(processes=2)
     pool.map(_run_process, processes)
+
 
 def _run_process(process, settings):
     #os.system('python3 train {}'.format(process))
@@ -117,12 +125,12 @@ def _run_process(process, settings):
     train.run(settings)
 
 
-
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', dest='commands', help='''Commands that are passed to evolution simulation''')
     args = parser.parse_args()
     return args
+
 
 if __name__ == '__main__':
     run_all_combinations()
