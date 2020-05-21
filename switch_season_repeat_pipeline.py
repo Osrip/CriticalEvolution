@@ -5,6 +5,8 @@ import train
 import copy
 from automatic_plot_helper import detect_all_isings
 import time
+import ray
+
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 class RunCombi:
@@ -48,11 +50,19 @@ def run_all_combinations():
     num_repeats = 5 #200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
     run_combis = make_combinations(settings)
+
+    ray.init()
+
     for run_combi in run_combis:
-        second_subfolder = run_combi.subfolder
-        save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
-        settings = run_combi.settings
-        run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats)
+        run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats)
+
+@ray.remote
+def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
+    second_subfolder = run_combi.subfolder
+    save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
+    settings = run_combi.settings
+    run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats)
+
 
 def run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats):
     settings['save_subfolder'] = save_subfolder
