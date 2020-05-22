@@ -15,21 +15,22 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 def main():
-    run_combis, first_subfolder = run_all_combinations()
+    run_combis, first_subfolder = run_all_combinations(num_repeats=200, same_repeats=4)
     plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 
-
-def run_all_combinations():
+def run_all_combinations(num_repeats, same_repeats):
     '''
     main function for running simulations
+    num_repeats: the number of times last generation is repeated
+    same_repeats: Number of times the same simulation is run
     '''
     # TODO Parallelize all combinations!
 
-    same_repeats = 4  # Number of times the same simulation is run
+    #same_repeats = 4  # Number of times the same simulation is run
 
     settings, Iterations = train.create_settings()
-    num_repeats = 5  # 200 # num repeats: the number of times last generation is repeated
+    #num_repeats = 5  # 200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
     run_combis = make_combinations(settings, same_repeats)
 
@@ -127,4 +128,10 @@ def _parse_args():
 
 
 if __name__ == '__main__':
+    '''
+    input arguments of train.py can be passed just as usual. This way f.e. the number of time steps as well as number of
+     generations in first simulation can be adjusted
+     recommended:
+     -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 0 -a 1999
+    '''
     main()
