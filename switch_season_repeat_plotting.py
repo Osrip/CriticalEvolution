@@ -31,6 +31,7 @@ def plot_pipeline(run_combis, runs_name, attr):
     ordered_df = reorder_df(unordered_object_df, new_order_labels)
     ordered_list = df_to_nested_list(ordered_df)
     scatter_plot(ordered_df, ordered_list, new_order_labels, runs_name, attr)
+    violin_plot(ordered_df, runs_name)
     pass
     # TODO: Create plotting functions
 
@@ -158,6 +159,38 @@ def df_to_nested_list(df):
     return out_list
 
 
+def generate_common_plotting_params(runs_name):
+    savefolder = 'save/{}/figs/'.format(runs_name)
+    if not os.path.exists(savefolder):
+        os.makedirs(savefolder)
+
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+              '#17becf']
+
+    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
+
+    return savefolder, colors, legend_elements
+
+
+def violin_plot(df, runs_name, yscale='linear'):
+
+    savefolder, colors, legend_elements = generate_common_plotting_params(runs_name)
+
+
+
+    violin_colors = create_violin_colors(colors)
+
+    plt.figure(figsize=(25, 10))
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
+                           palette=violin_colors)  # inner='quartile'
+    df.mean().plot(style='_', c='black', ms=30)
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    plt.yscale(yscale)
+    plt.gca().set_ylim(top=20)
+    plt.legend(handles=legend_elements)
+    plt.savefig('{}violin_df.png'.format(savefolder), dpi=300, bbox_inches='tight')
+    plt.show()
+
 def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, yscale='linear'):
     '''
     Creates scatter plot of data
@@ -167,31 +200,8 @@ def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, ysca
     repeated runs
     '''
 
-    savefolder = 'save/{}/figs/'.format(runs_name)
-    if not os.path.exists(savefolder):
-        os.makedirs(savefolder)
 
-
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
-              '#17becf']
-    violin_colors = create_violin_colors(colors)
-
-
-    # LEGEND
-
-    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
-    #
-    #
-    # plt.figure(figsize=(25, 10))
-    # chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
-    #                        palette=violin_colors)  # inner='quartile'
-    # df.mean().plot(style='_', c='black', ms=30)
-    # chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
-    # plt.yscale(yscale)
-    # plt.gca().set_ylim(top=20)
-    # plt.legend(handles=legend_elements)
-    # plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
-    # plt.show()
+    savefolder, colors, legend_elements = generate_common_plotting_params(runs_name)
 
     fig, ax = plt.subplots()
     col_i = 0
