@@ -292,7 +292,9 @@ def run(settings, Iterations):
         #pop size of current simulation is taken from loaded simulation
         settings['pop_size'] = prev_settings['pop_size']
         print(startstr)
-        isings = pickle.load(open(loadfile, 'rb'))
+        file = open(loadfile, 'rb')
+        isings = pickle.load(file)
+        file.close()
 
     else:
         startstr = 'Starting simulation: (' + str(settings['TimeSteps']) + \

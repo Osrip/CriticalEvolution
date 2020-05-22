@@ -7,6 +7,7 @@ from automatic_plot_helper import detect_all_isings
 import time
 import ray
 from switch_season_repeat_plotting import plot
+import pickle
 
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
@@ -62,7 +63,17 @@ def run_all_combinations():
 
     ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
+
+    save_run_combis(run_combis, first_subfolder)
     return run_combis, first_subfolder
+
+def save_run_combis(run_combis, first_subfolder):
+    savefolder = 'save/{}/run_combis.pickle'.format(first_subfolder)
+    pickle_out = open(savefolder, 'wb')
+    pickle.dump(run_combis, pickle_out)
+    pickle_out.close()
+
+
 
 def make_combinations(settings, same_repeats = 1):
     '''

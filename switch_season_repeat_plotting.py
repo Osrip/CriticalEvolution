@@ -6,6 +6,8 @@ import copy
 import pandas as pd
 import glob
 
+def load_and_plot(runs_folder):
+
 
 def plot(run_combis, runs_name, attr):
     unordered_object_df = create_df(run_combis, runs_name, attr)
