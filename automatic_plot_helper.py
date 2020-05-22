@@ -73,7 +73,7 @@ def load_isings_specific_path(isings_path):
     :param isings_path : specific path to folder that ising objects are saved in
     '''
 
-    iter_list = detect_all_isings(isings_path)
+    iter_list = detect_all_isings_specific_path(isings_path)
 
     isings_list = []
     for ii, iter in enumerate(iter_list):

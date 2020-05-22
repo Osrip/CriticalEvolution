@@ -6,6 +6,7 @@ import copy
 from automatic_plot_helper import detect_all_isings
 import time
 import ray
+from switch_season_repeat_plotting import plot
 
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
@@ -34,25 +35,18 @@ class RunCombi:
         self.food = food
         self.beta = beta
         self.season = season_name
+        self.same_repeat = same_repeat
 
 
-def make_combinations(settings, same_repeats = 1):
-    '''
-    creates all combinations of runs
-    same_repeats: int - Defines how many times the simulation with same parameter is "repeated"
-    (for statistical significance)
-    '''
-    run_combis = []
-    for food in [100, 10]:
-        for beta in [0.1, 1]:
-            for repeat in range(same_repeats):
-                run_combis.append(RunCombi(settings, food, beta, repeat))
-    return run_combis
+def main():
+    run_combis, first_subfolder = run_all_combinations()
+    plot(run_combis, first_subfolder)
+
 
 
 def run_all_combinations():
     '''
-    main function
+    main function for running simulations
     '''
     # TODO Parallelize all combinations!
 
@@ -67,6 +61,20 @@ def run_all_combinations():
 
     ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
+    return run_combis, first_subfolder
+
+def make_combinations(settings, same_repeats = 1):
+    '''
+    creates all combinations of runs
+    same_repeats: int - Defines how many times the simulation with same parameter is "repeated"
+    (for statistical significance)
+    '''
+    run_combis = []
+    for food in [100, 10]:
+        for beta in [0.1, 1]:
+            for repeat in range(same_repeats):
+                run_combis.append(RunCombi(settings, food, beta, repeat))
+    return run_combis
 
 
 @ray.remote
@@ -133,4 +141,4 @@ def _parse_args():
 
 
 if __name__ == '__main__':
-    run_all_combinations()
+    main()
