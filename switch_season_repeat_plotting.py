@@ -7,18 +7,30 @@ import pandas as pd
 import glob
 import pickle
 from run_combi import RunCombi
+import matplotlib.pylab as plt
+from matplotlib.lines import Line2D
+import seaborn as sns
 
 
-def load_and_plot(runs_folder, attr):
-    run_combis = load_run_combis(runs_folder)
-    plot_pipeline(run_combis, runs_folder, attr)
+def load_and_plot(runs_name, attr):
+    '''
+    This function is for manual use, to load simulation results and plot them
+    runs_folder is the main folder that all runs are saved in
+    '''
+    run_combis = load_run_combis(runs_name)
+    plot_pipeline(run_combis, runs_name, attr)
 
 
 def plot_pipeline(run_combis, runs_name, attr):
+    '''
+    This is the function called by switch_season_repeat_pipeline right after the runs are finished
+    '''
     unordered_object_df = create_df(run_combis, runs_name, attr)
     new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
                         'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
     ordered_df = reorder_df(unordered_object_df, new_order_labels)
+    ordered_list = df_to_nested_list(ordered_df)
+    scatter_plot(ordered_df, ordered_list, new_order_labels, runs_name, attr)
     pass
     # TODO: Create plotting functions
 
@@ -28,7 +40,7 @@ def create_df(run_combis, runs_name, attr):
     labels = []
     for run_combi in run_combis:
         switched_repeat_isings, same_repeat_isings = extract_isings(run_combi, runs_name)
-        # TODO: Finish to make dataframe
+
 
         #Create data frame label
         if run_combi.season == 'summer':
@@ -128,6 +140,7 @@ def reorder_df(df, new_order_labels):
     df_new = df_new[new_cols]
     return df_new
 
+
 def list_to_df(all_data, labels, sims_per_label=4):
     # all_data = np.array([np.array(data) for data in all_data])
     # all_data = np.asarray(all_data)
@@ -135,6 +148,80 @@ def list_to_df(all_data, labels, sims_per_label=4):
     df = pd.DataFrame(all_data, index=labels)
     df = df.transpose()
     return df
+
+
+def df_to_nested_list(df):
+    df = copy.deepcopy(df)
+    out_list = []
+    for col in df:
+        out_list.append(df[col].tolist())
+    return out_list
+
+
+def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, yscale='linear'):
+    '''
+    Creates scatter plot of data
+    df: data frame of all data
+    all_data_reordered: the same data frame as list
+    new_order_labels = The labels that were used to sort the labels... not one label per run but one label for all
+    repeated runs
+    '''
+
+    savefolder = 'save/{}/figs/'.format(runs_name)
+    if not os.path.exists(savefolder):
+        os.makedirs(savefolder)
+
+
+    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22',
+              '#17becf']
+    violin_colors = create_violin_colors(colors)
+
+
+    # LEGEND
+
+    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
+    #
+    #
+    # plt.figure(figsize=(25, 10))
+    # chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
+    #                        palette=violin_colors)  # inner='quartile'
+    # df.mean().plot(style='_', c='black', ms=30)
+    # chart.set_xticklabels(chart.get_xticklabels(), rotation=70)
+    # plt.yscale(yscale)
+    # plt.gca().set_ylim(top=20)
+    # plt.legend(handles=legend_elements)
+    # plt.savefig('{}violin_df{}.png'.format(savefolder, save_addition), dpi=300, bbox_inches='tight')
+    # plt.show()
+
+    fig, ax = plt.subplots()
+    col_i = 0
+    for i, d in enumerate(all_data_reordered):
+        color = colors[col_i]
+        noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
+        ax.scatter(noisy_x[0, :], d, alpha=0.6, s=0.01, c=color)
+        if (i + 1) % 4 == 0:
+            col_i += 1
+
+    mean_series = df.mean()
+    mean_series.plot(style='_', c='black', ms=7)
+
+    ax.set_xticks(np.arange(32))
+    ax.set_yscale(yscale)
+    #plt.ylabel('median energy')
+    plt.ylabel(attr)
+    plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
+    plt.legend(handles=legend_elements)
+    plt.savefig('{}scatter.png'.format(savefolder), dpi=300, bbox_inches='tight')
+    plt.show()
+
+
+def create_violin_colors(color_list, repeat=4):
+    out_color_list = []
+    for color in color_list:
+        for i in range(repeat):
+            out_color_list.append(color)
+    return out_color_list
+
 
 if __name__ == '__main__':
     runs_folder = 'switch_seasons_20200522-224735'
