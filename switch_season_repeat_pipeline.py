@@ -6,43 +6,17 @@ import copy
 from automatic_plot_helper import detect_all_isings
 import time
 import ray
-from switch_season_repeat_plotting import plot
+from switch_season_repeat_plotting import plot_pipeline
 import pickle
-
+from run_combi import RunCombi
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
-class RunCombi:
-    def __init__(self, settings, food, beta, same_repeat, tot_same_repeats):
-        '''
-        This Class includes the properties of a certain simulation run
-        '''
-        settings = copy.deepcopy(settings)
-        settings['food_num'] = food
-        settings['init_beta'] = beta
-        self.settings = settings
-
-        if food == 10:
-            season_name = 'winter'
-        elif food == 100:
-            season_name = 'summer'
-        else:
-            raise Exception('''In the current implementation of pipeline food_num has to be either 10 or 100 
-            (winter and summer)''')
-
-        # This defines the same of the folder, that the run is saved in
-        subfolder = 'b{}_{}_{}'.format(beta, season_name, same_repeat)
-        self.subfolder = subfolder
-        self.food = food
-        self.beta = beta
-        self.season = season_name
-        self.same_repeat = same_repeat
-        self.tot_same_repeats = tot_same_repeats
 
 
 def main():
     run_combis, first_subfolder = run_all_combinations()
-    plot(run_combis, first_subfolder, 'avg_energy')
+    plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 
 

@@ -5,11 +5,16 @@ from automatic_plot_helper import attribute_from_isings
 import copy
 import pandas as pd
 import glob
+import pickle
+from run_combi import RunCombi
 
-def load_and_plot(runs_folder):
+
+def load_and_plot(runs_folder, attr):
+    run_combis = load_run_combis(runs_folder)
+    plot_pipeline(run_combis, runs_folder, attr)
 
 
-def plot(run_combis, runs_name, attr):
+def plot_pipeline(run_combis, runs_name, attr):
     unordered_object_df = create_df(run_combis, runs_name, attr)
     new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
                         'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
@@ -69,6 +74,13 @@ def make_2d_list_1d(in_list):
             out_list.append(en)
     return out_list
 
+def load_run_combis(runs_folder):
+    path = 'save/{}/run_combis.pickle'.format(runs_folder)
+    file = open(path, 'rb')
+    run_combis = pickle.load(file)
+    file.close()
+    return run_combis
+
 
 def extract_isings(run_combi, runs_name):
     path = 'save/{}/{}/'.format(runs_name, run_combi.subfolder)
@@ -123,3 +135,8 @@ def list_to_df(all_data, labels, sims_per_label=4):
     df = pd.DataFrame(all_data, index=labels)
     df = df.transpose()
     return df
+
+if __name__ == '__main__':
+    runs_folder = 'switch_seasons_20200522-224735'
+    attr = 'avg_energy'
+    load_and_plot(runs_folder, attr)
