@@ -9,6 +9,9 @@ import glob
 
 def plot(run_combis, runs_name, attr):
     unordered_object_df = create_df(run_combis, runs_name, attr)
+    new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
+                        'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
+    ordered_df = reorder_df(unordered_object_df, new_order_labels)
     pass
     # TODO: Create plotting functions
 
@@ -26,8 +29,10 @@ def create_df(run_combis, runs_name, attr):
         elif run_combi.season == 'winter':
             switched_to = 'summer'
 
-        switched_label = "b{} switched from {} to {}".format(run_combi.beta, run_combi.season, switched_to)
-        same_label = "b{} {}".format(run_combi.beta, run_combi.season)
+        #switched_label = "b{} switched from {} to {}".format(run_combi.beta, run_combi.season, switched_to)
+        switched_label = "b{} switched to {} {}".format(run_combi.beta, switched_to, run_combi.same_repeat)
+
+        same_label = "b{} {} {}".format(run_combi.beta, run_combi.season, run_combi.same_repeat)
 
         # Make the currently 2d "repeat_isings" list 1d, which means that all ising objects from all repeated generations are in one big list
         switched_repeat_isings_1d = make_2d_list_1d(switched_repeat_isings)
@@ -50,7 +55,7 @@ def create_df(run_combis, runs_name, attr):
 
 
 
-    sims_per_label = run_combi.same_repeat
+    sims_per_label = run_combi.tot_same_repeats
     unordered_df = list_to_df(data, labels, sims_per_label)
     return unordered_df
 

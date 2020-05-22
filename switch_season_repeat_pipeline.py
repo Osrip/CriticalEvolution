@@ -12,7 +12,7 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 class RunCombi:
-    def __init__(self, settings, food, beta, same_repeat):
+    def __init__(self, settings, food, beta, same_repeat, tot_same_repeats):
         '''
         This Class includes the properties of a certain simulation run
         '''
@@ -36,6 +36,7 @@ class RunCombi:
         self.beta = beta
         self.season = season_name
         self.same_repeat = same_repeat
+        self.tot_same_repeats = tot_same_repeats
 
 
 def main():
@@ -71,9 +72,9 @@ def make_combinations(settings, same_repeats = 1):
     '''
     run_combis = []
     for food in [100, 10]:
-        for beta in [0.1, 1]:
+        for beta in [1, 10]:
             for repeat in range(same_repeats):
-                run_combis.append(RunCombi(settings, food, beta, repeat))
+                run_combis.append(RunCombi(settings, food, beta, repeat, same_repeats))
     return run_combis
 
 
