@@ -1,17 +1,19 @@
 import os
 import numpy as np
 from automatic_plot_helper import load_isings_specific_path
+from automatic_plot_helper import attribute_from_isings
 import copy
 import pandas as pd
 import glob
 
 
-def plot(run_combis, runs_name):
-    unordered_df = create_df(run_combis, runs_name)
+def plot(run_combis, runs_name, attr):
+    unordered_object_df = create_df(run_combis, runs_name, attr)
+    pass
     # TODO: Create plotting functions
 
 
-def create_df(run_combis, runs_name):
+def create_df(run_combis, runs_name, attr):
     data = []
     labels = []
     for run_combi in run_combis:
@@ -30,9 +32,19 @@ def create_df(run_combis, runs_name):
         # Make the currently 2d "repeat_isings" list 1d, which means that all ising objects from all repeated generations are in one big list
         switched_repeat_isings_1d = make_2d_list_1d(switched_repeat_isings)
         same_repeat_isings_1d = make_2d_list_1d(same_repeat_isings)
+        del switched_repeat_isings
+        del same_repeat_isings
+
+        # Extract attributes from isings
+        switched_repeat_isings_1d_attr = attribute_from_isings(switched_repeat_isings_1d, attr)
+        same_repeat_isings_1d_attr = attribute_from_isings(same_repeat_isings_1d, attr)
+        del switched_repeat_isings_1d
+        del same_repeat_isings_1d
+
+
         # Append stuff to lists that will be converted to df
-        data.append(same_repeat_isings_1d)
-        data.append(switched_repeat_isings_1d)
+        data.append(same_repeat_isings_1d_attr)
+        data.append(switched_repeat_isings_1d_attr)
         labels.append(same_label)
         labels.append(switched_label)
 

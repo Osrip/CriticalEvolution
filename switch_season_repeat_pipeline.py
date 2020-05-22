@@ -40,7 +40,7 @@ class RunCombi:
 
 def main():
     run_combis, first_subfolder = run_all_combinations()
-    plot(run_combis, first_subfolder)
+    plot(run_combis, first_subfolder, 'avg_energy')
 
 
 
