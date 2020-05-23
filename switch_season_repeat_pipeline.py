@@ -96,6 +96,9 @@ def create_repeats(sim_name, save_subfolder, settings, num_repeats, food_summer,
     settings['switch_off_evolution'] = True
     settings['save_data'] = False
     settings['switch_seasons_repeat_pipeline'] = True
+    # Animations:
+    settings['plot_generations'] = [1]
+
 
 
     #  Number of repeats
@@ -151,7 +154,7 @@ if __name__ == '__main__':
     food_winter = 10
     
     '''
-    folder_add = 'test'
+    folder_add = 'default_run'
     num_repeats = 20
     same_repeats = 2
     food_summer = 100

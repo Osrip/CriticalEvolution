@@ -181,7 +181,7 @@ def parse():
     parser.add_argument('-sb', '--sigb', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
     parser.add_argument('-nmb', '--nomutb', dest='no_mut_beta', action='store_true', help='Switch off beta mutation')
-    parser.add_argument('-a', '--ani', nargs='+', required=False, dest = 'plot_gens', type=int
+    parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
     parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
