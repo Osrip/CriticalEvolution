@@ -15,11 +15,15 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 def main():
-    run_combis, first_subfolder = run_all_combinations(num_repeats=20, same_repeats=2)
+    num_repeats = 20
+    same_repeats = 2
+    food_summer = 100
+    food_winter = 10
+    run_combis, first_subfolder = run_all_combinations(num_repeats, same_repeats, food_summer, food_winter)
     plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 
-def run_all_combinations(num_repeats, same_repeats):
+def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter):
     '''
     main function for running simulations
     num_repeats: the number of times last generation is repeated
@@ -32,11 +36,12 @@ def run_all_combinations(num_repeats, same_repeats):
     settings, Iterations = train.create_settings()
     #num_repeats = 5  # 200 # num repeats: the number of times last generation is repeated
     first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
-    run_combis = make_combinations(settings, same_repeats)
+    run_combis = make_combinations(settings, same_repeats, food_summer, food_winter)
 
     ray.init()
 
-    ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats, food_summer, food_winter)
+                 for run_combi in run_combis]
     #ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
 
@@ -51,14 +56,14 @@ def save_run_combis(run_combis, first_subfolder):
 
 
 
-def make_combinations(settings, same_repeats = 1):
+def make_combinations(settings, same_repeats, food_summer, food_winter):
     '''
     creates all combinations of runs
     same_repeats: int - Defines how many times the simulation with same parameter is "repeated"
     (for statistical significance)
     '''
     run_combis = []
-    for food in [100, 10]:
+    for food in [food_summer, food_winter]:
         for beta in [1, 10]:
             for repeat in range(same_repeats):
                 run_combis.append(RunCombi(settings, food, beta, repeat, same_repeats))
@@ -66,21 +71,21 @@ def make_combinations(settings, same_repeats = 1):
 
 
 @ray.remote
-def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
+def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats, food_summer, food_winter):
     second_subfolder = run_combi.subfolder
     save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
     settings = run_combi.settings
-    run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats)
+    run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats, food_summer, food_winter)
 
 
-def run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats):
+def run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats, food_summer, food_winter):
     settings['save_subfolder'] = save_subfolder
 
     sim_name = train.run(settings, Iterations)
-    create_repeats(sim_name, save_subfolder, settings, num_repeats)
+    create_repeats(sim_name, save_subfolder, settings, num_repeats, food_summer, food_winter)
 
 
-def create_repeats(sim_name, save_subfolder, settings, num_repeats):
+def create_repeats(sim_name, save_subfolder, settings, num_repeats, food_summer, food_winter):
     settings = copy.deepcopy(settings)
 
     complete_sim_folder = '{}/{}'.format(save_subfolder, sim_name)
@@ -101,10 +106,10 @@ def create_repeats(sim_name, save_subfolder, settings, num_repeats):
     train.run(settings, Iterations)
 
     #  switch seasons
-    if settings['food_num'] == 100:
-        settings['food_num'] = 10
-    elif settings['food_num'] == 10:
-        settings['food_num'] = 100
+    if settings['food_num'] == food_summer:
+        settings['food_num'] = food_winter
+    elif settings['food_num'] == food_winter:
+        settings['food_num'] = food_summer
 
 
     settings['repeat_pipeline_switched_boo'] = True
