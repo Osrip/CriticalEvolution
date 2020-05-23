@@ -15,7 +15,7 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 def main():
-    run_combis, first_subfolder = run_all_combinations(num_repeats=20, same_repeats=2)
+    run_combis, first_subfolder = run_all_combinations(num_repeats=20, same_repeats=4)
     plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 

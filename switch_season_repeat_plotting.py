@@ -25,12 +25,15 @@ def plot_pipeline(run_combis, runs_name, attr):
     '''
     This is the function called by switch_season_repeat_pipeline right after the runs are finished
     '''
+    # Total number of repeats (of same simulation)
+    tot_same_repeats = run_combis[0].tot_same_repeats
+
     unordered_object_df = create_df(run_combis, runs_name, attr)
     new_order_labels = ['b1 summer', 'b1 switched to summer', 'b10 summer', 'b10 switched to summer', 'b1 winter',
                         'b1 switched to winter', 'b10 winter', 'b10 switched to winter']
     ordered_df = reorder_df(unordered_object_df, new_order_labels)
     ordered_list = df_to_nested_list(ordered_df)
-    scatter_plot(ordered_df, ordered_list, new_order_labels, runs_name, attr)
+    scatter_plot(ordered_df, ordered_list, new_order_labels, runs_name, attr, tot_same_repeats)
     violin_plot(ordered_df, runs_name)
     pass
     # TODO: Create plotting functions
@@ -191,7 +194,7 @@ def violin_plot(df, runs_name, yscale='linear'):
     plt.savefig('{}violin_df.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
 
-def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, yscale='linear'):
+def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, tot_same_repeats, yscale='linear'):
     '''
     Creates scatter plot of data
     df: data frame of all data
@@ -209,17 +212,17 @@ def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, ysca
         color = colors[col_i]
         noisy_x = i * np.ones((1, len(d))) + np.random.random(size=len(d)) * 0.5
         ax.scatter(noisy_x[0, :], d, alpha=0.6, s=0.01, c=color)
-        if (i + 1) % 4 == 0:
+        if (i + 1) % tot_same_repeats == 0:
             col_i += 1
 
     mean_series = df.mean()
     mean_series.plot(style='_', c='black', ms=7)
 
-    ax.set_xticks(np.arange(32))
+    ax.set_xticks(np.arange(8 * tot_same_repeats))
     ax.set_yscale(yscale)
     #plt.ylabel('median energy')
     plt.ylabel(attr)
-    plt.xticks(np.arange(1, len(new_order_labels) * 4 + 1, 4), new_order_labels, rotation=70)
+    plt.xticks(np.arange(1, len(new_order_labels) * tot_same_repeats + 1, tot_same_repeats), new_order_labels, rotation=70)
     plt.legend(handles=legend_elements)
     plt.savefig('{}scatter.png'.format(savefolder), dpi=300, bbox_inches='tight')
     plt.show()
