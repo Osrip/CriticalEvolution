@@ -15,7 +15,7 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 def main():
-    run_combis, first_subfolder = run_all_combinations(num_repeats=20, same_repeats=4)
+    run_combis, first_subfolder = run_all_combinations(num_repeats=20, same_repeats=2)
     plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 
@@ -36,8 +36,8 @@ def run_all_combinations(num_repeats, same_repeats):
 
     ray.init()
 
-    #ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
-    ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    #ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
 
     save_run_combis(run_combis, first_subfolder)
@@ -65,7 +65,7 @@ def make_combinations(settings, same_repeats = 1):
     return run_combis
 
 
-#@ray.remote
+@ray.remote
 def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
     second_subfolder = run_combi.subfolder
     save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
