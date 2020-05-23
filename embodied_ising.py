@@ -381,6 +381,7 @@ class ising:
 
     # Update all states of the system without restricted influences
 
+
     def SequentialGlauberStepFastHelper(self, settings):
         thermalTime = int(settings['thermalTime'])
         self.UpdateSensors(settings)
@@ -894,7 +895,11 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
 
             else:
                 if settings['parallel_computing']:
-                    parallelizedSequGlauberSteps(isings, settings)
+                    # parallelizedSequGlauberSteps(isings, settings)
+                    ray.init(num_cpus=settings['cores'])
+                    ray_funcs = [ray_parallel_Glauber_steps.remote(I, settings) for I in isings]
+                    ray.get(ray_funcs)
+
                 else:
                     [I.SequentialGlauberStepFastHelper(settings) for I in isings]
 
@@ -1029,6 +1034,12 @@ def calculate_internal_energy(s, h, J):
     # E2m += E ** 2 / float(T)
     #C = I.Beta ** 2 * (E2m - E ** 2) / I.size
     return internal_energy
+
+
+@ray.remote
+def ray_parallel_Glauber_steps(I, settings):
+
+    I.SequentialGlauberStepFastHelper(settings)
 
 
 def parallelizedSequGlauberSteps(isings, settings, asynchronous=False):
@@ -1194,8 +1205,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 maxBeta = np.max(Beta)
                 minBeta = np.min(Beta)
 
-        # save rate equal to evolutation rate
-        # TODO: Add eatrate; make this useful
+            # save rate equal to evolutation rate
+            # TODO: Add eatrate; make this useful
             mutationrate = None
             fitm = None
             fitC = None
@@ -1226,7 +1237,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 save_sim_season_pipeline(settings, folder, isings_copy, fitness_stat, mutationrate, fitC, fitm, rep)
                 del isings_copy
 
-
+            # TODO: Doesn't this have to be elif?
             if settings['save_data']:
 
                 isings_copy = deepcopy(isings)

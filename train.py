@@ -108,7 +108,6 @@ def create_settings():
     settings['abrupt_seasons_len'] = args.abrupt_seasons_len
     
     settings['parallel_computing'] = False #BOO
-    settings['cores'] = 12 #INT if 0 number is determined automatically
     
     settings['energy_model'] = not args.no_ener_mod #BOO
     settings['v_min'] = args.v_min  # FLOAT [0,1)
@@ -250,7 +249,7 @@ def parse():
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
                         a_max=0.05, refresh_plot=1000, dream_heat_capacity=1000, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
-                        switch_off_evolution=True)
+                        switch_off_evolution=False)
     args = parser.parse_args()
     return args
 
