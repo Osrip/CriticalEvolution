@@ -14,16 +14,16 @@ processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
 
-def main():
-    num_repeats = 20
-    same_repeats = 2
-    food_summer = 100
-    food_winter = 10
-    run_combis, first_subfolder = run_all_combinations(num_repeats, same_repeats, food_summer, food_winter)
+def main(num_repeats, same_repeats, food_summer, food_winter, folder_add):
+
+    folder_add = 'num_rep_{}_same_rep_{}_f_sum_{}_f_win{}_{}'.format(num_repeats, same_repeats, food_summer, food_winter
+                                                                     , folder_add)
+
+    run_combis, first_subfolder = run_all_combinations(num_repeats, same_repeats, food_summer, food_winter, folder_add)
     plot_pipeline(run_combis, first_subfolder, 'avg_energy')
 
 
-def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter):
+def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter, folder_add):
     '''
     main function for running simulations
     num_repeats: the number of times last generation is repeated
@@ -35,7 +35,7 @@ def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter):
 
     settings, Iterations = train.create_settings()
     #num_repeats = 5  # 200 # num repeats: the number of times last generation is repeated
-    first_subfolder = 'switch_seasons_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
+    first_subfolder = 'switch_seasons_{}_{}'.format(time.strftime("%Y%m%d-%H%M%S"), folder_add)
     run_combis = make_combinations(settings, same_repeats, food_summer, food_winter)
 
     ray.init()
@@ -139,8 +139,22 @@ def _parse_args():
 if __name__ == '__main__':
     '''
     input arguments of train.py can be passed just as usual. This way f.e. the number of time steps as well as number of
-     generations in first simulation can be adjusted
-     recommended:
-     -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 0 -a 1999
+    generations in first simulation can be adjusted
+    recommended:
+    -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 0 -a 1999
+    
+    The parameters below specify the pipeline specific parameters. The following parameters are recommented:
+    folder_add = 'test_run'
+    num_repeats = 200
+    same_repeats = 4 (four times as many cores are required, so in this case 16)
+    food_summer = 100
+    food_winter = 10
+    
     '''
-    main()
+    folder_add = 'test'
+    num_repeats = 20
+    same_repeats = 2
+    food_summer = 100
+    food_winter = 10
+
+    main(num_repeats, same_repeats, food_summer, food_winter, folder_add)
