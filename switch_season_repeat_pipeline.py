@@ -36,7 +36,8 @@ def run_all_combinations(num_repeats, same_repeats):
 
     ray.init()
 
-    ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    #ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
     ray.get(ray_funcs)
 
     save_run_combis(run_combis, first_subfolder)
@@ -64,7 +65,7 @@ def make_combinations(settings, same_repeats = 1):
     return run_combis
 
 
-@ray.remote
+#@ray.remote
 def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats):
     second_subfolder = run_combi.subfolder
     save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
@@ -81,13 +82,16 @@ def run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats
 
 def create_repeats(sim_name, save_subfolder, settings, num_repeats):
     settings = copy.deepcopy(settings)
-    settings['loadfile'] = sim_name
+
     complete_sim_folder = '{}/{}'.format(save_subfolder, sim_name)
+    settings['loadfile'] = complete_sim_folder
 
     settings['iter'] = detect_all_isings(complete_sim_folder)[-1]
+    settings['LoadIsings'] = True
     settings['switch_off_evolution'] = True
     settings['save_data'] = False
     settings['switch_seasons_repeat_pipeline'] = True
+
 
     #  Number of repeats
     # Iterations = 200

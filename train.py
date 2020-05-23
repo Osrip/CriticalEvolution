@@ -281,15 +281,19 @@ def run(settings, Iterations):
 
     # --- POPULATE THE ENVIRONMENT WITH ORGANISMS ----------+
     if settings['LoadIsings']:
-        loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + str(settings['iter']) + ']-isings.pickle'
+        if not settings['switch_seasons_repeat_pipeline']:
+            loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + str(settings['iter']) + ']-isings.pickle'
+        else:
+            loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + str(settings['iter']) + ']-isings.pickle'
 
         startstr = 'Loading simulation:' + loadfile + ' (' + str(settings['TimeSteps']) + \
                    ' timesteps) x (' + str(Iterations) + ' iterations)'
 
-        prev_settings = load_settings(settings['loadfile'])
+        if not settings['switch_seasons_repeat_pipeline']:
+            prev_settings = load_settings(settings['loadfile'])
 
-        #pop size of current simulation is taken from loaded simulation
-        settings['pop_size'] = prev_settings['pop_size']
+            #pop size of current simulation is taken from loaded simulation
+            settings['pop_size'] = prev_settings['pop_size']
         print(startstr)
         file = open(loadfile, 'rb')
         isings = pickle.load(file)
