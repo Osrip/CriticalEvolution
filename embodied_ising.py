@@ -1617,7 +1617,8 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
 
     # cut off current sim_name and replace it with loadfile (loaded sim)
 
-    loaded_sim_with_subfolders = '{}/{}'.format(settings['save_subfolder'], settings['loadfile'])
+    #loaded_sim_with_subfolders = '{}/{}'.format(settings['save_subfolder'], settings['loadfile'])
+    loaded_sim_with_subfolders = settings['loadfile']
 
     dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods_{}".format(loaded_sim_with_subfolders, settings['iter'],
                                                                      settings['food_num'], switched_name_addition)

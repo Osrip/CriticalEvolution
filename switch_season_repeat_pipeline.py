@@ -42,7 +42,8 @@ def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter, fo
 
     ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats, food_summer, food_winter)
                  for run_combi in run_combis]
-    #ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats) for run_combi in run_combis]
+    # ray_funcs = [run_one_combination(run_combi, first_subfolder, Iterations, num_repeats, food_summer, food_winter)
+    #              for run_combi in run_combis]
     ray.get(ray_funcs)
 
     save_run_combis(run_combis, first_subfolder)
