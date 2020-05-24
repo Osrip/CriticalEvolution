@@ -66,7 +66,7 @@ def make_combinations(settings, same_repeats, food_summer, food_winter):
     for food in [food_summer, food_winter]:
         for beta in [1, 10]:
             for repeat in range(same_repeats):
-                run_combis.append(RunCombi(settings, food, beta, repeat, same_repeats))
+                run_combis.append(RunCombi(settings, food, beta, repeat, same_repeats, food_summer, food_winter))
     return run_combis
 
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     input arguments of train.py can be passed just as usual. This way f.e. the number of time steps as well as number of
     generations in first simulation can be adjusted
     recommended:
-    -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 0 -a 1999
+    -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 1999 -a 1999
     
     The parameters below specify the pipeline specific parameters. The following parameters are recommented:
     folder_add = 'test_run'
@@ -154,10 +154,10 @@ if __name__ == '__main__':
     food_winter = 10
     
     '''
-    folder_add = 'default_run'
+    folder_add = 'test'
     num_repeats = 20
-    same_repeats = 2
+    same_repeats = 1
     food_summer = 100
-    food_winter = 10
+    food_winter = 25
 
     main(num_repeats, same_repeats, food_summer, food_winter, folder_add)

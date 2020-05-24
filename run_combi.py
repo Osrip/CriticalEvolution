@@ -9,7 +9,7 @@ The class has to be in a separate file in order for the code to work properly
 
 
 class RunCombi:
-    def __init__(self, settings, food, beta, same_repeat, tot_same_repeats):
+    def __init__(self, settings, food, beta, same_repeat, tot_same_repeats, food_summer, food_winter):
         '''
         This Class includes the properties of a certain simulation run
         '''
@@ -18,9 +18,9 @@ class RunCombi:
         settings['init_beta'] = beta
         self.settings = settings
 
-        if food == 10:
+        if food == food_winter:
             season_name = 'winter'
-        elif food == 100:
+        elif food == food_summer:
             season_name = 'summer'
         else:
             raise Exception('''In the current implementation of pipeline food_num has to be either 10 or 100 
