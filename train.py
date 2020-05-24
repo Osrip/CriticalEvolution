@@ -39,6 +39,8 @@ def create_settings():
     # number of system-wide spin updates per unit of time  (multiplies computation time)
     settings['thermalTime'] = args.thermal_time
 
+
+    #  -- settings only used by switch_season_repeat_pipeline --
     settings['switch_off_evolution'] = args.switch_off_evolution
 
     # In case settings['switch_off_evolution'] == True and settings['loadfile'] != '' isings objects are saved in folder of
@@ -49,8 +51,10 @@ def create_settings():
     settings['repeat_pipeline_switched_boo'] = None
     settings['save_subfolder'] = ''
     settings['switch_seasons_repeat_pipeline'] = False  #  This has to be activated For the repeat runs of switch_season_repeat_pipeline
+    settings['commands_in_folder_name'] = True
 
-    
+
+
     settings['evolution_toggle'] = False  # only toggles for CriticalLearning
     settings['evolution_rate'] = 1  # only with critical learning number of iterations to skip to kill/mate (gives more time to eat before evolution)
     

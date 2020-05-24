@@ -75,6 +75,7 @@ def run_one_combination(run_combi, first_subfolder, Iterations, num_repeats, foo
     second_subfolder = run_combi.subfolder
     save_subfolder = '{}/{}'.format(first_subfolder, second_subfolder)
     settings = run_combi.settings
+    settings['commands_in_folder_name'] = False
     run_sim_and_create_repeats(save_subfolder, settings, Iterations, num_repeats, food_summer, food_winter)
 
 
@@ -144,7 +145,7 @@ if __name__ == '__main__':
     input arguments of train.py can be passed just as usual. This way f.e. the number of time steps as well as number of
     generations in first simulation can be adjusted
     recommended:
-    -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 1999 -a 1999
+    -g 2000 -t 2000 -dream_c 0 -nat_c 0 -ref 0 -rec_c 0
     
     The parameters below specify the pipeline specific parameters. The following parameters are recommented:
     folder_add = 'test_run'
@@ -158,6 +159,6 @@ if __name__ == '__main__':
     num_repeats = 20
     same_repeats = 1
     food_summer = 100
-    food_winter = 25
+    food_winter = 10
 
     main(num_repeats, same_repeats, food_summer, food_winter, folder_add)

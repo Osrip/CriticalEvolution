@@ -1107,7 +1107,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     #Add command line input to folder name
     s = sys.argv[1:]
     command_input = '_'.join([str(elem) for elem in s])
-    sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S") + command_input
+    sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S")
+    if settings['commands_in_folder_name']:
+        sim_name = sim_name + command_input
 
     settings['sim_name'] = sim_name
 
