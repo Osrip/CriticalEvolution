@@ -12,8 +12,6 @@ from run_combi import RunCombi
 processes = ('-g 5 -t 200', '-g 20 -t 200')
 
 
-
-
 def main(num_repeats, same_repeats, food_summer, food_winter, folder_add):
 
     folder_add = 'num_rep_{}_same_rep_{}_f_sum_{}_f_win{}_{}'.format(num_repeats, same_repeats, food_summer, food_winter
@@ -157,7 +155,7 @@ if __name__ == '__main__':
     
     '''
     folder_add = 'test'
-    num_repeats = 20
+    num_repeats = 100
     same_repeats = 1
     food_summer = 100
     food_winter = 10
