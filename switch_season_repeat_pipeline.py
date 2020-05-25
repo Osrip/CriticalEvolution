@@ -38,6 +38,7 @@ def run_all_combinations(num_repeats, same_repeats, food_summer, food_winter, fo
     first_subfolder = 'switch_seasons_{}_{}'.format(time.strftime("%Y%m%d-%H%M%S"), folder_add)
     run_combis = make_combinations(settings, same_repeats, food_summer, food_winter)
 
+    #ray.init(memory=5*10**9, object_store_memory=5*10**9)
     ray.init()
 
     ray_funcs = [run_one_combination.remote(run_combi, first_subfolder, Iterations, num_repeats, food_summer, food_winter, only_fittest)
@@ -199,7 +200,7 @@ if __name__ == '__main__':
     
     '''
     folder_add = 'test'
-    num_repeats = 20
+    num_repeats = 200
     same_repeats = 1
     food_summer = 100
     food_winter = 10
