@@ -178,7 +178,7 @@ def load_isings_attributes_from_list(loadfile, iter_list, attribute):
 
 def attribute_from_isings(isings, attribute):
     '''
-    Returns a list of attributes (numerated by organisms) from isings list
+    Returns a list of attributes (numerated by organisms) from isings list (Only one generation!!! in isings)
     '''
 
     #attribute_list = [exec('I.{}'.format(attribute)) for I in isings]
