@@ -131,6 +131,8 @@ def update_plot(f, x_pars_list, y_pars_list, c_pars_list, s = 3, alpha=0.8, log 
     # plt.ylim(y_lim)
     plt.xlabel('{}'.format(plot_var_x.replace('_', ' ')))
     plt.ylabel('{}'.format(plot_var_y.replace('_', ' ')))
+
+
 def upper_tri_masking(A):
     m = A.shape[0]
     r = np.arange(m)
