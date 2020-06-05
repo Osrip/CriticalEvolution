@@ -10,8 +10,9 @@ def main(sim_name, list_attr, len_cut_off):
     animate_cut_off(isings, list_attr, len_cut_off, sim_name)
 
 
-def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30):
-    fig = plt.figure()
+def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+    plt.rcParams.update({'font.size': 20})
+    fig = plt.figure(figsize=(19, 10))
     ani = animation.FuncAnimation(fig, update_plot,
                                   fargs=[isings, list_attr], interval=1,
                                   frames=len_cut_off)
@@ -21,10 +22,12 @@ def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30):
 
     save_path = 'save/{}/figs/cut_of_animation/'.format(sim_name)
     save_name = '{}_cut_off_{}_ts'.format(list_attr, len_cut_off)
+    #ani.save(save_path+save_name, writer=writer, dpi=dpi)
     ani.save(save_path+save_name, writer=writer)
 
 
 def update_plot(cut_num, isings, list_attr):
+    plt.cla()
 
     # isings is a list of generations including again isings, therefore iterating through the gernerations with list
     # comprehensions, then again iterating through different individuals of one generation within that
@@ -39,7 +42,7 @@ def update_plot(cut_num, isings, list_attr):
     gen_mean_mean_attrs_list = [np.mean(attrs_one_gen) for attrs_one_gen in attrs_list]
 
     x_axis = np.arange(len(gen_mean_mean_attrs_list))
-    plt.scatter(x_axis ,gen_mean_mean_attrs_list)
+    plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
     plt.ylabel(list_attr)
     plt.xlabel('Generation')
 
@@ -57,7 +60,8 @@ def cut_attrs(cut_num, attrs):
 
 if __name__ == '__main__':
     sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    len_cut_off = 500
-    list_attrs = ['energies', 'velocities']
+    len_cut_off = 1000 #500
+    #list_attrs = ['energies', 'velocities']
+    list_attrs = ['energies']
     for list_attr in list_attrs:
         main(sim_name, list_attr, len_cut_off)
