@@ -185,6 +185,12 @@ def violin_plot(df, runs_name, attr, tot_same_repeats, yscale='linear'):
     violin_colors = create_violin_colors(colors, repeat=tot_same_repeats)
 
     plt.figure(figsize=(25, 10))
+
+    if attr == 'avg_energy':
+        plt.axhline(y=2, linewidth=1, color='r')
+    elif attr== 'avg_velocity':
+        plt.axhline(y=0.05, linewidth=1, color='r')
+
     chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05,
                            palette=violin_colors)  # inner='quartile'
     df.mean().plot(style='_', c='black', ms=30)
@@ -193,7 +199,7 @@ def violin_plot(df, runs_name, attr, tot_same_repeats, yscale='linear'):
     #plt.gca().set_ylim(top=20)
     plt.legend(handles=legend_elements)
     plt.title(attr)
-    plt.savefig('{}violin_df.png'.format(savefolder), dpi=300, bbox_inches='tight')
+    plt.savefig('{}violin_{}.png'.format(savefolder, attr), dpi=300, bbox_inches='tight')
     plt.show()
 
 def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, tot_same_repeats, yscale='linear'):
@@ -208,7 +214,15 @@ def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, tot_
 
     savefolder, colors, legend_elements = generate_common_plotting_params(runs_name)
 
+    plt.rcParams.update({'font.size': 11})
+
     fig, ax = plt.subplots()
+
+    if attr == 'avg_energy':
+        plt.axhline(y=2, linewidth=0.5, color='r')
+    elif attr== 'avg_velocity':
+        plt.axhline(y=0.05, linewidth=0.5, color='r')
+
     col_i = 0
     for i, d in enumerate(all_data_reordered):
         color = colors[col_i]
@@ -219,6 +233,8 @@ def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, tot_
 
     mean_series = df.mean()
     mean_series.plot(style='_', c='black', ms=7)
+
+
 
     ax.set_xticks(np.arange(8 * tot_same_repeats))
     ax.set_yscale(yscale)
@@ -232,7 +248,7 @@ def scatter_plot(df, all_data_reordered, new_order_labels, runs_name, attr, tot_
                    rotation=70)
     plt.legend(handles=legend_elements)
     plt.title(attr)
-    plt.savefig('{}scatter.png'.format(savefolder), dpi=300, bbox_inches='tight')
+    plt.savefig('{}scatter_{}.png'.format(savefolder, attr), dpi=300, bbox_inches='tight')
     plt.show()
 
 
@@ -245,6 +261,19 @@ def create_violin_colors(color_list, repeat=4):
 
 
 if __name__ == '__main__':
-    runs_folder = 'switch_seasons_20200524-031338_num_rep_100_same_rep_1_f_sum_100_f_win10_middle_long_test'
-    attr = 'avg_energy'
-    load_and_plot(runs_folder, attr)
+    # runs_folder = 'switch_seasons_20200524-031338_num_rep_100_same_rep_1_f_sum_100_f_win10_middle_long_test'
+    # attr = 'food'
+    # load_and_plot(runs_folder, attr)
+
+    runs_folders = [
+        'switch_seasons_20200526-124526_num_rep_200_same_rep_4_f_sum_100_f_win10_huge_run'
+
+    ]
+
+    #runs_folders = ['switch_seasons_20200524-135607_num_rep_200_same_rep_1_f_sum_100_f_win10_Other_energy_payment_REAL']
+    #attrs = 'avg_energy', 'food', 'avg_velocity'
+    attrs = ['Beta']
+    for runs_folder in runs_folders:
+        for attr in attrs:
+            load_and_plot(runs_folder, attr)
+

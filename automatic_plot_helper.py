@@ -202,7 +202,7 @@ def wait_for_enough_memory(sim_name):
     total_system_memory = memory_data.active
 
     if total_system_memory < size_isings_folder:
-        raise warnings.warn("Your system's memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
+        warnings.warn("Your system's total memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
     else:
         waited_seconds = 0
         while available_memory < size_isings_folder:
