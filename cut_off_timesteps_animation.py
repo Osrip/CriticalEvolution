@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 import os
+import pandas as pd
+import seaborn as sns
+from matplotlib.lines import Line2D
+from numba import jit
 
 def main(sim_name, list_attr, len_cut_off):
     isings = load_isings(sim_name)
@@ -13,7 +17,7 @@ def main(sim_name, list_attr, len_cut_off):
 def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(19, 10))
-    ani = animation.FuncAnimation(fig, update_plot,
+    ani = animation.FuncAnimation(fig, update_violin_plot,
                                   fargs=[isings, list_attr], interval=1,
                                   frames=len_cut_off)
     Writer = animation.FFMpegFileWriter
@@ -38,7 +42,20 @@ def update_plot(cut_num, isings, list_attr):
     plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
     plt.ylabel(list_attr)
     plt.xlabel('Generation')
-        
+
+def update_violin_plot(cut_num, isings, list_attr, n_th_entry_violin=20):
+    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, isings)
+
+    plt.cla()
+
+    short_mean_attrs_list = mean_attrs_list[0::n_th_entry_violin]
+    df_labels = np.arange(0, len(mean_attrs_list), n_th_entry_violin)
+    df = pd.DataFrame(data=short_mean_attrs_list, index=df_labels)
+
+    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05)
+    df.mean().plot(style='_', c='black', ms=30)
+    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
+    plt.legend(handles=legend_elements)
 
 def load_and_process_attrs(list_attr, cut_num, isings):
     # isings is a list of generations including again isings, therefore iterating through the gernerations with list
@@ -69,7 +86,7 @@ def cut_attrs(cut_num, attrs):
 
 if __name__ == '__main__':
     sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    len_cut_off = 2 #500
+    len_cut_off = 10 #500
     #list_attrs = ['energies', 'velocities']
     list_attrs = ['energies']
     for list_attr in list_attrs:
