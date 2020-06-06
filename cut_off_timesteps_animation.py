@@ -3,7 +3,7 @@ from automatic_plot_helper import attribute_from_isings
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
-
+import os
 
 def main(sim_name, list_attr, len_cut_off):
     isings = load_isings(sim_name)
@@ -21,7 +21,10 @@ def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     writer.frame_format = 'png'
 
     save_path = 'save/{}/figs/cut_of_animation/'.format(sim_name)
-    save_name = '{}_cut_off_{}_ts'.format(list_attr, len_cut_off)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    save_name = '{}_cut_off_{}_ts.mp4'.format(list_attr, len_cut_off)
     #ani.save(save_path+save_name, writer=writer, dpi=dpi)
     ani.save(save_path+save_name, writer=writer)
 
@@ -60,7 +63,7 @@ def cut_attrs(cut_num, attrs):
 
 if __name__ == '__main__':
     sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    len_cut_off = 1000 #500
+    len_cut_off = 2 #500
     #list_attrs = ['energies', 'velocities']
     list_attrs = ['energies']
     for list_attr in list_attrs:

@@ -63,6 +63,7 @@ def main(loadfile, settings, isings_list, plot_var_x = 'avg_velocity', plot_var_
     ani = animation.FuncAnimation(fig, update_plot,
                                   fargs=[x_pars_list, y_pars_list, c_pars_list, s, alpha], interval=1,
                                   frames=len(x_pars_list))
+
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
     writer.frame_format = 'png'
