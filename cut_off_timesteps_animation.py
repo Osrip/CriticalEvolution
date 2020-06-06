@@ -11,13 +11,13 @@ from numba import jit
 
 def main(sim_name, list_attr, len_cut_off):
     isings = load_isings(sim_name)
-    animate_cut_off(isings, list_attr, len_cut_off, sim_name)
+    animate_cut_off_violin(isings, list_attr, len_cut_off, sim_name)
 
 
 def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(19, 10))
-    ani = animation.FuncAnimation(fig, update_violin_plot,
+    ani = animation.FuncAnimation(fig, update_plot,
                                   fargs=[isings, list_attr], interval=1,
                                   frames=len_cut_off)
     Writer = animation.FFMpegFileWriter
@@ -43,19 +43,40 @@ def update_plot(cut_num, isings, list_attr):
     plt.ylabel(list_attr)
     plt.xlabel('Generation')
 
-def update_violin_plot(cut_num, isings, list_attr, n_th_entry_violin=20):
+
+def animate_cut_off_violin(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+    plt.rcParams.update({'font.size': 20})
+    fig = plt.figure(figsize=(25, 10))
+    ani = animation.FuncAnimation(fig, update_violin_plot,
+                                  fargs=[isings, list_attr], interval=1,
+                                  frames=len_cut_off)
+    Writer = animation.FFMpegFileWriter
+    writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
+    writer.frame_format = 'png'
+
+    save_path = 'save/{}/figs/cut_of_animation/'.format(sim_name)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    save_name = '{}_cut_off_{}_ts.mp4'.format(list_attr, len_cut_off)
+    #ani.save(save_path+save_name, writer=writer, dpi=dpi)
+    ani.save(save_path+save_name, writer=writer)
+
+
+def update_violin_plot(cut_num, isings, list_attr, n_th_entry_violin=100):
     mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, isings)
 
     plt.cla()
 
     short_mean_attrs_list = mean_attrs_list[0::n_th_entry_violin]
-    df_labels = np.arange(0, len(mean_attrs_list), n_th_entry_violin)
+    df_labels = np.arange(0, len(mean_attrs_list)-1, n_th_entry_violin)
     df = pd.DataFrame(data=short_mean_attrs_list, index=df_labels)
-
+    df = df.T
     chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05)
-    df.mean().plot(style='_', c='black', ms=30)
+    df.mean().plot(style='_', c='black')  # , ms=30
     legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
     plt.legend(handles=legend_elements)
+
 
 def load_and_process_attrs(list_attr, cut_num, isings):
     # isings is a list of generations including again isings, therefore iterating through the gernerations with list
