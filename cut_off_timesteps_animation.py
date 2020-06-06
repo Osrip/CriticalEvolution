@@ -32,6 +32,15 @@ def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
 def update_plot(cut_num, isings, list_attr):
     plt.cla()
 
+    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, isings)
+
+    x_axis = np.arange(len(gen_mean_mean_attrs_list))
+    plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
+    plt.ylabel(list_attr)
+    plt.xlabel('Generation')
+        
+
+def load_and_process_attrs(list_attr, cut_num, isings):
     # isings is a list of generations including again isings, therefore iterating through the gernerations with list
     # comprehensions, then again iterating through different individuals of one generation within that
     attrs_list = [attribute_from_isings(ising, list_attr) for ising in isings]
@@ -42,12 +51,9 @@ def update_plot(cut_num, isings, list_attr):
     # Now we have the attributes of all inidividuals of all generations in a nice list of lists availablöe for plotting
 
     # Taking mean over every generation, so we have one data point for each generation
-    gen_mean_mean_attrs_list = [np.mean(attrs_one_gen) for attrs_one_gen in attrs_list]
+    gen_mean_mean_attrs_list = [np.mean(attrs_one_gen) for attrs_one_gen in mean_attrs_list]
 
-    x_axis = np.arange(len(gen_mean_mean_attrs_list))
-    plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
-    plt.ylabel(list_attr)
-    plt.xlabel('Generation')
+    return mean_attrs_list, gen_mean_mean_attrs_list
 
 
 def cut_attrs(cut_num, attrs):
