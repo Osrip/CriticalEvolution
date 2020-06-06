@@ -39,6 +39,36 @@ def load_settings(loadfile):
     settings = pickle.load(open(curdir + load_settings, 'rb'))
     return settings
 
+
+def load_isings_attr(loadfile, attr):
+    '''
+    Load all isings attributes from pickle files and return them as nested list
+    :param loadfile : simulation name
+    :param attr attriobute to load
+    '''
+
+
+    iter_list = detect_all_isings(loadfile)
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    attrs_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            file = open(filename, 'rb')
+            attrs = attribute_from_isings(pickle.load(file), attr)
+            file.close()
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        attrs_list.append(attrs)
+    return attrs_list
+
+
 def load_isings(loadfile, wait_for_memory = True):
     '''
     Load all isings pickle files and return them as list
