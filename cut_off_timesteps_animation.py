@@ -10,18 +10,20 @@ import seaborn as sns
 from matplotlib.lines import Line2D
 from numba import jit
 
-def main(sim_name, list_attr, len_cut_off):
+def main(sim_name, list_attr, len_cut_off, n_th_frame, fps):
     #isings = load_isings(sim_name)
     attrs_list = load_isings_attr(sim_name, list_attr)
-    animate_cut_off_violin(attrs_list, list_attr, len_cut_off, sim_name)
+    cut_offs_to_plot = np.arange(0, len_cut_off, n_th_frame)
+    animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps)
+    animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps)
 
 
-def animate_cut_off(attrs_list, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+def animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(19, 10))
     ani = animation.FuncAnimation(fig, update_plot,
                                   fargs=[attrs_list, list_attr], interval=1,
-                                  frames=len_cut_off)
+                                  frames=cut_offs_to_plot)
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
     writer.frame_format = 'png'
@@ -46,12 +48,12 @@ def update_plot(cut_num, attrs_list, list_attr):
     plt.xlabel('Generation')
 
 
-def animate_cut_off_violin(attrs_list, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+def animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(25, 10))
     ani = animation.FuncAnimation(fig, update_violin_plot,
                                   fargs=[attrs_list, list_attr], interval=1,
-                                  frames=len_cut_off)
+                                  frames=cut_offs_to_plot)
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
     writer.frame_format = 'png'
@@ -75,10 +77,14 @@ def update_violin_plot(cut_num, attrs_list, list_attr, n_th_entry_violin=100):
     df = pd.DataFrame(data=short_mean_attrs_list, index=df_labels)
     df = df.T
     #chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05)
-    chart = sns.violinplot(data=df, width=0.8, inner='box', scale='width', linewidth=0.05)
+    chart = sns.violinplot(data=df, width=0.8, inner='box', scale='width')
     #df.mean().plot(style='_', c='black')  # , ms=30
-    legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
-    plt.legend(handles=legend_elements)
+    #legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
+    #plt.legend(handles=legend_elements)
+    plt.title('Cut off {} time step'.format(cut_num))
+    plt.ylabel(list_attr)
+    plt.xlabel('Generation')
+
 
 
 def load_and_process_attrs(list_attr, cut_num, attrs_list):
@@ -99,6 +105,7 @@ def load_and_process_attrs(list_attr, cut_num, attrs_list):
     return mean_attrs_list, gen_mean_mean_attrs_list
 
 
+
 def cut_attrs(cut_num, attrs):
     '''
     Cuts away first -cut_num- entries from list attribute
@@ -112,8 +119,11 @@ def cut_attrs(cut_num, attrs):
 
 if __name__ == '__main__':
     sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_SMALL_TEST_COPY
     len_cut_off = 10 #500
-    #list_attrs = ['energies', 'velocities']
-    list_attrs = ['energies']
+    n_th_frame = 5
+    list_attrs = ['energies', 'velocities']
+    fps = 10
+    #list_attrs = ['energies']
     for list_attr in list_attrs:
-        main(sim_name, list_attr, len_cut_off)
+        main(sim_name, list_attr, len_cut_off, n_th_frame, fps)
