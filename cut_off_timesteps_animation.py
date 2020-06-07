@@ -1,4 +1,5 @@
 from automatic_plot_helper import load_isings
+from automatic_plot_helper import load_isings_attr
 from automatic_plot_helper import attribute_from_isings
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -10,15 +11,16 @@ from matplotlib.lines import Line2D
 from numba import jit
 
 def main(sim_name, list_attr, len_cut_off):
-    isings = load_isings(sim_name)
-    animate_cut_off_violin(isings, list_attr, len_cut_off, sim_name)
+    #isings = load_isings(sim_name)
+    attrs_list = load_isings_attr(sim_name, list_attr)
+    animate_cut_off_violin(attrs_list, list_attr, len_cut_off, sim_name)
 
 
-def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+def animate_cut_off(attrs_list, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(19, 10))
     ani = animation.FuncAnimation(fig, update_plot,
-                                  fargs=[isings, list_attr], interval=1,
+                                  fargs=[attrs_list, list_attr], interval=1,
                                   frames=len_cut_off)
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
@@ -33,10 +35,10 @@ def animate_cut_off(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     ani.save(save_path+save_name, writer=writer)
 
 
-def update_plot(cut_num, isings, list_attr):
+def update_plot(cut_num, attrs_list, list_attr):
     plt.cla()
 
-    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, isings)
+    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, attrs_list)
 
     x_axis = np.arange(len(gen_mean_mean_attrs_list))
     plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
@@ -44,11 +46,11 @@ def update_plot(cut_num, isings, list_attr):
     plt.xlabel('Generation')
 
 
-def animate_cut_off_violin(isings, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
+def animate_cut_off_violin(attrs_list, list_attr, len_cut_off, sim_name, fps=30, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(25, 10))
     ani = animation.FuncAnimation(fig, update_violin_plot,
-                                  fargs=[isings, list_attr], interval=1,
+                                  fargs=[attrs_list, list_attr], interval=1,
                                   frames=len_cut_off)
     Writer = animation.FFMpegFileWriter
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
@@ -58,13 +60,13 @@ def animate_cut_off_violin(isings, list_attr, len_cut_off, sim_name, fps=30, dpi
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    save_name = '{}_cut_off_{}_ts.mp4'.format(list_attr, len_cut_off)
+    save_name = '{}_cut_off_violin{}_ts.mp4'.format(list_attr, len_cut_off)
     #ani.save(save_path+save_name, writer=writer, dpi=dpi)
     ani.save(save_path+save_name, writer=writer)
 
 
-def update_violin_plot(cut_num, isings, list_attr, n_th_entry_violin=100):
-    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, isings)
+def update_violin_plot(cut_num, attrs_list, list_attr, n_th_entry_violin=100):
+    mean_attrs_list, gen_mean_mean_attrs_list = load_and_process_attrs(list_attr, cut_num, attrs_list)
 
     plt.cla()
 
@@ -72,16 +74,19 @@ def update_violin_plot(cut_num, isings, list_attr, n_th_entry_violin=100):
     df_labels = np.arange(0, len(mean_attrs_list)-1, n_th_entry_violin)
     df = pd.DataFrame(data=short_mean_attrs_list, index=df_labels)
     df = df.T
-    chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05)
-    df.mean().plot(style='_', c='black')  # , ms=30
+    #chart = sns.violinplot(data=df, width=0.8, inner='quartile', scale='width', linewidth=0.05)
+    chart = sns.violinplot(data=df, width=0.8, inner='box', scale='width', linewidth=0.05)
+    #df.mean().plot(style='_', c='black')  # , ms=30
     legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
     plt.legend(handles=legend_elements)
 
 
-def load_and_process_attrs(list_attr, cut_num, isings):
+def load_and_process_attrs(list_attr, cut_num, attrs_list):
     # isings is a list of generations including again isings, therefore iterating through the gernerations with list
     # comprehensions, then again iterating through different individuals of one generation within that
-    attrs_list = [attribute_from_isings(ising, list_attr) for ising in isings]
+    #attrs_list = [attribute_from_isings(ising, list_attr) for ising in isings]
+
+    #Cutting first off generations
     attrs_list = [cut_attrs(cut_num, attrs) for attrs in attrs_list]
 
     # !!! Taking mean of list_attr NOT MEDIAN !!!
