@@ -251,7 +251,7 @@ def parse():
                         server_mode=False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
-                        a_max=0.05, refresh_plot=1000, dream_heat_capacity=1000, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
+                        a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False)
     args = parser.parse_args()

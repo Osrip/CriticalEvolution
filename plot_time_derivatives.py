@@ -33,21 +33,23 @@ def calculate_derivative(list_attr):
 def plot_derivatives(derivatives, sim_name, gen, ind):
     matplotlib.use('GTK3Cairo')
     x_axis = np.arange(len(derivatives))
-    plt.figure(figsize=(12, 5))
+    plt.figure(figsize=(12, 10))
+    ax1 = plt.subplot(211)
     plt.scatter(x_axis, derivatives, s=2, alpha=0.5)
     save_name = 'derivatives_gen_{}_ind_{}.png'.format(gen, ind)
     save_path = 'save/{}/figs/derivative_time_steps/'.format(sim_name)
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    plt.savefig('{}{}'.format(save_path, save_name), dpi=300)
-    plt.show()
+    #plt.savefig('{}{}'.format(save_path, save_name), dpi=300)
+    #plt.show()
 
 
 def plot_derivatives_slided(derivatives, sim_name, gen, ind, win_size):
     matplotlib.use('GTK3Cairo')
     derivatives, x_axis = slide_window(derivatives, win_size=win_size)
-    plt.figure(figsize=(12, 5))
+    #plt.figure(figsize=(12, 5))
+    ax1 = plt.subplot(212)
     plt.scatter(x_axis, derivatives, s=2, alpha=0.5)
     save_name = 'derivatives_slided_winsize_{}_gen_{}_ind_{}.png'.format(win_size, gen, ind)
     save_path = 'save/{}/figs/derivative_time_steps/'.format(sim_name)
@@ -75,5 +77,5 @@ if __name__ == '__main__':
     list_attr = 'energies'
     win_size = 1000
     generations = [1999]
-    inds = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+    inds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     main(sim_name, list_attr, generations, inds, win_size)
