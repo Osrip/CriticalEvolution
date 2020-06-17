@@ -7,6 +7,7 @@ import numpy as np
 import os
 import pandas as pd
 import seaborn as sns
+import sys
 from matplotlib.lines import Line2D
 from numba import jit
 
@@ -14,11 +15,20 @@ def main(sim_name, list_attr, len_cut_off, n_th_frame, fps):
     #isings = load_isings(sim_name)
     attrs_list = load_isings_attr(sim_name, list_attr)
     cut_offs_to_plot = np.arange(0, len_cut_off, n_th_frame)
-    animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps)
-    animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps)
+
+    #Change wdir to save tmp png files in local folder (quick hack)
+    save_tmp_path = 'save/{}/figs/cut_of_animation/tmp/'.format(sim_name)
+    if not os.path.exists(save_tmp_path):
+        os.makedirs(save_tmp_path)
+    cur_wdir = os.getcwd()
+    os.chdir(save_tmp_path)
+
+    animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, cur_wdir)
+    animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, cur_wdir)
+    os.chdir(cur_wdir)
 
 
-def animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, dpi=100):
+def animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, cur_wdir, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(19, 10))
     ani = animation.FuncAnimation(fig, update_plot,
@@ -28,7 +38,7 @@ def animate_cut_off(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_o
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
     writer.frame_format = 'png'
 
-    save_path = 'save/{}/figs/cut_of_animation/'.format(sim_name)
+    save_path = '/{}/save/{}/figs/cut_of_animation/'.format(cur_wdir, sim_name)
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
@@ -44,11 +54,19 @@ def update_plot(cut_num, attrs_list, list_attr):
 
     x_axis = np.arange(len(gen_mean_mean_attrs_list))
     plt.scatter(x_axis, gen_mean_mean_attrs_list, alpha=0.15, color='blue')
-    plt.ylabel(list_attr)
+    if list_attr == 'energies':
+        ylabel = 'mean energy'
+    elif list_attr == 'velocities':
+        ylabel = 'mean velocity'
+    else:
+        ylabel = list_attr
+
+    plt.ylabel(ylabel)
     plt.xlabel('Generation')
+    plt.title('Cut off {} time step'.format(cut_num))
 
 
-def animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, dpi=100):
+def animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, len_cut_off, fps, cur_wdir, dpi=100):
     plt.rcParams.update({'font.size': 20})
     fig = plt.figure(figsize=(25, 10))
     ani = animation.FuncAnimation(fig, update_violin_plot,
@@ -58,7 +76,7 @@ def animate_cut_off_violin(attrs_list, list_attr, cut_offs_to_plot, sim_name, le
     writer = Writer(fps=fps, metadata=dict(artist='Jan Prosi'), bitrate=1800)
     writer.frame_format = 'png'
 
-    save_path = 'save/{}/figs/cut_of_animation/'.format(sim_name)
+    save_path = '/{}/save/{}/figs/cut_of_animation/'.format(cur_wdir, sim_name)
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
@@ -82,7 +100,15 @@ def update_violin_plot(cut_num, attrs_list, list_attr, n_th_entry_violin=100):
     #legend_elements = [Line2D([0], [0], marker='_', color='black', label='mean', markerfacecolor='g', markersize=10)]
     #plt.legend(handles=legend_elements)
     plt.title('Cut off {} time step'.format(cut_num))
-    plt.ylabel(list_attr)
+
+    if list_attr == 'energies':
+        ylabel = 'mean energy'
+    elif list_attr == 'velocities':
+        ylabel = 'mean velocity'
+    else:
+        ylabel = list_attr
+
+    plt.ylabel(ylabel)
     plt.xlabel('Generation')
 
 
@@ -118,12 +144,13 @@ def cut_attrs(cut_num, attrs):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    sim_name = sys.argv[1]
+    #sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     # sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_SMALL_TEST_COPY
-    len_cut_off = 10 #500
-    n_th_frame = 5
+    len_cut_off = 20 #500
+    n_th_frame = 10
     list_attrs = ['energies', 'velocities']
-    fps = 10
+    fps = 1
     #list_attrs = ['energies']
     for list_attr in list_attrs:
         main(sim_name, list_attr, len_cut_off, n_th_frame, fps)
