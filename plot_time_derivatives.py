@@ -31,10 +31,11 @@ def calculate_derivative(list_attr):
 
 
 def plot_derivatives(derivatives, sim_name, gen, ind):
-    matplotlib.use('GTK3Cairo')
+    #matplotlib.use('GTK3Cairo')
     x_axis = np.arange(len(derivatives))
     plt.figure(figsize=(12, 10))
     ax1 = plt.subplot(211)
+    plt.title('differences')
     plt.scatter(x_axis, derivatives, s=2, alpha=0.5)
     save_name = 'derivatives_gen_{}_ind_{}.png'.format(gen, ind)
     save_path = 'save/{}/figs/derivative_time_steps/'.format(sim_name)
@@ -46,11 +47,14 @@ def plot_derivatives(derivatives, sim_name, gen, ind):
 
 
 def plot_derivatives_slided(derivatives, sim_name, gen, ind, win_size):
-    matplotlib.use('GTK3Cairo')
+    #matplotlib.use('GTK3Cairo')
     derivatives, x_axis = slide_window(derivatives, win_size=win_size)
     #plt.figure(figsize=(12, 5))
     ax1 = plt.subplot(212)
     plt.scatter(x_axis, derivatives, s=2, alpha=0.5)
+    plt.title('differences slided')
+    plt.xlabel('Generations')
+    plt.ylabel('difference slided, window size = {}'.format(win_size))
     save_name = 'derivatives_slided_winsize_{}_gen_{}_ind_{}.png'.format(win_size, gen, ind)
     save_path = 'save/{}/figs/derivative_time_steps/'.format(sim_name)
     if not os.path.exists(save_path):
@@ -59,7 +63,7 @@ def plot_derivatives_slided(derivatives, sim_name, gen, ind, win_size):
     plt.savefig('{}{}'.format(save_path, save_name), dpi=300)
     plt.show()
 
-#@jit(nopython=True)
+
 def slide_window(iterable, win_size):
     slided = []
     x_axis_gens = []
@@ -71,11 +75,14 @@ def slide_window(iterable, win_size):
         n += 1
     return slided, x_axis_gens
 
+
 if __name__ == '__main__':
-    sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    #'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    #sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    #sim_name = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    sim_name = "sim-20200618-112616-l_sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b1"
+    sim_name = "sim-20200618-112742-l_sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b10"
     list_attr = 'energies'
     win_size = 1000
-    generations = [1999]
-    inds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    generations = [0]
+    inds = np.arange(10)
     main(sim_name, list_attr, generations, inds, win_size)
