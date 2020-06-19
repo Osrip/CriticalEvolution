@@ -243,8 +243,8 @@ def wait_for_enough_memory(sim_name):
             time.sleep(10)
             waited_seconds += 10
             if waited_seconds > max_waited_seconds:
-                warnings.warn('''After 20 minutes there is still not enough memory available for plotting,
-                 trying to plot now anyways hoping for enough swap space.''')
+                warnings.warn('''After {} seconds there is still not enough memory available for plotting,
+                 trying to plot now anyways hoping for enough swap space.'''.format(max_waited_seconds))
                 break
 
 

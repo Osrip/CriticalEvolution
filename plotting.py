@@ -59,7 +59,7 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
         ani.save(savepath, dpi=100, writer='imagemagick', fps=settings['animation_fps']) #TODO: dpi=100 writer='imagemagick',
     elif False:
         writer = animation.ImageMagickFileWriter(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
-        ani.save('location.gif', writer=writer, dpi = 100)#
+        ani.save('location.gif', writer=writer, dpi=100)
     print('\nAnimation successfully saved at {}'.format(savepath))
     os.chdir(cur_wdir)
 
