@@ -237,10 +237,12 @@ def wait_for_enough_memory(sim_name):
         warnings.warn("Your system's total memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
     else:
         waited_seconds = 0
+        # Randomize max waited seconds, to make it unlikely for two parallely waiting processes writing onto swap at the same time
+        max_waited_seconds = np.random.randint(1200, 3600)
         while available_memory < size_isings_folder:
             time.sleep(10)
             waited_seconds += 10
-            if waited_seconds > 1200:
+            if waited_seconds > max_waited_seconds:
                 warnings.warn('''After 20 minutes there is still not enough memory available for plotting,
                  trying to plot now anyways hoping for enough swap space.''')
                 break
