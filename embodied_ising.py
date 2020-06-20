@@ -1339,12 +1339,12 @@ def plotting_pipeline(rep, sim_name, settings):
             except Exception:
                 print('Something went wrong when refreshing plot at generation{}'.format(rep))
 
-    # Calculate and plot dream heat capacity
+    # Calculate and plot !dream!p heat capacity
     if not settings['dream_heat_capacity'] is 0:
         if rep % settings['dream_heat_capacity'] == 0 and rep != 0:
             try:
                 if settings['dream_heat_capacity'] - rep == 0:
-                    # During first refresh plot, compute heat capacity of gen 0
+                    # During first calculation of heat capacity also compute heat capacity of gen 0
                     compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0], recorded=False)
 
                 compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=False)
@@ -1352,12 +1352,12 @@ def plotting_pipeline(rep, sim_name, settings):
             except Exception:
                 print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
 
-    # Calculate and plot recorded heat capacity
+    # Calculate and plot !recorded! heat capacity
     if not settings['recorded_heat_capacity'] is 0:
         if rep % settings['recorded_heat_capacity'] == 0 and rep != 0:
             try:
                 if settings['recorded_heat_capacity'] - rep == 0:
-                    # During first refresh plot, compute heat capacity of gen 0
+                    # During first calculation of heat capacity also compute heat capacity of gen 0
                     compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0], recorded=True)
 
                 compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=True)
