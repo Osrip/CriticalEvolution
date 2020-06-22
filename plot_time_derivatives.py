@@ -22,7 +22,7 @@ def main(sim_name, list_attr, generations, inds, win_size):
         for ind in inds:
             fig = plt.figure(figsize=(24, 10))
             fig.suptitle('{}\ngeneration_{}_individual_{}'.format(sim_name, gen, ind))
-            list_attr = energies_inds[ind] # Choose energies
+            list_attr = energies_inds[ind]  # Choose energies
             derivatives = calculate_derivative(list_attr)
             #plot_derivatives(derivatives, sim_name, gen, ind)
             plot_velocities_and_energies(energies_inds[ind], velocities_inds[ind])
@@ -90,6 +90,8 @@ def derivatives_low_pass(slided_energies, win_size):
 def plot_energies_derivatives_slided(energies, win_size):
     slided_energies, x_axis = slide_window(energies, win_size)
     derivatives_slided, x_axis_derivatives = derivatives_low_pass(slided_energies, win_size)
+    # Normalizing derivatibes for win size,s o we have difference per time step
+    derivatives_slided = list(map(lambda x: x / win_size, derivatives_slided))
     ax222 = plt.subplot(221)
     plt.scatter(x_axis, slided_energies)
     slided_energies_xlim = ax222.get_xlim()
@@ -98,8 +100,8 @@ def plot_energies_derivatives_slided(energies, win_size):
     plt.title('Smoothed Energy, window length: {}'.format(win_size))
     plt.subplot(223)
     plt.xlabel('Time Step')
-    plt.ylabel('Energy derivative')
-    plt.title('Energy derivative of smoothed energy, point sampling difference: {}'.format(win_size))
+    plt.ylabel('Energy difference per Time Step')
+    plt.title('Energy difference of smoothed energy, sampling distance: {}'.format(win_size))
     plt.scatter(x_axis_derivatives, derivatives_slided)
     plt.xlim(slided_energies_xlim)
 
@@ -132,30 +134,45 @@ def slide_window(iterable, win_size):
 if __name__ == '__main__':
     #sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     #sim_name = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    #sim_name = "sim-20200618-112616-l_sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b1"
+    sim_name = "sim-20200618-112616-l_sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b1"
     #sim_name = "sim-20200618-112742-l_sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b10"
     list_attr = 'energies'
     #sim_name = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
     #sim_name = 'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
     #sim_name = 'sim-20200619-173345-g_2001_-ref_0_-noplt_-b_0.1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    sim_name = 'sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
-    sim_name = 'sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
-    sim_name = 'sim-20200606-014846-g_2000_-t_4000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
-    sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name = 'sim-20200621-100451-g_1_-t_30000_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-a_0_-n_random_timesteps_last_gen_very_long'
-    sim_name = 'sim-20200621-123120-g_1_-t_30000_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
-    sim_name = 'sim-20200621-123007-g_1_-t_30000_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
-    sim_name = 'sim-20200621-123354-g_1_-t_30000_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
-    sim_name = 'sim-20200621-123448-g_1_-t_30000_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
-    sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    #sim_name = 'sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
+    #sim_name = 'sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
+    #sim_name = 'sim-20200606-014846-g_2000_-t_4000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
+    # sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # sim_name = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # sim_name = 'sim-20200621-100451-g_1_-t_30000_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-a_0_-n_random_timesteps_last_gen_very_long'
+    # sim_name = 'sim-20200621-123120-g_1_-t_30000_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
+    # sim_name = 'sim-20200621-123007-g_1_-t_30000_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
+    # sim_name = 'sim-20200621-123354-g_1_-t_30000_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
+    # sim_name = 'sim-20200621-123448-g_1_-t_30000_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
+    #sim_name = 'sim-20200604-235417-g_2000_-t_2000_-b_0.1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     #sim_name = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     #sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     #win_size = 2000
     #win_size = 1000
-    win_size = 500
-    generations = [1999] #np.arange(1990, 2000)
+    #sim_name = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    #sim_name = 'sim-20200618-112616-l_sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b1'
+    #sim_name = 'sim-20200618-112742-l_sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved_-li_1999_-g_1_-t_30000_-n_last_generation_very_long_b10'
+    #sim_name = 'sim-20200621-123448-g_1_-t_30000_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
+    #sim_name = 'sim-20200621-123354-g_1_-t_30000_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-li_1999_-n_long_last_generation_from_4000_ts_sim_ENERGIES_this_time'
+    sim_name = 'sim-20200621-123120-g_1_-t_30000_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
+    sim_name = 'sim-20200621-123007-g_1_-t_30000_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_random_time_steps_last_gen_very_long_ENERGIES_saved_this_time'
+    sim_name = 'sim-20200622-004643-g_1_-t_500000_-noplt_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_1999_-n_random_time_steps_super_long_last_gen'
+    #sim_name = 'sim-20200622-004717-g_1_-t_500000_-noplt_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_1999_-n_random_time_steps_super_long_last_gen'
+    sim_name = 'sim-20200621-224919-g_1_-t_120000_-noplt_-li_1999_-l_sim-20200619-174456-g_2001_-t_6000_-b_10_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies_-n_long_last_gen_for_6000ts_sim'
+    sim_name = 'sim-20200621-205137-g_1_-t_120000_-li_1999_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
+    sim_name = 'sim-20200621-205137-g_1_-t_120000_-li_1999_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
+    sim_name = 'sim-20200621-205056-g_1_-t_120000_-li_1999_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
+    sim_name = 'sim-20200622-142753-g_1_-t_3000_-noplt_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_last_gen_random_time_steps_3000ts'
+    #sim_name = 'sim-20200622-142821-g_1_-t_3000_-noplt_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_last_gen_random_time_steps_3000ts'
+    win_size = 500#2000#500
+    generations = [0] #np.arange(1990, 2000)
     inds = np.arange(10)
     #inds = [0]
     main(sim_name, list_attr, generations, inds, win_size)

@@ -13,6 +13,7 @@ import warnings
 This is a library with useful functions to load ising objects and extract information from them.
 '''
 
+
 def detect_all_isings(sim_name):
     '''
     Creates iter_list
@@ -28,6 +29,7 @@ def detect_all_isings(sim_name):
         gen_nums.append(int(name[i_begin:i_end]))
     gen_nums = np.sort(gen_nums)
     return gen_nums
+
 
 def load_settings(loadfile):
     '''
@@ -69,8 +71,6 @@ def load_isings_attr(loadfile, attr):
     return attrs_list
 
 
-
-
 def load_isings(loadfile, wait_for_memory = True):
     '''
     Load all isings pickle files and return them as list
@@ -99,6 +99,36 @@ def load_isings(loadfile, wait_for_memory = True):
         isings_list.append(isings)
     return isings_list
 
+def load_top_isings(loadfile, first_n_isings, wait_for_memory = True):
+    '''
+    Load all isings pickle files and return them as list
+    :param loadfile : simulation name
+    first_n_isings: for each generation only load the top n isings (top 20 are those that were fittest and survived from prev generation)
+    '''
+    if wait_for_memory:
+        wait_for_enough_memory(loadfile)
+
+    iter_list = detect_all_isings(loadfile)
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    isings_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            file = open(filename, 'rb')
+            isings = pickle.load(file)
+            file.close()
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        isings_top = isings[:first_n_isings]
+        isings_list.append(isings_top)
+    return isings_list
+
 def load_isings_specific_path(isings_path):
     '''
     Load all isings pickle files from a specific isings folder (when they are not normally stored and return them as list
@@ -124,6 +154,7 @@ def load_isings_specific_path(isings_path):
         isings_list.append(isings)
     return isings_list
 
+
 def detect_all_isings_specific_path(isings_path):
     '''
     Creates iter_list
@@ -140,6 +171,7 @@ def detect_all_isings_specific_path(isings_path):
         gen_nums.append(int(name[i_begin:i_end]))
     gen_nums = np.sort(gen_nums)
     return gen_nums
+
 
 def load_isings_from_list(loadfile, iter_list, wait_for_memory = True):
     '''
@@ -169,13 +201,13 @@ def load_isings_from_list(loadfile, iter_list, wait_for_memory = True):
         isings_list.append(isings)
     return isings_list
 
+
 def list_to_blank_seperated_str(list):
     out_str = ''
     for en in list:
         out_str += str(en) + ' '
     out_str = out_str[:-1]
     return out_str
-
 
 
 def load_isings_attributes_from_list(loadfile, iter_list, attribute):
@@ -208,6 +240,7 @@ def load_isings_attributes_from_list(loadfile, iter_list, attribute):
 
     return isings_attribute_list
 
+
 def attribute_from_isings(isings, attribute):
     '''
     Returns a list of attributes (numerated by organisms) from isings list (Only one generation!!! in isings)
@@ -220,6 +253,7 @@ def attribute_from_isings(isings, attribute):
         exec('attribute_list.append(I.{})'.format(attribute))
 
     return attribute_list
+
 
 def wait_for_enough_memory(sim_name):
     '''

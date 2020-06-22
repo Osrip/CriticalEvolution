@@ -21,11 +21,17 @@ def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recor
     visualize_heat_capacity_generational_automatic.main(sim_name, settings, None, recorded)
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200514-013839-g_5_-t_2000_-ref_0_-nat_c_0_-dream_c_0_-rec_c_2_-c_15_-n_long_test'#'sim-20200327-220128-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_3_sensors'
-    settings = load_settings(sim_name)
-    main(sim_name, settings, recorded=True)
-    # cores = 3
-    # generation_list = [0, 200, 500, 1000, 2000, 4000, 6000, 7999]
+    # sim_name = 'sim-20200514-013839-g_5_-t_2000_-ref_0_-nat_c_0_-dream_c_0_-rec_c_2_-c_15_-n_long_test'#'sim-20200327-220128-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_3_sensors'
     # settings = load_settings(sim_name)
-    # compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded=True)
+    # main(sim_name, settings, recorded=True)
+    sim_names = ['sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved',
+                 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved',
+                 'sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps',
+                 'sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
+                 ]
+    for sim_name in sim_names :
+        cores = 14
+        generation_list = [0, 1000, 1998, 1999]
+        settings = load_settings(sim_name)
+        compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded=False)
 

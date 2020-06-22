@@ -3,6 +3,7 @@ import matplotlib as mpl
 mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
+from automatic_plot_helper import  load_top_isings
 import compute_and_plot_heat_capacity_automatic
 import plot_anything_combined
 import plot_anythingXY_scatter
@@ -12,13 +13,16 @@ import sys
 
 import plot_anythingXY_scatter_animation
 
-def main(sim_name, load_isings_list=True, final=False):
+def main(sim_name, only_top_isings, load_isings_list=True, final=False):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
     settings = load_settings(sim_name)
     if load_isings_list:
-        isings_list = load_isings(sim_name)
+        if only_top_isings:
+            isings_list = load_top_isings(sim_name, 20)
+        else:
+            isings_list = load_isings(sim_name)
     try:
         plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
     except Exception:
@@ -93,6 +97,7 @@ if __name__ == '__main__':
     '''
     first argument sim_name
     second argument 'final_true' in case it is final run 'final_false' otherwise
+    ! DON'T CHANGE THIS ! this is called by embodied_ising.py via os to prevent memory leak
     '''
 
     #sim_name ='3rd_4th_run_figures_training_runs_examples/sim-20200209-124814-ser_-b_10_-f_100_-n_1' #'sim-20200123-210723-g_20_-t_20_-ypi_0.05_-mf_0.1_-n_test' # 'sim-20191229-191241-ser_-s_-b_10_-ie_2_-a_0_500_1000_2000' #'sim-20200103-170603-ser_-s_-b_0.1_-ie_2_-a_0_200_500_1000_1500_1999'#'sim-20200103-170556-ser_-s_-b_1_-ie_2_-a_0_500_1000_1500_1999'
