@@ -13,20 +13,24 @@ import sys
 
 import plot_anythingXY_scatter_animation
 
-def main(sim_name, only_top_isings, load_isings_list=True, final=False):
+'''!!!!!!!!ONLY CHANGE, WHEN SIMULATION IS NOT RUNNING!!!!!!!   gets called via os to prevent memory leak'''
+
+
+def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
     settings = load_settings(sim_name)
     if load_isings_list:
-        if only_top_isings:
-            isings_list = load_top_isings(sim_name, 20)
+        if only_top_isings is not None:
+            isings_list = load_top_isings(sim_name, only_top_isings)
+            settings['pop_size'] = only_top_isings
         else:
             isings_list = load_isings(sim_name)
-    try:
-        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
-    except Exception:
-        print('Could not create generational plots')
+    #try:
+    plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
+    # except Exception:
+    #     print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food')]
     try:
