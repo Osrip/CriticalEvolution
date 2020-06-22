@@ -25,6 +25,11 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
         if only_top_isings is not None:
             isings_list = load_top_isings(sim_name, only_top_isings)
             settings['pop_size'] = only_top_isings
+            save_txt_path = 'save/{}/figs/'.format(sim_name)
+            if not os.path.exists(save_txt_path):
+                os.makedirs(save_txt_path)
+            f = open(save_txt_path + "Only_first_{}_fittest_individuals_have_been_plotted.txt".format(only_top_isings), "w+")
+            f.close()
         else:
             isings_list = load_isings(sim_name)
     #try:
@@ -73,13 +78,13 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
 
     if settings['energy_model']:
         #os.system("python plot__anything_combined {} avg_energy".format(sim_name))
-        plot_anything_combined.main([sim_name], 'avg_energy', isings_lists=[isings_list], autoLoad=autoLoad)
+        plot_anything_combined.main([sim_name], 'avg_energy', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
     else:
         #os.system("python plot__anything_combined {} fitness".format(sim_name))
-        plot_anything_combined.main([sim_name], 'fitness', isings_lists=[isings_list], autoLoad=autoLoad)
+        plot_anything_combined.main([sim_name], 'fitness', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
 
     for plot_var in plot_vars:
-        plot_anything_combined.main([sim_name], plot_var, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
+        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
 
 
 

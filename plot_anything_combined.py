@@ -21,7 +21,9 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
              'beta_experiment/beta-1/sim-20180511-163319',
              'beta_experiment/beta-10/sim-20180512-105824']
 '''
-def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
+
+
+def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
          sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter = True):
 
     '''
@@ -42,7 +44,8 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
     #Boo shows whether there are multiple simulations in one plot
     multiple_sim = len(loadfiles) > 1
 
-    #energy_model = settings['energy_model']
+    if settings is None:
+        energy_model = settings['energy_model']
 
     #autoLoad = True
     saveFigBool = True
@@ -61,7 +64,7 @@ def main(loadfiles, plot_var, isings_lists = None, autoLoad = True,
     FOODS = []
     for loadfile, isings_list in zip(loadfiles, isings_lists):
         iter_list = detect_all_isings(loadfile)  # iter_list = np.arange(0, 2000, 1)
-        settings = load_settings(loadfile)
+        #settings = load_settings(loadfile)
         numAgents = settings['pop_size']
         f = fitness(loadfile, iter_list, isings_list, numAgents, autoLoad, saveFigBool, plot_var)
         # FIX THE DOUBLE COUNTING PROBLEM
