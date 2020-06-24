@@ -41,8 +41,8 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
     else:
 
-        colour_b1 = 'blue'
-        colour_b10 = 'darkorange'
+        colour_b1 = 'darkorange'
+        colour_b10 = 'blue'
 
         file = open('{}/loaded_plot_attrs.pickle'.format(save_folder), 'rb')
         loaded_plot_attrs = pickle.load(file)
@@ -53,10 +53,10 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
-        ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b1, save_folder, 'b10_fix', get_axis=True)
-        plot_generational_avg(attrs_gen_b1_fix, colour_b10, save_folder, 'b1_fix', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b10_rand, colour_b1, save_folder, 'b10_rand', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b1_rand, colour_b10, save_folder, 'b1_rand', get_axis=False, ylim=ylim)
+        ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b10, save_folder, 'fixed_time_steps_b10', get_axis=True)
+        plot_generational_avg(attrs_gen_b1_fix, colour_b1, save_folder, 'fixed_time_steps_b1', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b10_rand, colour_b10, save_folder, 'random_time_steps_b10', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b1_rand, colour_b1, save_folder, 'random_time_steps_b1', get_axis=False, ylim=ylim)
 
         plot_overlap(attrs_gen_b1_fix, attrs_gen_b10_fix, colour_b1, colour_b10, save_folder,
                      'Overlap_fixed_time_steps', ylim)
@@ -117,6 +117,7 @@ def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_
     plt.scatter(x_axis_b10, y_axis_b10, alpha=0.15, c=colour_b10)
     plt.ylim(ylim)
     plt.savefig(save_folder+add_save_name, dpi=300)
+    plt.show()
 
 
 def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
