@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 from os import makedirs, path
 import pickle
+from matplotlib.patches import Patch
+from matplotlib.lines import Line2D
 
 class SmallIsing:
     def __init__(self, avg_energy, time_steps_gen):
@@ -104,6 +106,7 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, 
     ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
     plt.xlabel('Generation')
     plt.ylabel('Performance')
+    #plt.yticks([])
     if get_axis:
         ylim = plt.ylim()
     else:
@@ -123,10 +126,22 @@ def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_
     x_axis_b10 = np.arange(len(y_axis_b10))
     plt.figure(figsize=(19, 10))
     plt.scatter(x_axis_b1, y_axis_b1, alpha=alpha, c=colour_b1, s=s)
-    plt.scatter(x_axis_b10, y_axis_b10, alpha=alpha, c=colour_b10, s=s)
+    plot1 = plt.scatter(x_axis_b10, y_axis_b10, alpha=alpha, c=colour_b10, s=s)
     plt.ylim(ylim)
+    locs, labels = plt.yticks()
+    for label in labels[::2]:
+        label.set_visible(False)
     plt.xlabel('Generation')
     plt.ylabel('Performance')
+    #plt.yticks([])
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label='Critical', markerfacecolor=colour_b1,
+               markersize=25, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Sub-critical', markerfacecolor=colour_b10,
+               markersize=25, alpha=0.75)
+                       ]
+
+    plt.legend(loc="lower right", bbox_to_anchor=(0.95, 0.05), handles=legend_elements)
     plt.savefig(save_folder+add_save_name, dpi=300)
     plt.show()
 
