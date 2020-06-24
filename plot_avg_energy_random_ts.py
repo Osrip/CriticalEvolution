@@ -49,9 +49,10 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
-        plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix')
-        plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix')
-
+        ylim = plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix', get_axis=True)
+        plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b10_fix, 'blue', save_folder, 'b10_fix', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b1_rand, 'orange', save_folder, 'b1_rand', get_axis=False, ylim=ylim)
 
 
 
@@ -85,10 +86,10 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=T
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
     ax = plt.scatter(x_axis, y_axis, alpha=0.15)
-    # if get_axis:
-    #     ylim = plt.ylim()
-    # else:
-    #     plt.ylim(ylim)
+    if get_axis:
+        ylim = plt.ylim()
+    else:
+        plt.ylim(ylim)
 
     if not path.exists(save_folder):
         makedirs(save_folder)
@@ -96,8 +97,8 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=T
 
     plt.savefig(save_folder + save_name, c=colour, bbox_inches='tight', dpi=300)
     plt.show()
-    # if get_axis:
-    #     return ylim
+    if get_axis:
+        return ylim
 
 
 def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
