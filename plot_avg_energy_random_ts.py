@@ -104,6 +104,19 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, 
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
     ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
+
+    locs, labels = plt.yticks()
+    for label in labels[::2]:
+        label.set_visible(False)
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label='Critical', markerfacecolor='darkorange',
+               markersize=25, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Sub-critical', markerfacecolor='royalblue',
+               markersize=25, alpha=0.75)
+    ]
+
+    plt.legend(loc="lower right", bbox_to_anchor=(0.95, 0.05), handles=legend_elements)
+
     plt.xlabel('Generation')
     plt.ylabel('Performance')
     #plt.yticks([])
