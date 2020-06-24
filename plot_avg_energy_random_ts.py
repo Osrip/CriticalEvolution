@@ -14,8 +14,25 @@ class SmallIsing:
         self.norm_avg_energy = avg_energy / time_steps_gen
 
 
+def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand, only_top_isings=20):
 
-def main(sim_name, only_top_isings=20):
+
+    save_folder = 'save/plots_for_anna'
+
+    attrs_gen_b10_fix = load_ising_stuff(sim_name_b10_fix, only_top_isings)
+
+    attrs_gen_b1_fix = load_ising_stuff(sim_name_b1_fix, only_top_isings)
+
+
+
+    plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix')
+
+    plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix')
+
+
+
+
+def load_ising_stuff(sim_name, only_top_isings):
     isings_avg_energy_list = load_top_isings_attr(sim_name, only_top_isings, 'avg_energy')
     # Load this in order to have something to compute the number of time steps of current generation with
     energies_first_ind = load_top_isings_attr(sim_name, 1, 'energies')
@@ -26,7 +43,8 @@ def main(sim_name, only_top_isings=20):
     settings['pop_size'] = only_top_isings
     small_isings_list = create_small_isings(isings_avg_energy_list, time_steps_each_gen)
     mean_attrs_generational = create_generational_avg(small_isings_list, 'norm_avg_energy')
-    plot_generational_avg(mean_attrs_generational)
+    return mean_attrs_generational
+
 
 
 def create_generational_avg(isings_list, attr_name):
@@ -39,16 +57,16 @@ def create_generational_avg(isings_list, attr_name):
     return mean_attrs_generational
 
 
-def plot_generational_avg(y_axis):
+def plot_generational_avg(y_axis, colour, save_folder, add_save_name):
     x_axis = np.arange(len(y_axis))
     matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
     plt.scatter(x_axis, y_axis, alpha=0.15)
-    save_folder = 'save/{}/figs/avg_energy_normalized_ANNA/'.format(sim_name)
+
     if not path.exists(save_folder):
         makedirs(save_folder)
-    save_name = 'moin.png'
-    plt.savefig(save_folder + save_name, bbox_inches='tight', dpi=300)
+    save_name = '{}.png'.format(add_save_name)
+    plt.savefig(save_folder + save_name, c=colour, bbox_inches='tight', dpi=300)
     plt.show()
 
 
@@ -64,5 +82,8 @@ def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    main(sim_name)
+    sim_name_b10_fix = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    sim_name_b1_fix = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    sim_name_b10_rand = 'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_b10_rand)
