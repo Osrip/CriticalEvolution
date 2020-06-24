@@ -21,6 +21,10 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
     save_folder = 'save/plots_for_anna/'
     matplotlib.rcParams.update({'font.size': 22})
+    alpha = 0.3
+    s = 25
+    colour_b1 = 'darkorange'
+    colour_b10 = 'royalblue'
 
     if not load_previous:
         attrs_gen_b10_fix = load_ising_stuff(sim_name_b10_fix, only_top_isings)
@@ -41,8 +45,7 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
     else:
 
-        colour_b1 = 'darkorange'
-        colour_b10 = 'blue'
+
 
         file = open('{}/loaded_plot_attrs.pickle'.format(save_folder), 'rb')
         loaded_plot_attrs = pickle.load(file)
@@ -53,15 +56,19 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
-        ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b10, save_folder, 'fixed_time_steps_b10', get_axis=True)
-        plot_generational_avg(attrs_gen_b1_fix, colour_b1, save_folder, 'fixed_time_steps_b1', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b10_rand, colour_b10, save_folder, 'random_time_steps_b10', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b1_rand, colour_b1, save_folder, 'random_time_steps_b1', get_axis=False, ylim=ylim)
+    ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b10, save_folder, 'fixed_time_steps_b10', alpha, s,
+                                 get_axis=True)
+    plot_generational_avg(attrs_gen_b1_fix, colour_b1, save_folder, 'fixed_time_steps_b1', alpha, s, get_axis=False,
+                          ylim=ylim)
+    plot_generational_avg(attrs_gen_b10_rand, colour_b10, save_folder, 'random_time_steps_b10', alpha, s, get_axis=False,
+                          ylim=ylim)
+    plot_generational_avg(attrs_gen_b1_rand, colour_b1, save_folder, 'random_time_steps_b1', alpha, s, get_axis=False,
+                          ylim=ylim)
 
-        plot_overlap(attrs_gen_b1_fix, attrs_gen_b10_fix, colour_b1, colour_b10, save_folder,
-                     'Overlap_fixed_time_steps', ylim)
-        plot_overlap(attrs_gen_b1_rand, attrs_gen_b10_rand, colour_b1, colour_b10, save_folder,
-                     'Overlap_random_time_steps', ylim)
+    plot_overlap(attrs_gen_b1_fix, attrs_gen_b10_fix, colour_b1, colour_b10, save_folder,
+                 'Overlap_fixed_time_steps', alpha, s, ylim)
+    plot_overlap(attrs_gen_b1_rand, attrs_gen_b10_rand, colour_b1, colour_b10, save_folder,
+                 'Overlap_random_time_steps', alpha, s, ylim)
 
 
 
@@ -90,11 +97,11 @@ def create_generational_avg(isings_list, attr_name):
     return mean_attrs_generational
 
 
-def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=True, ylim=None):
+def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, get_axis=True, ylim=None):
     x_axis = np.arange(len(y_axis))
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
-    ax = plt.scatter(x_axis, y_axis, alpha=0.15, c=colour)
+    ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
     if get_axis:
         ylim = plt.ylim()
     else:
@@ -109,12 +116,12 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=T
     if get_axis:
         return ylim
 
-def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_save_name, ylim=None):
+def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_save_name, alpha, s, ylim):
     x_axis_b1 = np.arange(len(y_axis_b1))
     x_axis_b10 = np.arange(len(y_axis_b10))
     plt.figure(figsize=(19, 10))
-    plt.scatter(x_axis_b1, y_axis_b1, alpha=0.15, c=colour_b1)
-    plt.scatter(x_axis_b10, y_axis_b10, alpha=0.15, c=colour_b10)
+    plt.scatter(x_axis_b1, y_axis_b1, alpha=alpha, c=colour_b1, s=s)
+    plt.scatter(x_axis_b10, y_axis_b10, alpha=alpha, c=colour_b10, s=s)
     plt.ylim(ylim)
     plt.savefig(save_folder+add_save_name, dpi=300)
     plt.show()
