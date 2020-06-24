@@ -171,8 +171,12 @@ if __name__ == '__main__':
     sim_name = 'sim-20200621-205056-g_1_-t_120000_-li_1999_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
     sim_name = 'sim-20200622-142753-g_1_-t_3000_-noplt_-l_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_last_gen_random_time_steps_3000ts'
     #sim_name = 'sim-20200622-142821-g_1_-t_3000_-noplt_-l_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4_-li_2000_-n_last_gen_random_time_steps_3000ts'
-    win_size = 500#2000#500
-    generations = [0] #np.arange(1990, 2000)
+    sim_name = 'sim-20200621-205137-g_1_-t_120000_-li_1999_-l_sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
+    sim_name = 'sim-20200621-205056-g_1_-t_120000_-li_1999_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
+    sim_name = 'sim-20200619-174456-g_2001_-t_6000_-b_10_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
+    #sim_name = 'sim-20200619-174503-g_2001_-t_6000_-b_1_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
+    win_size = 2000#500#2000#500
+    generations = [2000] #np.arange(1990, 2000)
     inds = np.arange(10)
     #inds = [0]
     main(sim_name, list_attr, generations, inds, win_size)

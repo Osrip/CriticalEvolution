@@ -965,9 +965,6 @@ def calculate_natural_heat_capacity(isings, time_steps, beta_facs):
         I.heat_capacity_vec = heat_capacity_vec
 
 
-
-
-
 def prepare_natural_heat_capacity(settings, isings, beta_facs):
     '''
     Creates two vectors containing the internal energy of each ising with different beta values for each organism

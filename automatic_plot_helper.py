@@ -129,6 +129,38 @@ def load_top_isings(loadfile, first_n_isings, wait_for_memory = True):
         isings_list.append(isings_top)
     return isings_list
 
+def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = True):
+    '''
+    Load all isings pickle files and return them as list
+    :param loadfile : simulation name
+    first_n_isings: for each generation only load the top n isings (top 20 are those that were fittest and survived from prev generation)
+    '''
+    if wait_for_memory:
+        wait_for_enough_memory(loadfile)
+
+    iter_list = detect_all_isings(loadfile)
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    isings_attr_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            file = open(filename, 'rb')
+            isings = pickle.load(file)
+            isings_attribute = attribute_from_isings(isings, attr)
+            del isings
+            file.close()
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        isings_attr_top = isings_attribute[:first_n_isings]
+        isings_attr_list.append(isings_attr_top)
+    return isings_attr_list
+
 def load_isings_specific_path(isings_path):
     '''
     Load all isings pickle files from a specific isings folder (when they are not normally stored and return them as list

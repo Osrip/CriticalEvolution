@@ -32,10 +32,10 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
             f.close()
         else:
             isings_list = load_isings(sim_name)
-    #try:
-    plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
-    # except Exception:
-    #     print('Could not create generational plots')
+    try:
+        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
+    except Exception:
+        print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food')]
     try:
@@ -99,7 +99,6 @@ def plot_all_in_folder(folder_name):
         if 'sim-' in sim_name:
             sim_name = sim_name.replace('save/', '')
             main(sim_name)
-
 
 
 if __name__ == '__main__':
