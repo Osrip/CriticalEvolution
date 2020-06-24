@@ -20,6 +20,7 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
 
     save_folder = 'save/plots_for_anna/'
+    matplotlib.rcParams.update({'font.size': 22})
 
     if not load_previous:
         attrs_gen_b10_fix = load_ising_stuff(sim_name_b10_fix, only_top_isings)
@@ -40,6 +41,9 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
     else:
 
+        colour_b1 = 'blue'
+        colour_b10 = 'darkorange'
+
         file = open('{}/loaded_plot_attrs.pickle'.format(save_folder), 'rb')
         loaded_plot_attrs = pickle.load(file)
         file.close()
@@ -49,10 +53,15 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
-        ylim = plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix', get_axis=True)
-        plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b10_fix, 'blue', save_folder, 'b10_fix', get_axis=False, ylim=ylim)
-        plot_generational_avg(attrs_gen_b1_rand, 'orange', save_folder, 'b1_rand', get_axis=False, ylim=ylim)
+        ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b1, save_folder, 'b10_fix', get_axis=True)
+        plot_generational_avg(attrs_gen_b1_fix, colour_b10, save_folder, 'b1_fix', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b10_rand, colour_b1, save_folder, 'b10_rand', get_axis=False, ylim=ylim)
+        plot_generational_avg(attrs_gen_b1_rand, colour_b10, save_folder, 'b1_rand', get_axis=False, ylim=ylim)
+
+        plot_overlap(attrs_gen_b1_fix, attrs_gen_b10_fix, colour_b1, colour_b10, save_folder,
+                     'Overlap_fixed_time_steps', ylim)
+        plot_overlap(attrs_gen_b1_rand, attrs_gen_b10_rand, colour_b1, colour_b10, save_folder,
+                     'Overlap_random_time_steps', ylim)
 
 
 
@@ -85,7 +94,7 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=T
     x_axis = np.arange(len(y_axis))
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
-    ax = plt.scatter(x_axis, y_axis, alpha=0.15)
+    ax = plt.scatter(x_axis, y_axis, alpha=0.15, c=colour)
     if get_axis:
         ylim = plt.ylim()
     else:
@@ -95,10 +104,19 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=T
         makedirs(save_folder)
     save_name = '{}.png'.format(add_save_name)
 
-    plt.savefig(save_folder + save_name, c=colour, bbox_inches='tight', dpi=300)
+    plt.savefig(save_folder + save_name, dpi=300) #bbox_inches='tight'
     plt.show()
     if get_axis:
         return ylim
+
+def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_save_name, ylim=None):
+    x_axis_b1 = np.arange(len(y_axis_b1))
+    x_axis_b10 = np.arange(len(y_axis_b10))
+    plt.figure(figsize=(19, 10))
+    plt.scatter(x_axis_b1, y_axis_b1, alpha=0.15, c=colour_b1)
+    plt.scatter(x_axis_b10, y_axis_b10, alpha=0.15, c=colour_b10)
+    plt.ylim(ylim)
+    plt.savefig(save_folder+add_save_name, dpi=300)
 
 
 def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
