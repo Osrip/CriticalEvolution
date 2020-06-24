@@ -20,7 +20,7 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
 
     save_folder = 'save/plots_for_anna/'
-    matplotlib.rcParams.update({'font.size': 22})
+    matplotlib.rcParams.update({'font.size': 30})
     alpha = 0.3
     s = 25
     colour_b1 = 'darkorange'
@@ -102,6 +102,8 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, 
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
     ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
+    plt.xlabel('Generation')
+    plt.ylabel('Performance')
     if get_axis:
         ylim = plt.ylim()
     else:
@@ -123,6 +125,8 @@ def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_
     plt.scatter(x_axis_b1, y_axis_b1, alpha=alpha, c=colour_b1, s=s)
     plt.scatter(x_axis_b10, y_axis_b10, alpha=alpha, c=colour_b10, s=s)
     plt.ylim(ylim)
+    plt.xlabel('Generation')
+    plt.ylabel('Performance')
     plt.savefig(save_folder+add_save_name, dpi=300)
     plt.show()
 
