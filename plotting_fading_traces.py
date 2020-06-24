@@ -91,13 +91,25 @@ def animate_plot(all_artists, settings, ax, fig):
 def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fig):
     #[a.remove for a in reversed(ax.artists)]
 
-    isings = isings_all_timesteps[t]
-    foods = foods_all_timesteps[t]
-    ax.cla()
-    design_figure(settings, fig, ax)
-    initial_plot(isings, foods, settings, ax)
+    fade_out_frames = 20
 
-    return ax.artists
+    if t > fade_out_frames:
+        actual_fade_frames = fade_out_frames = 20
+    else:
+        actual_fade_frames = t
+
+    for i in range(actual_fade_frames):
+        alpha = (fade_out_frames + 1 - i) / fade_out_frames
+        frame = t - i
+
+        #-------Actual plotting---------
+        isings = isings_all_timesteps[frame]
+        foods = foods_all_timesteps[frame]
+        ax.cla()
+        design_figure(settings, fig, ax)
+        initial_plot(isings, foods, settings, ax)
+
+        return ax.artists
 
 def design_figure(settings, fig, ax):
     # fig, ax = plt.subplots()
@@ -183,7 +195,7 @@ def plot_frame(settings, folder, fig, ax, isings, foods, time, rep):
 
 
 
-def initial_plot(isings, foods, settings, ax):
+def initial_plot(isings, foods, settings, ax, alpha):
     for I in isings:
         __plot_organism_init(settings, I[0], I[1], I[2], I[3], ax)
 
@@ -191,7 +203,7 @@ def initial_plot(isings, foods, settings, ax):
     for food in foods:
         __plot_food_init(settings, food[0], food[1], ax)
 
-def __plot_organism_init(settings, x1, y1, theta, energy, ax):
+def __plot_organism_init(settings, x1, y1, theta, energy, ax, alpha):
     if energy < 0.5:
        energy = 0.5
 
@@ -208,11 +220,11 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax):
         #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus#  foods eaten as energy
 
 
-    circle = Circle([x1,y1], settings['org_radius'], edgecolor = 'g', facecolor = 'lightgreen', zorder=8)
+    circle = Circle([x1,y1], settings['org_radius'], edgecolor = 'g', facecolor = 'lightgreen', zorder=8, alpha=alpha)
     #circle = Circle([x1,y1], org_size, edgecolor = color1, facecolor = color1, zorder=8)
     ax.add_artist(circle)
 
-    edge = Circle([x1,y1], settings['org_radius'], facecolor='None', edgecolor = 'darkgreen', zorder=8)
+    edge = Circle([x1,y1], settings['org_radius'], facecolor='None', edgecolor = 'darkgreen', zorder=8, alpha=alpha)
     #edge = Circle([x1, y1], org_size, facecolor='None', edgecolor=color2, zorder=8)
     ax.add_artist(edge)
 
@@ -222,7 +234,7 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax):
     y2 = sin(radians(theta)) * tail_len + y1
 
 
-    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='red', linewidth=1, zorder=10))
+    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='red', linewidth=1, zorder=10, alpha=alpha))
     #ax.add_line(lines.Line2D([x1, x2], [y1, y2], color='darkgreen', linewidth=1, zorder=10))
 
     pass
