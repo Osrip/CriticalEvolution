@@ -58,14 +58,19 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
+    attrs_gen_b10_fix = list(map(lambda x: x*1000, attrs_gen_b10_fix))
+    attrs_gen_b1_fix = list(map(lambda x: x*1000, attrs_gen_b1_fix))
+    attrs_gen_b10_rand = list(map(lambda x: x*1000, attrs_gen_b10_rand))
+    attrs_gen_b1_rand = list(map(lambda x: x*1000, attrs_gen_b1_rand))
+
     ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b10, save_folder, 'fixed_time_steps_b10', alpha, s,
                                  get_axis=True)
-    plot_generational_avg(attrs_gen_b1_fix, colour_b1, save_folder, 'fixed_time_steps_b1', alpha, s, get_axis=False,
-                          ylim=ylim)
+    labels = plot_generational_avg(attrs_gen_b1_fix, colour_b1, save_folder, 'fixed_time_steps_b1', alpha, s, get_axis=False,
+                          ylim=ylim, return_labels=True)
     plot_generational_avg(attrs_gen_b10_rand, colour_b10, save_folder, 'random_time_steps_b10', alpha, s, get_axis=False,
                           ylim=ylim)
     plot_generational_avg(attrs_gen_b1_rand, colour_b1, save_folder, 'random_time_steps_b1', alpha, s, get_axis=False,
-                          ylim=ylim)
+                          ylim=ylim, set_labels=None)
 
     plot_overlap(attrs_gen_b1_fix, attrs_gen_b10_fix, colour_b1, colour_b10, save_folder,
                  'Overlap_fixed_time_steps', alpha, s, ylim)
@@ -99,15 +104,20 @@ def create_generational_avg(isings_list, attr_name):
     return mean_attrs_generational
 
 
-def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, get_axis=True, ylim=None):
+def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, get_axis=True, ylim=None,
+                          return_labels=False, set_labels=None):
     x_axis = np.arange(len(y_axis))
     #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
     ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
 
     locs, labels = plt.yticks()
+    if set_labels is not None:
+        labels = set_labels
+
     for label in labels[::2]:
         label.set_visible(False)
+
     legend_elements = [
         Line2D([0], [0], marker='o', color='w', label='Critical', markerfacecolor='darkorange',
                markersize=25, alpha=0.75),
@@ -133,6 +143,8 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, 
     plt.show()
     if get_axis:
         return ylim
+    if return_labels:
+        return labels
 
 def plot_overlap(y_axis_b1, y_axis_b10, colour_b1, colour_b10, save_folder, add_save_name, alpha, s, ylim):
     x_axis_b1 = np.arange(len(y_axis_b1))
