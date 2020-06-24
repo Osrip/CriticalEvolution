@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from os import makedirs, path
+import pickle
 
 class SmallIsing:
     def __init__(self, avg_energy, time_steps_gen):
@@ -14,20 +15,42 @@ class SmallIsing:
         self.norm_avg_energy = avg_energy / time_steps_gen
 
 
-def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand, only_top_isings=20):
+def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand, only_top_isings=20,
+              load_previous=True):
 
 
-    save_folder = 'save/plots_for_anna'
+    save_folder = 'save/plots_for_anna/'
 
-    attrs_gen_b10_fix = load_ising_stuff(sim_name_b10_fix, only_top_isings)
+    if not load_previous:
+        attrs_gen_b10_fix = load_ising_stuff(sim_name_b10_fix, only_top_isings)
+        attrs_gen_b1_fix = load_ising_stuff(sim_name_b1_fix, only_top_isings)
+        attrs_gen_b10_rand = load_ising_stuff(sim_name_b10_rand, only_top_isings)
+        attrs_gen_b1_rand = load_ising_stuff(sim_name_b1_rand, only_top_isings)
 
-    attrs_gen_b1_fix = load_ising_stuff(sim_name_b1_fix, only_top_isings)
+        loaded_plot_attrs = {
+            'attrs_gen_b1_fix': attrs_gen_b1_fix,
+            'attrs_gen_b10_fix': attrs_gen_b10_fix,
+            'attrs_gen_b10_rand': attrs_gen_b10_rand,
+            'attrs_gen_b1_rand': attrs_gen_b1_rand
+        }
 
+        pickle_out = open('{}loaded_plot_attrs.pickle'.format(save_folder), 'wb')
+        pickle.dump(loaded_plot_attrs, pickle_out)
+        pickle_out.close()
 
+    else:
 
-    plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix')
+        file = open('{}/loaded_plot_attrs.pickle'.format(save_folder), 'rb')
+        loaded_plot_attrs = pickle.load(file)
+        file.close()
 
-    plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix')
+        attrs_gen_b10_fix = loaded_plot_attrs['attrs_gen_b10_fix']
+        attrs_gen_b1_fix = loaded_plot_attrs['attrs_gen_b1_fix']
+        attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
+        attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
+
+        plot_generational_avg(attrs_gen_b1_fix, 'blue', save_folder, 'b1_fix')
+        plot_generational_avg(attrs_gen_b10_fix, 'orange', save_folder, 'b10_fix')
 
 
 
@@ -57,17 +80,24 @@ def create_generational_avg(isings_list, attr_name):
     return mean_attrs_generational
 
 
-def plot_generational_avg(y_axis, colour, save_folder, add_save_name):
+def plot_generational_avg(y_axis, colour, save_folder, add_save_name, get_axis=True, ylim=None):
     x_axis = np.arange(len(y_axis))
-    matplotlib.use('GTK3Cairo')
+    #matplotlib.use('GTK3Cairo')
     plt.figure(figsize=(19, 10))
-    plt.scatter(x_axis, y_axis, alpha=0.15)
+    ax = plt.scatter(x_axis, y_axis, alpha=0.15)
+    # if get_axis:
+    #     ylim = plt.ylim()
+    # else:
+    #     plt.ylim(ylim)
 
     if not path.exists(save_folder):
         makedirs(save_folder)
     save_name = '{}.png'.format(add_save_name)
+
     plt.savefig(save_folder + save_name, c=colour, bbox_inches='tight', dpi=300)
     plt.show()
+    # if get_axis:
+    #     return ylim
 
 
 def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
