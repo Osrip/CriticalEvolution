@@ -53,7 +53,7 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
         Writer = animation.FFMpegFileWriter
         writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
         writer.frame_format = 'png'
-        ani.save(savepath, writer=writer)
+        ani.save(savepath, writer=writer, dpi=500)
     elif False:
         #Using defaul writer instead of imagemagick
         ani.save(savepath, dpi=100, writer='imagemagick', fps=settings['animation_fps']) #TODO: dpi=100 writer='imagemagick',
@@ -112,7 +112,7 @@ def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fi
     for i in range(fade):
         alpha = (fade_out_iter - i) / fade_out_iter  #alpha = (fade_out_iter + 1 - i) / fade_out_iter
         # Make trace more transparent
-        alpha = alpha / 4
+        alpha = alpha / 6
         if i == 0:
             alpha = 1
         frame = t - i
