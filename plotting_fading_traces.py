@@ -44,7 +44,7 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
 
     os.chdir(path)
     design_figure(settings, fig, ax)
-    initial_plot(isings_all_timesteps[0], foods_all_timesteps[0], settings, ax)
+    initial_plot(isings_all_timesteps[0], foods_all_timesteps[0], settings, ax, alpha=1)
     #plt.savefig('firstframe.png', dpi =100, bbox_inches = 'tight')
     ani = animation.FuncAnimation(fig, __update_plot, fargs=[isings_all_timesteps, foods_all_timesteps, settings, ax, fig], interval=1, frames=len(isings_all_timesteps))
 
@@ -91,25 +91,42 @@ def animate_plot(all_artists, settings, ax, fig):
 def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fig):
     #[a.remove for a in reversed(ax.artists)]
 
-    fade_out_frames = 20
+    # fade_out_frames = 20
+    #
+    # if t > fade_out_frames:
+    #     actual_fade_frames = fade_out_frames
+    # else:
+    #     actual_fade_frames = t
+    #
+    # for i in range(actual_fade_frames):
+    #     alpha = (fade_out_frames + 1 - i) / fade_out_frames
+    #     frame = t - i
 
-    if t > fade_out_frames:
-        actual_fade_frames = fade_out_frames = 20
+    fade_out_iter = 20
+    ax.cla()
+
+    if t > fade_out_iter:
+        fade = fade_out_iter
     else:
-        actual_fade_frames = t
-
-    for i in range(actual_fade_frames):
-        alpha = (fade_out_frames + 1 - i) / fade_out_frames
+        fade = t
+    for i in range(fade):
+        alpha = (fade_out_iter - i) / fade_out_iter  #alpha = (fade_out_iter + 1 - i) / fade_out_iter
         frame = t - i
 
         #-------Actual plotting---------
         isings = isings_all_timesteps[frame]
         foods = foods_all_timesteps[frame]
-        ax.cla()
-        design_figure(settings, fig, ax)
-        initial_plot(isings, foods, settings, ax)
 
-        return ax.artists
+        # No fading for foods: only plot foods once
+        if i == 0:
+            plot_foods = True
+        else:
+            plot_foods = False
+
+        design_figure(settings, fig, ax)
+        initial_plot(isings, foods, settings, ax, alpha, plot_foods=plot_foods)
+
+    return ax.artists
 
 def design_figure(settings, fig, ax):
     # fig, ax = plt.subplots()
@@ -195,13 +212,14 @@ def plot_frame(settings, folder, fig, ax, isings, foods, time, rep):
 
 
 
-def initial_plot(isings, foods, settings, ax, alpha):
+def initial_plot(isings, foods, settings, ax, alpha, plot_foods=True):
     for I in isings:
-        __plot_organism_init(settings, I[0], I[1], I[2], I[3], ax)
+        __plot_organism_init(settings, I[0], I[1], I[2], I[3], ax, alpha)
 
     # PLOT FOOD PARTICLES
-    for food in foods:
-        __plot_food_init(settings, food[0], food[1], ax)
+    if plot_foods:
+        for food in foods:
+            __plot_food_init(settings, food[0], food[1], ax)
 
 def __plot_organism_init(settings, x1, y1, theta, energy, ax, alpha):
     if energy < 0.5:
@@ -229,7 +247,7 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax, alpha):
     ax.add_artist(edge)
 
     tail_len = org_size*1.25
-    
+
     x2 = cos(radians(theta)) * tail_len + x1
     y2 = sin(radians(theta)) * tail_len + y1
 
