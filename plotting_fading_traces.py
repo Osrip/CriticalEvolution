@@ -111,6 +111,10 @@ def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fi
         fade = t
     for i in range(fade):
         alpha = (fade_out_iter - i) / fade_out_iter  #alpha = (fade_out_iter + 1 - i) / fade_out_iter
+        # Make trace more transparent
+        alpha = alpha / 4
+        if i == 0:
+            alpha = 1
         frame = t - i
 
         #-------Actual plotting---------
@@ -231,10 +235,16 @@ def __plot_organism_init(settings, x1, y1, theta, energy, ax, alpha):
     #color1 = 'black'
     #color2 = cmap(norm(-(energy+1)))
     #org_size = settings['org_radius']
+
+
+    # Log scaling tails / noses to energy:
+    '''
     if settings['energy_model']:
         org_size = settings['org_radius'] * (np.log(energy+1))
     else:
         org_size = settings['org_radius'] * (np.log(energy + 1))
+    '''
+    org_size = settings['org_radius'] * 2
         #  If energy model is not active the "extract_plot_information function in embodied ising defines fitness thus#  foods eaten as energy
 
 
