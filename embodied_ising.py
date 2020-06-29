@@ -915,7 +915,10 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
     if settings['plot']:
         #plotting.animate_plot(artist_list, settings, ax, fig)
         # try:
-        plotting_fading_traces.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
+        if settings['fading_traces_animation']:
+            plotting_fading_traces.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
+        else:
+            plotting.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
 
         # except Exception:
         #     print('There occurred an error during animation...the simulation keeps going')

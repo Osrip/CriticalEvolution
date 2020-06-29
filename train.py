@@ -79,6 +79,7 @@ def create_settings():
     settings['plotLive'] = False  # live updates of figures
     settings['frameRate'] = 1
     settings['animation_fps'] = args.fps
+    settings['fading_traces_animation'] = args.fading_traces_animation
     
     settings['size'] = 12 #Total number of neurons in NN
     settings['nSensors'] = 4
@@ -188,6 +189,9 @@ def parse():
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
+    parser.add_argument('-notrace', '--animation_no_trace', dest='fading_traces_animation', action='store_false',
+                        help='Deactivate fading traces in animation. This significantly speeds up computational time'
+                             ', This calls completely differnt animation module, so other things might vary as well.')
     parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
     parser.add_argument('-l','--load', type=str, dest = 'loadfile',
                         help='Filename of previously saved simulation in save folder. Specify iteration using -li')
@@ -253,7 +257,7 @@ def parse():
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
-                        switch_off_evolution=False)
+                        switch_off_evolution=False, fading_traces_animation=True)
     args = parser.parse_args()
     return args
 
