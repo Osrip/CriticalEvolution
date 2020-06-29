@@ -131,6 +131,9 @@ def create_settings():
     settings['natural_heat_capacity_beta_fac_props'] = args.natural_heat_capacity_beta_fac_props  # [-1, 1, 102]
     settings['cores'] = args.cores
 
+    settings['random_time_steps'] = args.random_time_steps
+    settings['random_time_step_limits'] = args.random_time_step_limits
+
 
 
 
@@ -247,6 +250,10 @@ def parse():
                         arguments 10 ** np.linspace(low_lim, high_lim, num_betas) expects blank seperated list len 3''')
     parser.add_argument('-c', '--cores', dest='cores', type=int,
                         help='Amount of cores available for heat capacity calculations. If 0 no heat cap calculations are done')
+    parser.add_argument('-rand_ts', dest='random_time_steps', action='store_true', help='Activate random time steps every generation')
+    parser.add_argument('-rand_ts_lim', dest='random_time_step_limits', nargs='+', type=int,
+                        help='Expacts blank seperated list X Y, where X is the lower and Y the upper limit of the '
+                             'uniform random distribution, which is used for random time steps')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
@@ -257,7 +264,8 @@ def parse():
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
-                        switch_off_evolution=False, fading_traces_animation=True)
+                        switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
+                        random_time_step_limits=[100, 8000])
     args = parser.parse_args()
     return args
 

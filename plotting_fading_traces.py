@@ -53,7 +53,7 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
         Writer = animation.FFMpegFileWriter
         writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
         writer.frame_format = 'png'
-        ani.save(savepath, writer=writer, dpi=250) # Good quality: dpi = 500
+        ani.save(savepath, writer=writer, dpi=250)  # Good quality: dpi = 500
     elif False:
         #Using defaul writer instead of imagemagick
         ani.save(savepath, dpi=100, writer='imagemagick', fps=settings['animation_fps']) #TODO: dpi=100 writer='imagemagick',

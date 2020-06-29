@@ -50,6 +50,7 @@ import ray
 # ------------------------------------------------------------------------------+
 settings = {}
 
+
 class ising:
     # Initialize the network
     def __init__(self, settings, netsize, Nsensors=2, Nmotors=2, name=None):
@@ -825,7 +826,12 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
                record):
     [ising.reset_state(settings) for ising in isings]
 
-    T = settings['TimeSteps']
+    if settings['random_time_steps']:
+        random_ts_limits = settings['random_time_step_limits']
+        T = np.random.randint(random_ts_limits[0], random_ts_limits[1])
+    else:
+        T = settings['TimeSteps']
+
     for I in isings:
         I.position = np.zeros((2, T))
 
@@ -1543,7 +1549,7 @@ def evolve(settings, I_old, gen):
         # CROSS/MUTATE TEMPERATURE
         if settings['mutateB']:
             # folded normal distribution
-            deltaB = np.abs( np.random.normal(1, settings['sigB']) )
+            deltaB = np.abs(np.random.normal(1, settings['sigB']) )
 
             Beta_new = ((crossover_weight * org_1.Beta) + \
                             ((1 - crossover_weight) * org_2.Beta) ) * deltaB

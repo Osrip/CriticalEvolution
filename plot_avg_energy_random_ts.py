@@ -185,6 +185,13 @@ def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
 if __name__ == '__main__':
     sim_name_b10_fix = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     sim_name_b1_fix = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name_b10_rand = 'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    sim_name_b10_rand = 'sim-20200621-130735-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1990_1999_--nomutb_-n_random_time_steps_save_energies_nomutb' #'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
     sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+
+    pre_folder = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/'
+
+    sim_name_b10_rand = pre_folder + sim_name_b10_rand
+    sim_name_b1_rand = pre_folder + sim_name_b1_rand
+    sim_name_b10_fix = pre_folder + sim_name_b10_fix
+    sim_name_b1_fix = pre_folder + sim_name_b1_fix
     all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_b10_rand)
