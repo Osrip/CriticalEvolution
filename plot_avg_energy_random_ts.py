@@ -18,7 +18,7 @@ class SmallIsing:
 
 
 def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand, only_top_isings=20,
-              load_previous=True):
+              load_previous=False):
 
 
     save_folder = 'save/plots_for_anna/'
