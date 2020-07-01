@@ -852,6 +852,10 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
     '''
     #for t in tqdm(range(T)):
     for t in range(T):
+        #TODO: Is it good to randomize neuron states each time step? (Not done before)
+        #[I.randomize_state() for I in isings]
+
+
         #print(len(foods))
 
         # print('\r', 'Iteration {0} of {1}'.format(t, T), end='') #, end='\r'
@@ -1037,6 +1041,8 @@ def calculate_internal_energy(s, h, J):
     internal_energy:  internal energy of ising neural network
     '''
     internal_energy = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
+    #TODO: Vorzeichen?? +-  internal_energy = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
+
     # Em += E / float(T)
     # E2m += E ** 2 / float(T)
     #C = I.Beta ** 2 * (E2m - E ** 2) / I.size

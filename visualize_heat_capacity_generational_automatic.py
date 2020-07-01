@@ -136,7 +136,7 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200327-215421-g_8000_-b_10_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_4_sensors'
+    sim_name = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
     generation_list = [0, 4000]
     settings = load_settings(sim_name)
-    main(sim_name, settings, None)
+    main(sim_name, settings, None, False)

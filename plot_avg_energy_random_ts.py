@@ -9,6 +9,7 @@ from os import makedirs, path
 import pickle
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
+import os
 
 class SmallIsing:
     def __init__(self, avg_energy, time_steps_gen):
@@ -22,6 +23,8 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
 
     save_folder = 'save/plots_for_anna/'
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
     matplotlib.rcParams.update({'font.size': 30})
     alpha = 0.3
     s = 25
@@ -40,10 +43,12 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
             'attrs_gen_b10_rand': attrs_gen_b10_rand,
             'attrs_gen_b1_rand': attrs_gen_b1_rand
         }
-
-        pickle_out = open('{}loaded_plot_attrs.pickle'.format(save_folder), 'wb')
-        pickle.dump(loaded_plot_attrs, pickle_out)
-        pickle_out.close()
+        try:
+            pickle_out = open('{}loaded_plot_attrs.pickle'.format(save_folder), 'wb')
+            pickle.dump(loaded_plot_attrs, pickle_out)
+            pickle_out.close()
+        except Exception:
+            print('Could not save pickle file')
 
     else:
 
