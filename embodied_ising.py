@@ -139,6 +139,7 @@ class ising:
         self.avg_velocity = 0
         self.v = 0.0
         self.generation = 0
+        self.time_steps = 0  # time_steps of current generation
 
         ###Attributes required for heat capacity calculation###
         #  Those two vectors include the internal energy of the organism with different altered betas
@@ -148,6 +149,7 @@ class ising:
         self.beta_vec = np.array([])
         #  This vector includes all heat capacity values of the organism with different altered beta values
         self.heat_capacity_vec = np.array([])
+
 
         #self.assign_critical_values(settings) (attribute ising.C1)
 
@@ -690,6 +692,7 @@ class food():
 # ------------------------------------------------------------------------------+
 
 def save_whole_project(folder):
+    '''Copies complete code into simulation folder'''
     cwd = os.getcwd()
     onlyfiles = [f for f in listdir(cwd) if isfile(join(cwd, f))]
     save_folder = folder + 'code/'
@@ -831,6 +834,9 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
         T = np.random.randint(random_ts_limits[0], random_ts_limits[1])
     else:
         T = settings['TimeSteps']
+
+    for I in isings:
+        I.time_steps = T
 
     for I in isings:
         I.position = np.zeros((2, T))
