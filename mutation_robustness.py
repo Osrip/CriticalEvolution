@@ -11,29 +11,39 @@ import os
 import pickle
 
 
-def main(sim_name, num_evaluate_different_inds = 5, repeat_mutations=20, load_generation=False, pop_size=50,
-         time_steps=2000, attr_name='avg_energy', load_results=True):
+def main(sim_name, num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
+         time_steps=2000, attr_name='avg_energy', load_results_boo=False):
 
-    all_inds_evaluated = test_robustness(sim_name, num_evaluate_different_inds, repeat_mutations, load_generation, pop_size,
-                    time_steps, attr_name)
+
     save_dir = 'save/mutation_robustness/{}/'.format(sim_name)
+    save_name = '{}ts_{}inds_{}repeats_{}'.format(time_steps, num_evaluate_different_inds, repeat_mutations, attr_name)
+    save_sim_name = save_name+'.pickle'
+    save_plot_name = save_name+'.png'
+
+    if not load_results_boo:
+        all_inds_evaluated = test_robustness(sim_name, num_evaluate_different_inds, repeat_mutations, load_generation, pop_size,
+                                             time_steps, attr_name)
+        save_results(all_inds_evaluated, save_dir, save_sim_name)
+    else:
+        all_inds_evaluated = load_results(save_dir, save_sim_name)
+
+    plot(all_inds_evaluated, attr_name, sim_name, save_dir, save_plot_name)
 
 
-def save_results(all_inds_evaluated, save_dir):
-    pickle_out = open('{}/mutation_robustness.pickle'.format(save_dir), 'wb')
+def save_results(all_inds_evaluated, save_dir, save_name):
+    pickle_out = open(save_dir+save_name, 'wb')
     pickle.dump(all_inds_evaluated, pickle_out)
     pickle_out.close()
 
 
-def load_results(save_dir):
-    filename='mutation_robustness.pickle'
-    file = open(filename, 'rb')
+def load_results(save_dir, save_name):
+    file = open(save_dir+save_name, 'rb')
     all_inds_evaluated = pickle.load(file)
     file.close()
     return all_inds_evaluated
 
 
-def test_robustness(sim_name, num_evaluate_different_inds = 5, repeat_mutations=20, load_generation=False, pop_size=50,
+def test_robustness(sim_name, num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
                     time_steps=2000, attr_name='avg_energy'):
     if not load_generation:
         load_generation = detect_all_isings(sim_name)[-1]
@@ -53,16 +63,22 @@ def test_robustness(sim_name, num_evaluate_different_inds = 5, repeat_mutations=
     all_inds_evaluated = []
     for ind in range(num_evaluate_different_inds):
         # Only take first 20 inds, those are the not recently mutated
-        chosen_I = isings[ind]
+        chosen_I = copy.deepcopy(isings[ind])
         one_agend_all_repeats_list = []
         for rep in range(repeat_mutations):
-            network_edge_positions = np.argwhere(chosen_I.maskJ == True)
-            rand_pos = np.random.randint(0, len(network_edge_positions))
-            mutate_edge_pos = network_edge_positions[rand_pos]
-            chosen_I.J[mutate_edge_pos] = np.random.uniform(-1, 1) * chosen_I.max_weights
+            chosen_I_copy = copy.deepcopy(chosen_I)
+            # Mutation!
+            if not rep == 0:
+                network_edge_positions = np.argwhere(chosen_I.maskJ==True)
+                rand_pos = np.random.randint(0, len(network_edge_positions))
+                mutate_edge_pos = network_edge_positions[rand_pos]
+
+                # Don't use chosen_I_copy if with each iteration there shouls be more mutations
+
+                chosen_I_copy.J[mutate_edge_pos] = np.random.uniform(-1, 1) * chosen_I_copy.max_weights
             clone_isings = []
             for i in range(pop_size):
-                clone_isings.append(copy.deepcopy(chosen_I))
+                clone_isings.append(copy.deepcopy(chosen_I_copy))
 
 
             blub, evaluated_isings = EvolutionLearning(isings, foods, settings, Iterations=1)
@@ -70,34 +86,36 @@ def test_robustness(sim_name, num_evaluate_different_inds = 5, repeat_mutations=
             one_agend_all_repeats_list.append(evaluated_isings)
         all_inds_evaluated.append(one_agend_all_repeats_list)
 
-    plot(all_inds_evaluated, attr_name, sim_name)
     return all_inds_evaluated
 
-def plot(all_inds_evaluated, attr_name, sim_name, save_dir):
+def plot(all_inds_evaluated, attr_name, sim_name, save_dir, save_name):
 
-    save_name = '{}_{}'.format(time.strftime("%Y%m%d-%H%M%S"), attr_name)
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    plt.figure(figsize=(19,10))
-    for one_agend_all_repeats_list in all_inds_evaluated:
+    plt.figure(figsize=(40, 10))
+    for ind_num, one_agend_all_repeats_list in enumerate(all_inds_evaluated):
         colour = np.random.rand(3,)
         for num_simulation_repeat, isings_simulation_repeat in enumerate(one_agend_all_repeats_list):
-
+            # PLotting parameters adjusted for 4 individuals
             attributes_to_plot = []
             for I in isings_simulation_repeat:
                 exec('attributes_to_plot.append(I.{})'.format(attr_name))
-            x = [float(num_simulation_repeat) + np.random.uniform(-0.3, 0.3) for i in range(len(attributes_to_plot))]
-            plt.scatter(x, attributes_to_plot, c=colour)
+            x = [float(num_simulation_repeat) - 0.3 + 0.2*ind_num + np.random.uniform(-0.075, 0.075) for i in range(len(attributes_to_plot))]
+            plt.scatter(x, attributes_to_plot, c=colour, alpha=0.5)
 
     plt.savefig(save_dir+save_name, dpi=300, bbox_inches='tight')
     plt.show()
 
 if __name__ == '__main__':
     sim_name = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    num_evaluate_diff_inds = 2
+    sim_name = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    num_evaluate_diff_inds = 4
     repeat_mutations = 5
-    time_steps = 10
+    time_steps = 2000
     attr_name='avg_energy'
-    test_robustness(sim_name, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,
-                    time_steps=time_steps, attr_name=attr_name)
+    load_results_boo = False
+    main(sim_name, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,
+         time_steps=time_steps, attr_name=attr_name, load_results_boo=load_results_boo)
+    # test_robustness(sim_name, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,
+    #                 time_steps=time_steps, attr_name=attr_name)
