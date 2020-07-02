@@ -1321,7 +1321,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
 
 
-    return sim_name
+    return sim_name, isings
 
 def set_record_boo(rep, settings):
     '''

@@ -333,7 +333,7 @@ def run(settings, Iterations):
     #No critical learning:
     # CriticalLearning(isings, foods, settings, Iterations)
 
-    sim_name = EvolutionLearning(isings, foods, settings, Iterations)
+    sim_name, not_used_isings = EvolutionLearning(isings, foods, settings, Iterations)
 
     return sim_name
 
