@@ -38,7 +38,10 @@ def load_settings(loadfile):
     '''
     curdir = os.getcwd()
     load_settings = '/save/{}/settings.pickle'.format(loadfile)
-    settings = pickle.load(open(curdir + load_settings, 'rb'))
+    file = open(curdir + load_settings, 'rb')
+    settings = pickle.load(file)
+    file.close()
+
     return settings
 
 
