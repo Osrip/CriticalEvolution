@@ -34,6 +34,11 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
         #  when loading file generation counting starts from 0 again, thats why we have to add the iteration that was loaded
     else:
         path = '/{}animation_gen{}/'.format(save_folder, rep)
+
+    #Specific setting for module mutation_robustness.py
+    if settings['mutation_robustness_path'] != '':
+        path = '/' + settings['mutation_robustness_path']
+
     savename = 'ani-{}-{}ts-gen{}.mp4'.format(time.strftime("%Y%m%d-%H%M%S"), t, rep)
 
     savepath = savename
