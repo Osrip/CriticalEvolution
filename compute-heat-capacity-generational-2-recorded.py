@@ -24,7 +24,7 @@ def main():
     iterNum = int(argv[3]) #Generation numbers
 
 
-    R = 10 # Number of Repetitions
+    R = 10 # Number of Repetitions, each initialising with new recorded sensor value
     mode = 'MonteCarlo'
 
     #Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
@@ -33,8 +33,10 @@ def main():
     loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 
     # print(iterNum)
+    file = open(loadstr, 'rb')
+    isings = pickle.load(file)
+    file.close()
 
-    isings = pickle.load(open(loadstr, 'rb'))
     size = isings[0].size # get size from first agent
     numAgents = len(isings)
 
@@ -55,9 +57,10 @@ def main():
 
             T = 10000 #TimeSteps in dream simulation T = 100000
 
+
             betaVec = betas * I.Beta  # scale by org's local temperature
             # print(agentNum)
-            I.Beta = betaVec[bind]
+            beta_new = betaVec[bind]
             #I.randomize_state()
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
@@ -67,7 +70,7 @@ def main():
             #I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
 
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):
@@ -85,7 +88,7 @@ def main():
             #     # Why is this divided by T (total amount of time steps after thermalization)? --> mean calculation
 
             #  Claculate heat capacity
-            C[rep, agentNum] = I.Beta ** 2 * (E2m - Em ** 2) / size
+            C[rep, agentNum] = beta_new ** 2 * (E2m - Em ** 2) / size
             agentNum += 1
 
     # print(np.mean(C, 0))

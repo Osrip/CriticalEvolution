@@ -37,7 +37,8 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
     except Exception:
         print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
-    plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food')]
+    plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
+                       ('generation', 'Beta')]
     try:
         plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
     except Exception:
