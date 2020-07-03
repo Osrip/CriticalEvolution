@@ -247,9 +247,9 @@ def parse():
                         If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
                         input values are recorded during the simulation and subsequently used to calculate heat cap''')
     parser.add_argument('-c_props', dest='heat_capacity_props', type=int, nargs='+', help='''Properties of dream and recorded heat 
-                        capacity calculation. As blank spaced list: R, thermal_time, beta_low, beta_high, y_lim_high 
+                        capacity calculation. As blank spaced integer list: R, thermal_time, beta_low, beta_high, y_lim_high 
                         R = number of repititions (with newly initialized sensor values) thermal_time = number of thermal iterations used
-                        for energy measurements  beta_low = log lower bound for x axis  beta_high = log upper bound  y_lim_high = upper bound for plot''')
+                        for energy measurements  beta_low = log lower bound for x axis  beta_high = log upper bound  y_lim_high = upper bound for plot/100''')
     parser.add_argument('-nat_c', '--natural_heat_cap_gen', dest='natural_heat_capacity_Nth_gen', help='''natural heat capacity 
                         is calculated for every nth generation, if 0 no heat capacity is calculated''', type=int)
     parser.add_argument('-nat_c_props', '--nat_heat_cap_beta_props', dest='natural_heat_capacity_beta_fac_props', nargs='+',
