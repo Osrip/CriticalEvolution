@@ -1374,20 +1374,20 @@ def plotting_pipeline(rep, sim_name, settings):
                 compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=False)
 
             except Exception:
-                print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
+               print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
 
     # Calculate and plot !recorded! heat capacity
     if not settings['recorded_heat_capacity'] is 0:
         if rep % settings['recorded_heat_capacity'] == 0 and rep != 0:
-            try:
+            #try:
                 if settings['recorded_heat_capacity'] - rep == 0:
                     # During first calculation of heat capacity also compute heat capacity of gen 0
                     compute_and_plot_heat_capacity_automatic.main(sim_name, settings, generations=[0], recorded=True)
 
                 compute_and_plot_heat_capacity_automatic.main(sim_name, settings, recorded=True)
 
-            except Exception:
-                print('Something went wrong when computing and plotting dream heat capacity at generation{}'.format(rep))
+            # except Exception:
+            #     print('Something went wrong when computing and plotting recorded heat capacity at generation{}'.format(rep))
 
 
 def abrupt_seasons(settings, foods, rep, abrupt_seasons_arr):

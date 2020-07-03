@@ -20,7 +20,7 @@ def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recor
     else:
         os.system('bash bash-heat-capacity-generational-automatic.sh {} "{}" {}'.format(sim_name, gens_str, cores))
     visualize_heat_capacity_generational_automatic.main(sim_name, settings, None, recorded)
-    visualize_heat_capacity_generational_automatic_recorded.main(sim_name, settings, None, recorded)
+    #visualize_heat_capacity_generational_automatic_recorded.main(sim_name, settings, None, recorded)
 
 if __name__ == '__main__':
     # sim_name = 'sim-20200514-013839-g_5_-t_2000_-ref_0_-nat_c_0_-dream_c_0_-rec_c_2_-c_15_-n_long_test'#'sim-20200327-220128-g_8000_-b_1_-ref_2000_-a_500_1000_2000_4000_6000_8000_-n_3_sensors'

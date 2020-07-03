@@ -9,6 +9,7 @@ import os
 
 
 
+
 def main(sim_name, settings, generation_list, recorded):
     '''
     generation list can be set to None
@@ -27,12 +28,13 @@ def main(sim_name, settings, generation_list, recorded):
     #            2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
     #iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2300, 2500, 2800, 3100, 3400, 3700, 3990]
 
-
-    R = 10
+    R, thermal_time, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
+    #R = 10
     Nbetas = 102
-    betas = 10 ** np.linspace(-1, 1, Nbetas)
+    betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
     numAgents = settings['pop_size']
     size = settings['size']
+
 
     if generation_list is None:
         if recorded:
@@ -76,9 +78,10 @@ def main(sim_name, settings, generation_list, recorded):
         fig.suptitle(title)
 
         # CHANGE THIS TO CUSTOMIZE HEIGHT OF PLOT
-        upperbound = 1.5 * np.max(np.mean(np.mean(C[:, :, :-40, :], axis=0), axis=0))
+        #upperbound = 1.5 * np.max(np.mean(np.mean(C[:, :, :-40, :], axis=0), axis=0))
         # upperbound = np.max(np.mean(np.mean(C, axis=0)), axis=0)
-        upperbound = 0.4
+        #upperbound = 0.4
+        upperbound = y_lim_high / 100
 
         label = iter
 
@@ -92,7 +95,9 @@ def main(sim_name, settings, generation_list, recorded):
         ax.set_xticks(xticks)
         ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
 
-        plt.axis([0.1, 10, 0, upperbound])
+        low_xlim = 10 ** beta_low
+        high_xlim = 10 ** beta_high
+        plt.axis([low_xlim, high_xlim, 0, upperbound])
 
         # leg = plt.legend(loc=2, title='Generation')
         #

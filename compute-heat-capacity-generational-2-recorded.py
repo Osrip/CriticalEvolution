@@ -9,6 +9,7 @@ import pickle
 import random
 import glob
 from numba import jit
+from automatic_plot_helper import load_settings
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -23,13 +24,16 @@ def main():
     bind = int(argv[2]) #beta index
     iterNum = int(argv[3]) #Generation numbers
 
+    settings = load_settings(loadfile)
 
-    R = 10 # Number of Repetitions, each initialising with new recorded sensor value
+    R, thermal_time, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
+
+    #R = 100 # Number of Repetitions, each initialising with new recorded sensor value
     mode = 'MonteCarlo'
 
     #Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
     Nbetas = 102
-    betas = 10 ** np.linspace(-1, 1, Nbetas)
+    betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
     loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 
     # print(iterNum)
@@ -55,7 +59,7 @@ def main():
 
         for I in isings:
 
-            T = 10000 #TimeSteps in dream simulation T = 100000
+             #TimeSteps in dream simulation T = 100000
 
 
             betaVec = betas * I.Beta  # scale by org's local temperature
@@ -70,7 +74,7 @@ def main():
             #I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
+            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
 
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):

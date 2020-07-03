@@ -124,6 +124,8 @@ def create_settings():
     settings['dream_heat_capacity'] = args.dream_heat_capacity
     settings['recorded_heat_capacity'] = args.recorded_heat_capacity
 
+    settings['heat_capacity_props'] = args.heat_capacity_props
+
     # natural heat capacity is calculated for every nth generation, if 0 no heat capacity is calculated
     settings['natural_heat_capacity_Nth_gen'] = args.natural_heat_capacity_Nth_gen
     # natural heat capacity beta factor distribution properties, last three linspace arguments
@@ -244,6 +246,10 @@ def parse():
                         Every nth generation that recorded heat capacity is calculated and plotted. 
                         If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
                         input values are recorded during the simulation and subsequently used to calculate heat cap''')
+    parser.add_argument('-c_props', dest='heat_capacity_props', type=int, nargs='+', help='''Properties of dream and recorded heat 
+                        capacity calculation. As blank spaced list: R, thermal_time, beta_low, beta_high, y_lim_high 
+                        R = number of repititions (with newly initialized sensor values) thermal_time = number of thermal iterations used
+                        for energy measurements  beta_low = log lower bound for x axis  beta_high = log upper bound  y_lim_high = upper bound for plot''')
     parser.add_argument('-nat_c', '--natural_heat_cap_gen', dest='natural_heat_capacity_Nth_gen', help='''natural heat capacity 
                         is calculated for every nth generation, if 0 no heat capacity is calculated''', type=int)
     parser.add_argument('-nat_c_props', '--nat_heat_cap_beta_props', dest='natural_heat_capacity_beta_fac_props', nargs='+',
@@ -266,7 +272,7 @@ def parse():
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
-                        random_time_step_limits=[100, 8000])
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -1, 1, 40])
     args = parser.parse_args()
     return args
 

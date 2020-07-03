@@ -4,6 +4,7 @@ from embodied_ising import ising
 import numpy as np
 from sys import argv
 from os import path, makedirs
+from automatic_plot_helper import load_settings
 
 import pickle
 import glob
@@ -21,13 +22,16 @@ loadfile = str(argv[1]) #
 bind = int(argv[2]) #beta index
 iterNum = int(argv[3]) #Generation numbers
 
+settings = load_settings(loadfile)
 
-R = 1 # Number of Repetitions
+R, T, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
+
+#R = 1 # Number of Repetitions
 mode = 'MonteCarlo'
 
 #Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
 Nbetas = 102
-betas = 10 ** np.linspace(-1, 1, Nbetas)
+betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
 loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 
 # print(iterNum)
@@ -52,7 +56,7 @@ for rep in range(R):
     for I in isings:
         Em = 0
         E2m = 0
-        T = 10000 #TimeSteps in dream simulation T = 100000
+        #T = 10000 #TimeSteps in dream simulation T = 100000
 
         betaVec = betas * I.Beta  # scale by org's local temperature
         # print(agentNum)
