@@ -52,9 +52,8 @@ def main():
         agentNum = 0
 
         for I in isings:
-            Em = 0
-            E2m = 0
-            T = 10 #TimeSteps in dream simulation T = 100000
+
+            T = 10000 #TimeSteps in dream simulation T = 100000
 
             betaVec = betas * I.Beta  # scale by org's local temperature
             # print(agentNum)
@@ -68,7 +67,7 @@ def main():
             #I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, E, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):
@@ -159,11 +158,12 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
                 #transformed  P = 1/(1+e^(deltaE* Beta)
                 s[perm] = -s[perm]
 
+        # Record/Measure energy:
         E = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
         Em += E / float(thermalTime)   # <-- mean calculation??
         E2m += E ** 2 / float(thermalTime)
 
-    return s, E, E2m
+    return s, Em, E2m
 
 @jit(nopython=True)
 def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
