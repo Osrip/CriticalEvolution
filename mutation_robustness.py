@@ -122,7 +122,7 @@ if __name__ == '__main__':
     time_steps = 2000
     attr_name = 'avg_energy'
     load_results_boo = False
-    animate_reps = [0,1,2,3]
+    animate_reps = [0] # [0,1,2,3]
     main(sim_name, animate_reps, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,
          time_steps=time_steps, attr_name=attr_name, load_results_boo=load_results_boo)
     # test_robustness(sim_name, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,

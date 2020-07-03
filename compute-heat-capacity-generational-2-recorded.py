@@ -24,7 +24,7 @@ def main():
     iterNum = int(argv[3]) #Generation numbers
 
 
-    R = 1 # Number of Repetitions
+    R = 10 # Number of Repetitions
     mode = 'MonteCarlo'
 
     #Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
@@ -54,7 +54,7 @@ def main():
         for I in isings:
             Em = 0
             E2m = 0
-            T = 10000 #TimeSteps in dream simulation T = 100000
+            T = 10 #TimeSteps in dream simulation T = 100000
 
             betaVec = betas * I.Beta  # scale by org's local temperature
             # print(agentNum)

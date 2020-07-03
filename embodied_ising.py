@@ -1001,14 +1001,16 @@ def prepare_natural_heat_capacity(settings, isings, beta_facs):
         beta_vec = beta_facs * I_d.Beta
         int_energy_vec = np.zeros(len(beta_facs))
         for j, new_beta in enumerate(beta_vec):
-            I_d_copy = copy.deepcopy(I_d)
+            #I_d_copy = copy.deepcopy(I_d)
             # TODO: inheriting states from previous dream ising?????
-            I_d_copy.Beta = new_beta
+            I_d.Beta = new_beta
             # TODO: Do Thermalization before measuring heat capacity (probably yes) ... Sensors are updated in there
-            I_d_copy.SequentialGlauberStepFastHelper(settings)
-            int_energy = calculate_internal_energy(I_d_copy.s, I_d_copy.h, I_d_copy.J)
+            I_d.SequentialGlauberStepFastHelper(settings)
+            int_energy = calculate_internal_energy(I_d.s, I_d.h, I_d.J)
             int_energy_vec[j] = int_energy
-            del I_d_copy
+            # Reinitialize all neurons except sensor neurons
+            I_d.s[I_d.Ssize:] = np.random.randint(0, 2, size=I_d.size - I_d.Ssize) * 2 - 1
+            #del I_d_copy
         if len(I_n.cumulative_int_energy_vec) != 0:
             I_n.cumulative_int_energy_vec = I_n.cumulative_int_energy_vec + int_energy_vec
             I_n.cumulative_int_energy_vec_quad = I_n.cumulative_int_energy_vec_quad + int_energy_vec**2

@@ -27,7 +27,7 @@ def plot_heat_cap(heat_cap_vecs, gen, sim_name):
     ax.set_xscale("log", nonposx='clip')
     # ax.set_xticks(xticks)
     # ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
-    plt.ylim(0, 1)
+    #plt.ylim(0, 1)
     upperbound = 0.4
     #plt.axis([0.1, 10, 0, upperbound])
 
