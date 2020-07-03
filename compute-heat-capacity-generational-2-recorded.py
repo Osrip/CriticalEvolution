@@ -62,8 +62,10 @@ def main():
             #I.randomize_state()
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
+
             # Thermalosation to equilibrium before making energy measurements
-            I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            #TODO LEave thermalization to equilibrium away before measurement?
+            #I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, E, E2m = SequentialGlauberStepFast_calc_energy(T, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
@@ -124,7 +126,7 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
     Energy calculation each thermal time step
     '''
     # TODO: After figuring the effect of thermalize sensors out delete this shit, slows everything down!
-    thermalize_sensors = True
+    thermalize_sensors = False
 
     if thermalize_sensors:
         all_neurons_except_sens = np.arange(0, size)
