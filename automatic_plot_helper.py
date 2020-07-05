@@ -81,6 +81,9 @@ def load_isings(loadfile, wait_for_memory = True):
     '''
     if wait_for_memory:
         wait_for_enough_memory(loadfile)
+        print('Not enough memory to load in isings files. \nWaiting for memory free before loading isings files... '
+              '\nIf within a randomly chosen amount of time there is not enough memory will attempt loading them '
+              'anyways')
 
     iter_list = detect_all_isings(loadfile)
     settings = load_settings(loadfile)
@@ -102,7 +105,7 @@ def load_isings(loadfile, wait_for_memory = True):
         isings_list.append(isings)
     return isings_list
 
-def load_top_isings(loadfile, first_n_isings, wait_for_memory = True):
+def load_top_isings(loadfile, first_n_isings, wait_for_memory = False):
     '''
     Load all isings pickle files and return them as list
     :param loadfile : simulation name
@@ -110,6 +113,7 @@ def load_top_isings(loadfile, first_n_isings, wait_for_memory = True):
     '''
     if wait_for_memory:
         wait_for_enough_memory(loadfile)
+
 
     iter_list = detect_all_isings(loadfile)
     settings = load_settings(loadfile)
@@ -132,7 +136,7 @@ def load_top_isings(loadfile, first_n_isings, wait_for_memory = True):
         isings_list.append(isings_top)
     return isings_list
 
-def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = True):
+def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = False):
     '''
     Load all isings pickle files and return them as list
     :param loadfile : simulation name
@@ -140,6 +144,8 @@ def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = True)
     '''
     if wait_for_memory:
         wait_for_enough_memory(loadfile)
+
+
 
     iter_list = detect_all_isings(loadfile)
     settings = load_settings(loadfile)
@@ -208,7 +214,7 @@ def detect_all_isings_specific_path(isings_path):
     return gen_nums
 
 
-def load_isings_from_list(loadfile, iter_list, wait_for_memory = True):
+def load_isings_from_list(loadfile, iter_list, wait_for_memory = False):
     '''
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
@@ -303,12 +309,15 @@ def wait_for_enough_memory(sim_name):
     total_system_memory = memory_data.active
 
     if total_system_memory < size_isings_folder:
-        warnings.warn("Your system's total memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
+        warnings.warn("Your system's total (not currently free) memory is not sufficient to load in isings file. Attempting it anyways hoping for enough swap")
     else:
         waited_seconds = 0
         # Randomize max waited seconds, to make it unlikely for two parallely waiting processes writing onto swap at the same time
         max_waited_seconds = np.random.randint(1200, 3600)
         while available_memory < size_isings_folder:
+            print('Not enough memory to load in isings files. \nWaiting for memory to be free before loading isings files... '
+                  '\nIf within {} seconds} chosen amount of time there is not enough memory will attempt loading them '
+                  'anyways'.format(max_waited_seconds))
             time.sleep(10)
             waited_seconds += 10
             if waited_seconds > max_waited_seconds:

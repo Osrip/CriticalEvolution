@@ -87,10 +87,18 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 def load_ising_stuff(sim_name, only_top_isings):
     isings_avg_energy_list = load_top_isings_attr(sim_name, only_top_isings, 'avg_energy')
     # Load this in order to have something to compute the number of time steps of current generation with
-    energies_first_ind = load_top_isings_attr(sim_name, 1, 'energies')
-    # Get rid of double list (usually several individuals are in there but now only one is in there, which is why we can remove one nesting)
-    energies_first_ind = [energies[0] for energies in energies_first_ind]
-    time_steps_each_gen = list(map(lambda x: len(x), energies_first_ind))
+
+    # TODO Always fit this to current data format... only in latest version time steps of current generation are saved as attributes in isings
+    #Getting number of time steps for each generation:
+    try:
+        # Get rid of double list (usually several individuals are in there but now only one is in there, which is why we can remove one nesting)
+        energies_first_ind = load_top_isings_attr(sim_name, 1, 'energies')
+        energies_first_ind = [energies[0] for energies in energies_first_ind]
+        time_steps_each_gen = list(map(lambda x: len(x), energies_first_ind))
+    except Exception:
+        time_steps_first_ind = load_top_isings_attr(sim_name, 1, 'time_steps')
+        time_steps_each_gen = [time_steps[0] for time_steps in time_steps_first_ind]
+
     settings = load_settings(sim_name)
     settings['pop_size'] = only_top_isings
     small_isings_list = create_small_isings(isings_avg_energy_list, time_steps_each_gen)
@@ -190,13 +198,16 @@ def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
 if __name__ == '__main__':
     sim_name_b10_fix = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
     sim_name_b1_fix = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name_b10_rand = 'sim-20200621-130735-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1990_1999_--nomutb_-n_random_time_steps_save_energies_nomutb' #'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    # sim_name_b10_rand = 'sim-20200621-130735-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1990_1999_--nomutb_-n_random_time_steps_save_energies_nomutb' #'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    # sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    sim_name_b10_rand = 'sim-20200702-113213-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_10_-noplt_-n_huge_random_ts_run_ts_saved'
+    sim_name_b1_rand = 'sim-20200702-113206-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_1_-noplt_-n_huge_random_ts_run_ts_saved'
+
 
     pre_folder = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/'
 
-    sim_name_b10_rand = pre_folder + sim_name_b10_rand
-    sim_name_b1_rand = pre_folder + sim_name_b1_rand
+    # sim_name_b10_rand = pre_folder + sim_name_b10_rand
+    # sim_name_b1_rand = pre_folder + sim_name_b1_rand
     sim_name_b10_fix = pre_folder + sim_name_b10_fix
     sim_name_b1_fix = pre_folder + sim_name_b1_fix
     all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_b10_rand)
