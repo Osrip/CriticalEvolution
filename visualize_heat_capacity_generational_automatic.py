@@ -43,6 +43,7 @@ def main(sim_name, settings, generation_list, recorded):
             generation_list = automatic_generation_generation_list(folder + '/C')
     iter_gen = generation_list
 
+    # TODO: !!!!!How are REPEATS AVERAGED here??? Looks like only last repeat is plotted!!!!!!
     C = np.zeros((R, numAgents, Nbetas, len(iter_gen)))
 
 

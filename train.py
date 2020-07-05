@@ -272,7 +272,7 @@ def parse():
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
-                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -1, 1, 40])
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40])
     args = parser.parse_args()
     return args
 
