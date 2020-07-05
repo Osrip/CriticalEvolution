@@ -14,14 +14,14 @@ def plot_heat_cap(heat_cap_vecs, gen, sim_name):
 
 
     fig, ax = plt.subplots(1, 1, figsize=(11, 10), sharex=True)
-    fig.text(0.51, 0.035, r'$\beta$', ha='center', fontsize=28)
+    fig.text(0.51, 0.035, r'$\beta_{fac}$', ha='center', fontsize=28)
     fig.text(0.005, 0.5, r'$C/N$', va='center', rotation='vertical', fontsize=28)
     title = 'Natural Specific Heat of Foraging Community\n Generation: ' + str(gen)
     fig.suptitle(title)
 
     for heat_cap_vec in heat_cap_vecs:
-        plt.scatter(beta_facs, heat_cap_vec)
-        ax.scatter(beta_facs, heat_cap_vec, s=30, alpha=0.3, marker='o', label=None)
+        #plt.scatter(beta_facs, heat_cap_vec)
+        ax.scatter(beta_facs, heat_cap_vec, s=6, alpha=0.5, marker='o', label=None)
 
     # xticks = [0.1, 0.5, 1, 2, 4, 10]
     ax.set_xscale("log", nonposx='clip')
@@ -44,6 +44,9 @@ def load_and_plot(sim_name, gens):
         plot_heat_cap(heat_cap_vecs, gen, sim_name)
 
 def plot_all_possible_gens(sim_name):
+    '''
+    This is MAIN FUNCTION
+    '''
     all_heat_capacity_gens = load_gens_with_heat_cap(sim_name)
     load_and_plot(sim_name, all_heat_capacity_gens)
 
@@ -66,7 +69,8 @@ def load_beta_facs(sim_name):
     return beta_facs
 
 if __name__ == '__main__':
-    sims = ['sim-20200416-003618-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003611-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003603-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-5_5_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003527-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003407-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003357-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003347-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003238-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003227-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003217-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_disabled']
+    #sims = ['sim-20200416-003618-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003611-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003603-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-5_5_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003527-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003407-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003357-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003347-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_enabled', 'sim-20200416-003238-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003227-g_2000_-t_2000_-c_gen_200_-ref_200_-b_0.1_-n_first_nat_C_test_reset_line_disabled', 'sim-20200416-003217-g_2000_-t_2000_-c_gen_200_-ref_200_-b_1_-n_first_nat_C_test_reset_line_disabled']
+    sims=['sim-20200703-180403-g_1_-t_2000_-b_1_-nat_c_1_-nat_c_props_-1_1_100_-n_natural_heat_cap_ylim']
     for sim in sims:
         plot_all_possible_gens(sim)
     # sim = 'sim-20200416-003618-g_2000_-t_2000_-c_gen_200_-ref_200_-b_10_-c_props_-10_10_102_-n_first_nat_C_test_reset_line_enabled'

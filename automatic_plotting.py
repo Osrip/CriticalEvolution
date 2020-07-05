@@ -4,11 +4,13 @@ mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
 from automatic_plot_helper import  load_top_isings
+from automatic_plot_helper import load_isings_from_list
 import compute_and_plot_heat_capacity_automatic
 import plot_anything_combined
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
 import sys
+import numpy as np
 
 
 import plot_anythingXY_scatter_animation
@@ -32,13 +34,14 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
             f.close()
         else:
             isings_list = load_isings(sim_name)
+            #isings_list = load_isings_from_list(sim_name, [0])
     try:
         plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
     except Exception:
         print('Could not create generational plots')
     #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
-                       ('generation', 'Beta')]
+                       ('generation', 'Beta'), ('Beta', 'avg_energy')]
     try:
         plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
     except Exception:
