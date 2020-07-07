@@ -11,7 +11,7 @@ import os
 import pickle
 
 
-def main(sim_name, animate_reps=[0], num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
+def main(sim_name, animate_reps=[recorded], num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
          time_steps=2000, attr_name='avg_energy', load_results_boo=False):
 
 
@@ -92,7 +92,7 @@ def test_robustness(sim_name, save_dir, animate_reps, num_evaluate_different_ind
                 clone_isings.append(copy.deepcopy(chosen_I_copy))
 
 
-            blub, evaluated_isings = EvolutionLearning(isings, foods, settings, Iterations=1)
+            blub, evaluated_isings = EvolutionLearning(clone_isings, foods, settings, Iterations=1)
 
             one_agend_all_repeats_list.append(evaluated_isings)
         all_inds_evaluated.append(one_agend_all_repeats_list)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     time_steps = 2000
     attr_name = 'avg_energy'
     load_results_boo = False
-    animate_reps = [0] # [0,1,2,3]
+    animate_reps = [] # [0,1,2,3]
     main(sim_name, animate_reps, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,
          time_steps=time_steps, attr_name=attr_name, load_results_boo=load_results_boo)
     # test_robustness(sim_name, num_evaluate_different_inds=num_evaluate_diff_inds, repeat_mutations=repeat_mutations,

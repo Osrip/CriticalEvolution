@@ -71,7 +71,7 @@ def main():
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            #I.s = SequentialGlauberStepFast(int(T/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            #I.s = SequentialGlauberStepFast(int(thermal_time/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
@@ -174,7 +174,7 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
 
 @jit(nopython=True)
 def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
-    thermalize_sensors = True
+    thermalize_sensors = False
     if thermalize_sensors:
         all_neurons_except_sens = np.arange(0, size)
     else:

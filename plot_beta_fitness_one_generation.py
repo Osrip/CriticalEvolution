@@ -22,5 +22,6 @@ def plot(sim_name, generation):
     plt.show()
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200705-212507-g_2000_-t_2000_-ref_100_-n_evolve_together_sim-20200604-235424-g_2000_-t_2000_-b_1___sim-20200604-235433-g_2000_-t_2000_-b_10'
+    #sim_name = 'sim-20200705-212507-g_2000_-t_2000_-ref_100_-n_evolve_together_sim-20200604-235424-g_2000_-t_2000_-b_1___sim-20200604-235433-g_2000_-t_2000_-b_10'
+    sim_name = 'sim-20200705-211207-g_2000_-t_2000_-ref_100_-n_evolve_together_sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_random_time_steps_save_energies_4'
     plot(sim_name, 0)
