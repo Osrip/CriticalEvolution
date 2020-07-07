@@ -150,6 +150,8 @@ class ising:
         #  This vector includes all heat capacity values of the organism with different altered beta values
         self.heat_capacity_vec = np.array([])
 
+        self.selected = False  # Those, that were selected in previous generation and copied into current get this
+
 
         #self.assign_critical_values(settings) (attribute ising.C1)
 
@@ -569,6 +571,10 @@ class ising:
         if settings['mutateB']:
             deltaB = np.abs(np.random.normal(1, settings['sigB']))
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
+            # #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
+            # if np.random.uniform(0,1) < 0.1:
+            #     self.Beta = np.random.uniform(0.1, 10)
+
             #biases GA pushing towards lower betas (artifical pressure to small betas)
 
     def reset_state(self, settings):
@@ -1489,6 +1495,13 @@ def food_fitness(isings):
     return fitnessN, fitness
 
 def evolve(settings, I_old, gen):
+    '''
+    Fittest 10 individuals are copied into next generation --> FIRST 10 POSITION OF NEW GENERATION
+    Fittest 10 are again copied 15 times, those copies are mutated by a probability of 10 % --> NEXT 15 POSITION OF NEW GENERATION
+    For mutation see self.mutate. This includes edge weight mutations, adding/removing of edges, beta mutations (again for certain probabilities)
+    The 25 individuals that were created this way will be parents to the last 15 individuals
+
+    '''
 
     size = settings['size']
     nSensors = settings['nSensors']
@@ -1503,22 +1516,27 @@ def evolve(settings, I_old, gen):
         I_sorted = sorted(I_old, key=operator.attrgetter('fitness'), reverse=True)
     I_new = []
 
-    alive_num = int(settings['pop_size'] - settings['numKill'])
-    elitism_num = int(alive_num/2) # only the top half of the living orgs can duplicate
+    alive_num = int(settings['pop_size'] - settings['numKill']) #numKill = 30 --> alive num = 20 --> elitism num = 10
+    elitism_num = int(alive_num/2)  # only the top half of the living orgs can duplicate
 
-    numMate = int(settings['numKill'] * settings['mateDupRatio'])
-    numDup = settings['numKill'] - numMate
+    numMate = int(settings['numKill'] * settings['mateDupRatio']) # 15
+    numDup = settings['numKill'] - numMate #15
 
+    # Make isings (I_new) of len 20
+    # Fittest 20 agents are copied
     for i in range(0, alive_num):
         I_new.append(I_sorted[i])
 
     # --- GENERATE NEW ORGANISMS ---------------------------+
     orgCount = settings['pop_size'] + gen * settings['numKill']
 
-    # DUPLICATION OF ELITE POPULATION
+    # DUPLICATION OF ELITE POPULATION (iterating 15 times)
     for dup in range(0, numDup):
+        '''
+        Fittest 10 agents copied 15 times and mutates them for a probability of 0.1, they make position 20 to 34 in I_new (counted from 0)
+        '''
         candidateDup = range(0, elitism_num)
-        random_index = sample(candidateDup, 1)[0]
+        random_index = sample(candidateDup, 1)[0] # random int between 0 and 10
 
         name = copy.deepcopy(I_sorted[random_index].name) + 'm'
         I_new.append(ising(settings, size, nSensors, nMotors, name))
@@ -1531,25 +1549,31 @@ def evolve(settings, I_old, gen):
         I_new[-1].maskJ = copy.deepcopy(I_sorted[random_index].maskJ)
         # I_new[-1].maskJtriu = I_sorted[random_index].maskJtriu
         
-        '''
-        only important with critical learning
-        '''
+
+        #only important with critical learning
+
         # try:
         #     I_new[-1].C1 = I_sorted[random_index].C1
         # except NameError:
         #     pass
 
         # MUTATE SOMETIMES
-        if np.random.random() < settings['mutationRateDup']:
+        # self.mutate mutates edge weights, adds/removes edges and mutates beta
+        if np.random.random() < settings['mutationRateDup']: # settings['mutationRateDup'] = 0.1
             I_new[-1].mutate(settings)
 
         # random mutations in duplication
 
     # MATING OF LIVING POPULATION DOUBLE DIPPING ELITE
+    # numMate = 15
+    '''
+    Occupying the last 15 positions with crossed over individuals, parents are all 10 fittest individuals as well as 
+    the following 15 individuals, which are copies of the fittest (which have been mutated for a probablility of 0.1) 
+    '''
     for mate in range(0, numMate):
         # TODO: negative weight mutations?!
         # SELECTION (TRUNCATION SELECTION)
-        candidatesMate = range(0, len(I_new)) # range(0, alive_num) to avoid double dipping
+        candidatesMate = range(0, len(I_new)) # range(0, alive_num) to avoid double dipping : range(0,35)
         random_index = sample(candidatesMate, 2)
         org_1 = I_sorted[random_index[0]]
         org_2 = I_sorted[random_index[1]]
@@ -1566,7 +1590,7 @@ def evolve(settings, I_old, gen):
         # CROSS/MUTATE TEMPERATURE
         if settings['mutateB']:
             # folded normal distribution
-            deltaB = np.abs(np.random.normal(1, settings['sigB']) )
+            deltaB = np.abs(np.random.normal(1, settings['sigB']))
 
             Beta_new = ((crossover_weight * org_1.Beta) + \
                             ((1 - crossover_weight) * org_2.Beta) ) * deltaB
