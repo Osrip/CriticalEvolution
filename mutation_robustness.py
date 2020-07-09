@@ -11,7 +11,7 @@ import os
 import pickle
 
 
-def main(sim_name, animate_reps=[recorded], num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
+def main(sim_name, animate_reps=[], num_evaluate_different_inds=4, repeat_mutations=20, load_generation=False, pop_size=50,
          time_steps=2000, attr_name='avg_energy', load_results_boo=False):
 
 
