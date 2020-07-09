@@ -138,7 +138,8 @@ def create_settings():
 
     settings['mutation_robustness_path'] = ''  # Special setting for mutation_robustness.py otherwise always =''
 
-
+    # name that is added to folder that simulation is saved in
+    settings['add_save_name'] = ''
 
 
     
