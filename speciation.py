@@ -14,6 +14,7 @@ def speciation(isings_old, isings_new, max_species_num_ever, settings):
             I_old_species1, I_old_species2 = I_old_species_tuple
             #merged_species_name = '({}_{})'.format(I_old_species1.species, I_old_species2.species)
             merged_species_name = max_species_num_ever + 1
+            max_species_num_ever = merged_species_name
             # Make one of the individuals representative for new species and delete the other one out of repres_inds_all_species
             # (If we wanted to be accurate we would have to draw a new representative out of merged species, but for
             # simplicity I'm not going to do that)
@@ -50,6 +51,8 @@ def speciation(isings_old, isings_new, max_species_num_ever, settings):
             #new_species_name = str(int(max_species_number) + 1)
             new_species_name = max_species_num_ever + 1
             I_new.species = new_species_name
+            max_species_num_ever = new_species_name
+    return max_species_num_ever
 
 
 def calculate_shared_fitness_continuous_species(isings_new, settings):

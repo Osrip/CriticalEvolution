@@ -1441,6 +1441,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             '''
             if not settings['switch_off_evolution']:
                 if settings['speciation']:
+                    # Make sure max_species_num_ever (just to be save)
+                    max_species_num_ever = max([int(I.species) for I in isings])
                     # First of all calculate shared_fitness (species-specific fitness) as evolve needs this
                     # Cannot be done earlier as avg_energy (non-species specific fitness) is required in order to
                     # calculate shared_fitness
@@ -1449,10 +1451,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     # Evolve_new_isings
                     isings = evolve2(settings, isings, rep)
                     # Assign species to newly evolved isings
-                    speciation(isings_old, isings, max_species_num_ever, settings)
+                    max_species_num_ever = speciation(isings_old, isings, max_species_num_ever, settings)
                     del isings_old
-            else:
-                isings = evolve(settings, isings, rep)
+                else:
+                    isings = evolve(settings, isings, rep)
 
 
         #### PLOTTING PIPELINE ####
