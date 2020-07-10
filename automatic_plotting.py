@@ -18,7 +18,7 @@ import plot_anythingXY_scatter_animation
 '''!!!!!!!!ONLY CHANGE, WHEN SIMULATION IS NOT RUNNING!!!!!!!   gets called via os to prevent memory leak'''
 
 
-def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
+def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
@@ -33,11 +33,16 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
             f = open(save_txt_path + "Only_first_{}_fittest_individuals_have_been_plotted.txt".format(only_top_isings), "w+")
             f.close()
         else:
-            #isings_list = load_isings(sim_name)
-            isings_list = load_isings_from_list(sim_name, [0])
+            isings_list = load_isings(sim_name)
+            #isings_list = load_isings_from_list(sim_name, [0])
     plot_vars = ['Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
                        ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+
+    if settings['speciation']:
+        append_species_stuff = [('species', 'shared_fitness'), ('species', 'avg_energy'), ('generation', 'species')]
+        for tup in append_species_stuff:
+            plot_var_tuples.append(tup)
 
 
     # Try plotting norm_avg_energy in case dataset already has I.time_steps
