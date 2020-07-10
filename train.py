@@ -89,7 +89,7 @@ def create_settings():
     settings['numDisconnectedNeurons'] = 0 #  int((settings['size'] - settings['nSensors'] - settings['nMotors']) / 1.2)
     # how should organisms repopulate, duplicate or mate?
     settings['mateDupRatio'] = 0.5
-    settings['mutationRateDup'] = 0.1  # DUPLICATION mutation rate
+    settings['mutationRateDup'] = args.mutationRateDup #0.1  # DUPLICATION mutation rate
 
     settings['init_beta'] = args.init_beta
     settings['mutateB'] = not args.no_mut_beta  # toggle to allow Beta (temperature) mutations (toggle off if critical learning is on)
@@ -276,6 +276,10 @@ def parse():
                         help='Constants c_top, c_weight, c_beta in genetic distance function, that determine which '
                              '"weight" topology differences, weight differences and beta differences have'
                         )
+    parser.add_argument('-mutdup', dest='mutationRateDup', type=float,
+                        help='Mutation rate for the fittest individuals that have been duplicated (fittest individuals'
+                             'are first copied into new generation, then again duplicated. The duplicated are mutated with'
+                             'this mutation rate')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -287,7 +291,7 @@ def parse():
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
-                        delta_threshold_speciation=2, shared_fitness_constants=[1,1,1])
+                        delta_threshold_speciation=2, shared_fitness_constants=[1,1,1], mutationRateDup=0.1)
     args = parser.parse_args()
     return args
 
