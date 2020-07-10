@@ -141,7 +141,14 @@ def create_settings():
     # name that is added to folder that simulation is saved in
     settings['add_save_name'] = ''
 
+    # Speciation stuff
+    settings['speciation'] = args.speciation
+    #Constants for delta formula c_top, c_weight, c_beta
+    settings['shared_fitness_constants'] = tuple(args.shared_fitness_constants) #(1, 1, 1)
+    settings['delta_threshold_speciation'] = args.delta_threshold_speciation
 
+    # name that is added to folder that simulation is saved in
+    settings['add_save_name'] = ''
     
     Iterations = args.iterations
 
@@ -262,7 +269,13 @@ def parse():
     parser.add_argument('-rand_ts_lim', dest='random_time_step_limits', nargs='+', type=int,
                         help='Expacts blank seperated list X Y, where X is the lower and Y the upper limit of the '
                              'uniform random distribution, which is used for random time steps')
-
+    parser.add_argument('-spec', '--speciation', dest='speciation', action='store_true', help='Activates speciation in evolutionary algorithm')
+    parser.add_argument('-delta', dest='delta_threshold_speciation', type=float, help='Threshold at which genetic distance '
+                                                                                      'species are seperated')
+    parser.add_argument('-ccc', dest='shared_fitness_constants', nargs='+', type=float,
+                        help='Constants c_top, c_weight, c_beta in genetic distance function, that determine which '
+                             '"weight" topology differences, weight differences and beta differences have'
+                        )
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -273,7 +286,8 @@ def parse():
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
-                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40])
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
+                        delta_threshold_speciation=2, shared_fitness_constants=[1,1,1])
     args = parser.parse_args()
     return args
 

@@ -42,6 +42,11 @@ import subprocess
 import visualize_in_model_natural_heat_capacity
 import ray
 
+from speciation import speciation
+from speciation import calculate_shared_fitness
+from speciation import calculate_shared_fitness_continuous_species
+
+
 
 # ------------------------------------------------------------------------------+
 # ------------------------------------------------------------------------------+
@@ -152,6 +157,9 @@ class ising:
 
         self.selected = False  # Those, that were selected in previous generation and copied into current get this
 
+        self.species = 0  # INT species name
+
+        self.shared_fitness = 0  # Fitness calculated by speciation algorithm
 
         #self.assign_critical_values(settings) (attribute ising.C1)
 
@@ -463,6 +471,9 @@ class ising:
 
 
     # mutate the connectivity matrix of an organism by stochastically adding/removing an edge
+
+
+
     def mutate(self, settings):
         '''
          3 Mutations happening at once:
@@ -473,7 +484,124 @@ class ising:
 
         EDGE MUTATIONS
         currently in an edge mutation means, that the whole edge weight is replaced by a randomly generated weight
-        
+
+
+        BETA Mutations
+        Beta is mutated
+        '''
+
+        # ADDS/REMOVES RANDOM EDGE DEPENDING ON SPARSITY SETTING, RANDOMLY MUTATES ANOTHER RANDOM EDGE
+
+        # expected number of disconnected edges
+        numDisconnectedEdges = len(list(combinations(range(settings['numDisconnectedNeurons']), 2)))
+        totalPossibleEdges = len(list(combinations(range(self.size - self.Ssize - self.Msize), 2)))
+
+        # number of (dis)connected edges
+        connected = copy.deepcopy(self.maskJ)
+
+        disconnected = ~connected #disconnected not connected
+        np.fill_diagonal(disconnected, 0)
+        disconnected = np.triu(disconnected)
+
+        # things that need to be connected and not flagged to change
+        connected[0:self.Ssize, :] = 0
+        connected[:, -self.Msize:] = 0
+        # things that need to be disconnected and not flagged to change
+        disconnected[0:self.Ssize, -self.Msize:] = 0
+        disconnected[0:self.Ssize, 0:self.Ssize] = 0
+
+        numEdges = np.sum(connected) #number of edges, that can actuall be disconnected (in beginning of simulatpn curr settings 3)
+        # positive value means too many edges, negative value means too little
+        edgeDiff = numEdges - (totalPossibleEdges - numDisconnectedEdges)
+        # edgeDiff = numEdges - numDisconnectedEdges
+
+        # TODO: investigate the empty connectivity matrix here
+        prob = sigmoid(edgeDiff)  #for numDisconnectedNeurons=0 this means 0.5 --> equal probability of adding edge and removing edge # probability near 1 means random edge will be removed, near 0 means random edge added
+        rand = np.random.rand()
+
+        if prob >= rand:
+            # remove random edge
+            i, j = np.nonzero(connected) #Indecies of neurons connected by edges that can be disconnected
+            if len(i) > 0:
+                randindex = np.random.randint(0, len(i))
+                ii = i[randindex]
+                jj = j[randindex]
+
+                self.maskJ[ii, jj] = False
+                self.J[ii, jj] = 0
+
+                # TODO: is this a good way of making the code multi-purpose?
+                # try:
+                #     self.C1[ii, jj] = 0
+                # except NameError:
+                #     pass'
+
+            else:
+                print('Connectivity Matrix Empty! Mutation Blocked.')
+
+        else:
+            #looking for disconnected neurons that can be connected
+            # add random edge
+            i, j = np.nonzero(disconnected)
+            if len(i) > 0:
+                randindex = np.random.randint(0, len(i))
+                ii = i[randindex]
+                jj = j[randindex]
+
+                self.maskJ[ii, jj] = True
+                self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
+                # I.J[ii, jj] = np.random.uniform(np.min(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) / 2,
+                #                                 np.max(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) * 2)
+                # try:
+                #     self.C1[ii, jj] = settings['Cdist'][np.random.randint(0, len(settings['Cdist']))]
+                # except NameError:
+                #     pass
+
+            else:  # if connectivity matrix is full, just change an already existing edge
+                #This only happens, when alogorithm tries to add edge, but everything is connected
+                i, j = np.nonzero(connected)
+
+                randindex = np.random.randint(0, len(i))
+                ii = i[randindex]
+                jj = j[randindex]
+
+                self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
+
+
+        # MUTATE RANDOM EDGE
+        i, j = np.nonzero(self.maskJ)
+
+        randindex = np.random.randint(0, len(i))
+        ii = i[randindex]
+        jj = j[randindex]
+
+        self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
+        #Mutation of weights--> mutated weight is generated randomly from scratch
+
+        # MUTATE LOCAL TEMPERATURE
+        if settings['mutateB']:
+            deltaB = np.abs(np.random.normal(1, settings['sigB']))
+            self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
+            #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
+            if np.random.uniform(0, 1) < 0.1:
+                self.Beta = np.random.uniform(0.1, 10)
+
+
+            #biases GA pushing towards lower betas (artifical pressure to small betas)
+
+    # End of mutate (1)
+
+    def mutate2(self, settings):
+        '''
+         3 Mutations happening at once:
+        CONNECTIVITY Mutations:
+        One of these things happen
+        - A new edge is removed (according to sparsity settings more or less likely)
+        - or added (if no adding is possible some random edge gets new edge weight)
+
+        EDGE MUTATIONS
+        currently in an edge mutation means, that the whole edge weight is replaced by a randomly generated weight
+
 
         BETA Mutations
         Beta is mutated
@@ -575,6 +703,8 @@ class ising:
             # if np.random.uniform(0,1) < 0.1:
             #     self.Beta = np.random.uniform(0.1, 10)
             #biases GA pushing towards lower betas (artifical pressure to small betas)
+
+    # End of mutate2
 
 
     def reset_state(self, settings):
@@ -1179,6 +1309,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     nat_heat_gens = create_save_nat_heat_gens(settings, Iterations, folder)
     beta_facs = create_beta_facs(settings, folder)
 
+    ### Preparing speciation###
+    if settings['speciation']:
+        max_species_num_ever = max([int(I.species) for I in isings])
 
     #tr = tracker.SummaryTracker()
     count = 0
@@ -1307,6 +1440,18 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             Does every evolution event represent one generation?
             '''
             if not settings['switch_off_evolution']:
+                if settings['speciation']:
+                    # First of all calculate shared_fitness (species-specific fitness) as evolve needs this
+                    # Cannot be done earlier as avg_energy (non-species specific fitness) is required in order to
+                    # calculate shared_fitness
+                    calculate_shared_fitness(isings)
+                    isings_old = copy.deepcopy(isings)
+                    # Evolve_new_isings
+                    isings = evolve2(settings, isings, rep)
+                    # Assign species to newly evolved isings
+                    speciation(isings_old, isings, max_species_num_ever, settings)
+                    del isings_old
+            else:
                 isings = evolve(settings, isings, rep)
 
 
@@ -1644,6 +1789,160 @@ def evolve(settings, I_old, gen):
 
 
     return I_new
+# End of evolve (1)
+
+
+def evolve2(settings, I_old, gen):
+    '''
+    Fittest 10 individuals are copied into next generation --> FIRST 10 POSITION OF NEW GENERATION
+    Fittest 10 are again copied 15 times, those copies are mutated by a probability of 10 % --> NEXT 15 POSITION OF NEW GENERATION
+    For mutation see self.mutate. This includes edge weight mutations, adding/removing of edges, beta mutations (again for certain probabilities)
+    The 25 individuals that were created this way will be parents to the last 15 individuals
+
+    '''
+
+    size = settings['size']
+    nSensors = settings['nSensors']
+    nMotors = settings['nMotors']
+
+    '''
+    !!!fitness function!!!
+    '''
+    if settings['energy_model']:
+        I_sorted = sorted(I_old, key=operator.attrgetter('avg_energy'), reverse=True)
+    else:
+        I_sorted = sorted(I_old, key=operator.attrgetter('fitness'), reverse=True)
+    I_new = []
+
+    alive_num = int(settings['pop_size'] - settings['numKill']) #numKill = 30 --> alive num = 20 --> elitism num = 10
+    elitism_num = int(alive_num/2)  # only the top half of the living orgs can duplicate
+
+    numMate = int(settings['numKill'] * settings['mateDupRatio']) # 15
+    numDup = settings['numKill'] - numMate #15
+
+    # Make isings (I_new) of len 20
+    # Fittest 20 agents are copied
+    for i in range(0, alive_num):
+        I_new.append(I_sorted[i])
+
+    # --- GENERATE NEW ORGANISMS ---------------------------+
+    orgCount = settings['pop_size'] + gen * settings['numKill']
+
+    # DUPLICATION OF ELITE POPULATION (iterating 15 times)
+    for dup in range(0, numDup):
+        '''
+        Fittest 10 agents copied 15 times and mutates them for a probability of 0.1, they make position 20 to 34 in I_new (counted from 0)
+        '''
+        candidateDup = range(0, elitism_num)
+        random_index = sample(candidateDup, 1)[0] # random int between 0 and 10
+
+        name = copy.deepcopy(I_sorted[random_index].name) + 'm'
+        I_new.append(ising(settings, size, nSensors, nMotors, name))
+
+        #  TODO: need to seriously check if mutations are occuring uniquely
+        # probably misusing deepcopy here, figure this shit out
+        I_new[-1].Beta = copy.deepcopy(I_sorted[random_index].Beta)
+        I_new[-1].J = copy.deepcopy(I_sorted[random_index].J)
+        I_new[-1].h = copy.deepcopy(I_sorted[random_index].h)
+        I_new[-1].maskJ = copy.deepcopy(I_sorted[random_index].maskJ)
+        # I_new[-1].maskJtriu = I_sorted[random_index].maskJtriu
+
+
+        #only important with critical learning
+
+        # try:
+        #     I_new[-1].C1 = I_sorted[random_index].C1
+        # except NameError:
+        #     pass
+
+        # MUTATE SOMETIMES
+        # self.mutate mutates edge weights, adds/removes edges and mutates beta
+        if np.random.random() < settings['mutationRateDup']: # settings['mutationRateDup'] = 0.1
+            # !!!! MUTATE 2 !!!!!
+            I_new[-1].mutate2(settings)
+
+        # random mutations in duplication
+
+    # MATING OF LIVING POPULATION DOUBLE DIPPING ELITE
+    # numMate = 15
+    '''
+    Occupying the last 15 positions with crossed over individuals, parents are all 10 fittest individuals as well as 
+    the following 15 individuals, which are copies of the fittest (which have been mutated for a probablility of 0.1) 
+    '''
+    for mate in range(0, numMate):
+        # TODO: negative weight mutations?!
+        # SELECTION (TRUNCATION SELECTION)
+        candidatesMate = range(0, len(I_new)) # range(0, alive_num) to avoid double dipping : range(0,35)
+        random_index = sample(candidatesMate, 2)
+        org_1 = I_sorted[random_index[0]]
+        org_2 = I_sorted[random_index[1]]
+
+        # CROSSOVER
+        J_new = np.zeros((size, size))
+        h_new = np.zeros(size)
+
+        # load up a dummy maskJ which gets updated
+        maskJ_new = np.zeros((size, size), dtype=bool)
+
+        crossover_weight = random()
+
+        # CROSS/MUTATE TEMPERATURE
+        if settings['mutateB']:
+            # folded normal distribution
+            deltaB = np.abs(np.random.normal(1, settings['sigB']))
+
+            Beta_new = ((crossover_weight * org_1.Beta) + \
+                        ((1 - crossover_weight) * org_2.Beta) ) * deltaB
+        else:
+            Beta_new = org_1.Beta
+
+        # CROSS WEIGHTS
+        for iJ in range(0, size):
+            crossover_weight = random()
+
+            h_new[iJ] = (crossover_weight * org_1.h[iJ]) + \
+                        ((1 - crossover_weight) * org_2.h[iJ])
+
+            for jJ in range(iJ + 1, size):
+                crossover_weight = random()
+
+                # check if these hidden neurons are disconnected to begin with
+                if org_1.maskJ[iJ, jJ] != 0 and org_2.maskJ[iJ, jJ] != 0:
+                    J_new[iJ, jJ] = (crossover_weight * org_1.J[iJ, jJ]) + \
+                                    ((1 - crossover_weight) * org_2.J[iJ, jJ])
+                    maskJ_new[iJ, jJ] = org_1.maskJ[iJ, jJ]
+                elif np.random.randint(2) == 0:
+                    J_new[iJ, jJ] = org_1.J[iJ, jJ]
+                    maskJ_new[iJ, jJ] = org_1.maskJ[iJ, jJ]
+                else:
+                    J_new[iJ, jJ] = org_2.J[iJ, jJ]
+                    maskJ_new[iJ, jJ] = org_2.maskJ[iJ, jJ]
+
+                if np.abs(J_new[iJ, jJ]) > org_1.max_weights:
+                    J_new[iJ, jJ] = org_1.max_weights
+
+
+        # TODO: include name of parents
+        name = 'gen[' + str(gen) + ']-org[' + str(orgCount) + ']'
+        I_new.append(ising(settings, size, nSensors, nMotors, name))
+
+        I_new[-1].Beta = Beta_new
+        I_new[-1].J = J_new
+        I_new[-1].h = h_new
+        I_new[-1].maskJ = maskJ_new
+
+        # MUTATE IN GENERAL
+        I_new[-1].mutate(settings)
+
+        orgCount += 1
+
+    for I in I_new:
+        I.fitness = 0
+
+
+    return I_new
+
+# End of evolve2
 
 def save_settings(folder, settings):
     with open(folder + 'settings.csv', 'w') as f:
