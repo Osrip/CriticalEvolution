@@ -193,7 +193,7 @@ def parse():
                         help='''This boolean argument deactivates evolution. If command -l loadfile is active, isings 
                         are saved in folder of loaded simulation''')
     parser.add_argument('-b', '--beta', dest='init_beta', type=float, help='Initial beta of first generation')
-    parser.add_argument('-bs', '--betas', nargs='+', required=False, dest = 'diff_init_betas', type=float
+    parser.add_argument('-bs', '--betas', nargs='+', required=False, dest='diff_init_betas', type=float
                         , help='''In case you want different initial beta values in the first generations define those 
                         in a blank separated list after this argument. Probability of each entry occurring
                          is uniformly distributed''')
