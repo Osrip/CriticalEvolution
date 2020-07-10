@@ -574,8 +574,8 @@ class ising:
             # #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
             # if np.random.uniform(0,1) < 0.1:
             #     self.Beta = np.random.uniform(0.1, 10)
-
             #biases GA pushing towards lower betas (artifical pressure to small betas)
+
 
     def reset_state(self, settings):
 

@@ -17,6 +17,8 @@ from automatic_plot_helper import load_isings_from_list
 import os
 
 
+#TODO: Import the following functions directly from train.py instead of copy pasting!!!
+
 def create_settings():
 
     args = parse()

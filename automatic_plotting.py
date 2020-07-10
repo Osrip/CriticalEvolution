@@ -33,15 +33,29 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
             f = open(save_txt_path + "Only_first_{}_fittest_individuals_have_been_plotted.txt".format(only_top_isings), "w+")
             f.close()
         else:
-            isings_list = load_isings(sim_name)
-            #isings_list = load_isings_from_list(sim_name, [0])
-    try:
-        plot_anything_auto(sim_name, ['Beta', 'avg_velocity', 'food'], settings, isings_list=isings_list, autoLoad=False)
-    except Exception:
-        print('Could not create generational plots')
-    #plot_var_tuples = [('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+            #isings_list = load_isings(sim_name)
+            isings_list = load_isings_from_list(sim_name, [0])
+    plot_vars = ['Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
-                       ('generation', 'Beta'), ('Beta', 'avg_energy')]
+                       ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+
+
+    # Try plotting norm_avg_energy in case dataset already has I.time_steps
+    try:
+        for isings in isings_list:
+            for I in isings:
+                I.norm_avg_energy = I.avg_energy / I.time_steps
+        plot_vars.append('norm_avg_energy')
+        plot_var_tuples.append(('generation', 'norm_avg_energy'))
+    except Exception:
+        print('Could not calculate norm_avg_energy (Do isings lack attribute I.time_steps?)')
+
+    try:
+        plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list, autoLoad=False)
+    except Exception:
+       print('Could not create generational plots')
+
+
     try:
         plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
     except Exception:
@@ -52,7 +66,7 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
     except Exception:
         print('Could not create food velocity scatter plot')
 
-    del isings_list
+
     if final:
         pass
         # try:
@@ -63,7 +77,7 @@ def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
         #     print('Could not compute and plot heat capacity')
 
     #  Trying to fix memory leak:
-
+    del isings_list
     del settings
 
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
