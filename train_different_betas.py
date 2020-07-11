@@ -2,7 +2,7 @@ from train import create_settings
 from embodied_ising import ising
 from embodied_ising import EvolutionLearning
 from embodied_ising import food
-from numpy import np
+import numpy as np
 import time
 import automatic_plotting
 

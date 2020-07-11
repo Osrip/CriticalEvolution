@@ -1442,7 +1442,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
             if not settings['switch_off_evolution']:
                 if settings['speciation']:
                     # Make sure max_species_num_ever (just to be save)
-                    max_species_num_ever = max([int(I.species) for I in isings])
+                    if max_species_num_ever < max([int(I.species) for I in isings]):
+                        raise Exception('max_species_num_ever does not work')
                     # First of all calculate shared_fitness (species-specific fitness) as evolve needs this
                     # Cannot be done earlier as avg_energy (non-species specific fitness) is required in order to
                     # calculate shared_fitness

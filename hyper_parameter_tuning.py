@@ -46,7 +46,7 @@ def main_hyperparams(iterations, cores):
         os.makedirs(save_dir)
     with open(save_dir + 'hyper_param_results_{}.csv'.format(time.strftime("%Y%m%d-%H%M%S")), 'w') as f:
         for tup in accuracies:
-            f.write('{}: {}\n'.format(tup[0], tup[1]))
+            f.write('{}: {}\n'.format(tup[1], tup[0]))
     f.close()
 
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     Time steps and other settings can be adjusted just like in train using argparse
     '''
     cores = 20
-    generations = 200
+    generations = 300
     main_hyperparams(generations, cores)
 
     #test_hyperparams(3)
