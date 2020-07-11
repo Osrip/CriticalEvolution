@@ -61,10 +61,10 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
        print('Could not create generational plots')
 
 
-    try:
-        plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
-    except Exception:
-        print('Could not create scatter plot')
+    # try:
+    plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad=False)
+    # except Exception:
+    #     print('Could not create scatter plot')
     try:
         plot_anythingXY_scatter_food_velocity_optimized.main(sim_name, settings, isings_list, 'avg_velocity', 'food', s=0.8,
                                                              alpha=0.05, autoLoad=False)

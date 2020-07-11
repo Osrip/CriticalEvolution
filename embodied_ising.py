@@ -1479,7 +1479,6 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
 
 
-
     return sim_name, isings
 
 

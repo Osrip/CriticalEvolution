@@ -31,9 +31,14 @@ def speciation(isings_old, isings_new, max_species_num_ever, settings):
                 I_new.species = I_old_species.species
 
     # Creating new species for those individuals, that were not compatible to any of the existing species
+    # TODO: When new species are created what about two species, that
     all_species_names = get_all_species_names(isings_new)
 
     for I_new in isings_new:
+        # Those species that could not be assigned to existing species have NONE assigned and get new species
+        # What about two individuals that have low genetic distance to each other, but both are above delta away
+        # any other old representative? They both would eb assigned a new species to, which however in next generation
+        # be merged...
         if I_new.species is None:
             # Get maximal number that is in current species names and add 1
             # In case none of the new isings could be assigned to old species (all_species_names is empty in that case)

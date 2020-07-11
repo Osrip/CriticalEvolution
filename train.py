@@ -197,7 +197,7 @@ def parse():
                         , help='''In case you want different initial beta values in the first generations define those 
                         in a blank separated list after this argument. Probability of each entry occurring
                          is uniformly distributed''')
-    parser.add_argument('-sb', '--sigb', dest='sig_beta', type=float,
+    parser.add_argument('-std_b', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
     parser.add_argument('-nmb', '--nomutb', dest='no_mut_beta', action='store_true', help='Switch off beta mutation')
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
