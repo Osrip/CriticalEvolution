@@ -58,7 +58,7 @@ def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
     cmap = plt.get_cmap('seismic')
     norm = colors.Normalize(vmin=0, vmax=len(loadfiles))  # age/color mapping
 
-    a = 0.15 # alpha
+    a = 0.15  # alpha
 
     ###########################
     FOODS = []
