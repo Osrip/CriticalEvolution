@@ -70,7 +70,6 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     except Exception:
         print('Could not create food velocity scatter plot')
 
-
     if final:
         pass
         # try:
@@ -87,12 +86,14 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
     #  TODO: Animation dies not work for some reasone when called from here but does work when it is called itself... WHY???
 
+
 def plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad = True):
     for plot_var_x, plot_var_y in plot_var_tuples:
         plot_anythingXY_scatter.main(sim_name, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.05,
                                      autoLoad=autoLoad, name_extension='')
 
-def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLoad = True):
+
+def plot_anything_auto(sim_name, plot_vars, settings, isings_list=None, autoLoad=True):
     '''
     :param plot_vars: List of string of which each represents an attribute of the isings class
     :param isings_list: List of all isings generations in case it has been loaded previously
@@ -106,9 +107,8 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
         plot_anything_combined.main([sim_name], 'fitness', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
 
     for plot_var in plot_vars:
-        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
-
-
+        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list],
+                                    autoLoad=autoLoad, scatter=True)
 
 
 def plot_all_in_folder(folder_name):
@@ -123,12 +123,11 @@ def plot_all_in_folder(folder_name):
             main(sim_name)
 
 
-
-
-
 def seperate_isolated_populations(isings_list):
     '''
     Sorts all isngs objects in ising lists to a dict of ising_lists that only contain one isolated_population
+
+    @return: A dict of isings_lists, with one isings_list for each isolated_population
     '''
     iso_pop_names = set()
     for isings in isings_list:
@@ -153,6 +152,7 @@ def seperate_isolated_populations(isings_list):
                 iso_pops_dict_isings_list[iso_pop_name].append(iso_pops_dict_isings[iso_pop_name])
 
     return iso_pops_dict_isings_list
+
 
 if __name__ == '__main__':
     '''
