@@ -1444,6 +1444,11 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     # Make sure max_species_num_ever (just to be save)
                     if max_species_num_ever < max([int(I.species) for I in isings]):
                         raise Exception('max_species_num_ever does not work')
+                    # GLOBALLY OR GENERATIONALLY UNIQUE SPECIES NUMBERS?
+                    # This line makes species number non-unique by satting down max to max in current generation (not
+                    # all generations before):
+                    if rep != 0:
+                        max_species_num_ever = max([int(I.species) for I in isings])
                     # First of all calculate shared_fitness (species-specific fitness) as evolve needs this
                     # Cannot be done earlier as avg_energy (non-species specific fitness) is required in order to
                     # calculate shared_fitness

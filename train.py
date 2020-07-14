@@ -203,7 +203,7 @@ def parse():
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
-    parser.add_argument('-notrace', '--animation_no_trace', dest='fading_traces_animation', action='store_false',
+    parser.add_argument('-no_trace', '--animation_no_trace', dest='fading_traces_animation', action='store_false',
                         help='Deactivate fading traces in animation. This significantly speeds up computational time'
                              ', This calls completely differnt animation module, so other things might vary as well.')
     parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
@@ -291,7 +291,7 @@ def parse():
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
-                        delta_threshold_speciation=2, shared_fitness_constants=[1,1,1], mutationRateDup=0.1)
+                        delta_threshold_speciation=1, shared_fitness_constants=[1,1,1], mutationRateDup=0.1)
     args = parser.parse_args()
     return args
 
@@ -340,6 +340,11 @@ def run(settings, Iterations):
         file = open(loadfile, 'rb')
         isings = pickle.load(file)
         file.close()
+
+        if settings['speciation']:
+            for I in isings:
+                I.species = 0
+                I.shared_fitness = 0
 
     else:
         startstr = 'Starting simulation: (' + str(settings['TimeSteps']) + \
