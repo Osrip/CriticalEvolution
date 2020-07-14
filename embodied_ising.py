@@ -1653,25 +1653,46 @@ def food_fitness(isings):
 
 
 def evolve_isolated_populations(isings_old, fitness_attr, gen, settings):
+    '''
+    This evolves all isolated populations seperately
+    '''
+
+    # Figuring out which different isolated exist:
     all_iso_pops = set()
     for I in isings_old:
         all_iso_pops.add(I.isolated_population)
     all_iso_pops = list(all_iso_pops)
-    all_isolated_isings = []
+
+    # Iterating through all isolated population names (curr_iso_pop) and assigning them to an own list
+    # (curr_isolated_isings). All of those different "populations" are put into list of list all_isolated_isings
+    all_isolated_isings = {}
     for curr_iso_pop in all_iso_pops:
         curr_isolated_isings = []
         for I in isings_old:
             if I.isolated_population == curr_iso_pop:
                 curr_isolated_isings.append(I)
-        all_isolated_isings.append(curr_isolated_isings)
+        #all_isolated_isings.append(curr_isolated_isings)
+        all_isolated_isings[curr_iso_pop] = curr_isolated_isings
 
-    all_isolated_isings_new = []
-    for isolated_isings in all_isolated_isings:
-
+    # All isolated populations are evolved in an isolated manner in evolve. Population size and num kill are fitted to the isolated
+    # population size
+    all_isolated_isings_new_dict = {}
+    all_isolated_isings_new_list = []
+    for curr_iso_pop in all_isolated_isings:
+        isolated_isings = all_isolated_isings[curr_iso_pop]
         isolated_isings_new = evolve(settings, isolated_isings, gen, pop_size=len(isolated_isings), numKill=int(len(isolated_isings) / 1.66))
-        all_isolated_isings_new.append(isolated_isings_new)
+        #all_isolated_isings_new.append(isolated_isings_new)
+        all_isolated_isings_new_dict[curr_iso_pop] = isolated_isings_new
+        all_isolated_isings_new_list.append(isolated_isings_new)
 
-    isings_new = flat(all_isolated_isings_new)
+    # Assigning the isolated population name curr_iso_pop to all newly evolved individuals
+
+    for curr_iso_pop in all_isolated_isings_new_dict:
+        isolated_isings_new = all_isolated_isings_new_dict[curr_iso_pop]
+        for I in isolated_isings_new:
+            I.isolated_population = curr_iso_pop
+
+    isings_new = flat(all_isolated_isings_new_list)
     return isings_new
 
 
