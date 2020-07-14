@@ -42,9 +42,13 @@ def run(settings, Iterations):
         if i < 25:
             I.species = 0
             I.Beta = 1
+            if settings['isolated_populations']:
+                I.isolated_population = 0
         else:
             I.species = 1
             I.Beta = 10
+            if settings['isolated_populations']:
+                I.isolated_population = 1
 
 
 

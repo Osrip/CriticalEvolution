@@ -13,11 +13,11 @@ def evolve_together(sim_name1, sim_name2):
     for i in range(0, settings['food_num']):
         foods.append(food(settings))
 
-    isings_new = merge_ising_files(sim_name1, sim_name2)
+    isings_new = merge_ising_files(sim_name1, sim_name2, settings)
     sim_name, not_used_isings = EvolutionLearning(isings_new, foods, settings, Iterations)
 
 
-def merge_ising_files(sim_name1, sim_name2):
+def merge_ising_files(sim_name1, sim_name2, settings):
     last_gen1 = detect_all_isings(sim_name1)[-1]
     last_gen2 = detect_all_isings(sim_name2)[-1]
     isings1 = load_isings_from_list(sim_name1, [last_gen1], wait_for_memory=False)[0]
@@ -26,10 +26,15 @@ def merge_ising_files(sim_name1, sim_name2):
     for I_1 in isings1:
         I_1.species = 0
         I_1.shared_fitness = 0
+        if settings['isolated_populations']:
+            I_1.isolated_population = 0
+
 
     for I_2 in isings2:
         I_2.species = 1
         I_2.shared_fitness = 0
+        if settings['isolated_populations']:
+            I_2.isolated_population = 1
 
     isings_new = isings1[:25] + isings2[:25]
 

@@ -149,7 +149,8 @@ def create_settings():
 
     # name that is added to folder that simulation is saved in
     settings['add_save_name'] = ''
-    
+
+    settings['isolated_populations'] = args.isolated_populations
     Iterations = args.iterations
 
 
@@ -280,6 +281,11 @@ def parse():
                         help='Mutation rate for the fittest individuals that have been duplicated (fittest individuals'
                              'are first copied into new generation, then again duplicated. The duplicated are mutated with'
                              'this mutation rate')
+    parser.add_argument('-iso', dest='isolated_populations', action='store_true',
+                        help='This command only works for "train_different_betas.py" and "evolve_two_simulations_together.py'
+                             'but nit with "train.py". If this is active all different initial populations are evolved'
+                             'isolated from each other, meaning that they live in the same 2D environment but do not compete'
+                             'in the Evolutionary Algorithm')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -291,7 +297,8 @@ def parse():
                         natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
-                        delta_threshold_speciation=1, shared_fitness_constants=[1,1,1], mutationRateDup=0.1)
+                        delta_threshold_speciation=1, shared_fitness_constants=[1,1,1], mutationRateDup=0.1,
+                        isolated_populations=False)
     args = parser.parse_args()
     return args
 

@@ -1460,7 +1460,10 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     max_species_num_ever = speciation(isings_old, isings, max_species_num_ever, settings)
                     del isings_old
                 else:
-                    isings = evolve(settings, isings, rep)
+                    if settings['isolated_populations']:
+                        isings = evolve_isolated_populations(isings, 'avg_energy', rep, settings)
+                    else:
+                        isings = evolve(settings, isings, rep)
 
 
         #### PLOTTING PIPELINE ####
@@ -1648,7 +1651,50 @@ def food_fitness(isings):
 
     return fitnessN, fitness
 
-def evolve(settings, I_old, gen):
+
+def evolve_isolated_populations(isings_old, fitness_attr, gen, settings):
+    all_iso_pops = set()
+    for I in isings_old:
+        all_iso_pops.add(I.isolated_population)
+    all_iso_pops = list(all_iso_pops)
+    all_isolated_isings = []
+    for curr_iso_pop in all_iso_pops:
+        curr_isolated_isings = []
+        for I in isings_old:
+            if I.isolated_population == curr_iso_pop:
+                curr_isolated_isings.append(I)
+        all_isolated_isings.append(curr_isolated_isings)
+
+    all_isolated_isings_new = []
+    for isolated_isings in all_isolated_isings:
+
+        isolated_isings_new = evolve(settings, isolated_isings, gen, pop_size=len(isolated_isings), numKill=int(len(isolated_isings) / 1.66))
+        all_isolated_isings_new.append(isolated_isings_new)
+
+    isings_new = flat(all_isolated_isings_new)
+    return isings_new
+
+
+
+def flat(alist):
+    '''
+    No Python hacks in this implementation. Also, this accepts many levels of nested lists.
+    @alist: A tuple or list.
+    @return: A flat list with all elements of @alist and its nested lists.
+    Complexity: `Θ(n)`, where `n` is the number of elements of @alist
+    plus the number of elements of all nested lists.
+    '''
+    new_list = []
+    for item in alist:
+        if isinstance(item, (list, tuple)):
+            new_list.extend(flat(item))
+        else:
+            new_list.append(item)
+    return new_list
+
+
+
+def evolve(settings, I_old, gen, pop_size=None, numKill=None):
     '''
     Fittest 10 individuals are copied into next generation --> FIRST 10 POSITION OF NEW GENERATION
     Fittest 10 are again copied 15 times, those copies are mutated by a probability of 10 % --> NEXT 15 POSITION OF NEW GENERATION
@@ -1660,21 +1706,28 @@ def evolve(settings, I_old, gen):
     size = settings['size']
     nSensors = settings['nSensors']
     nMotors = settings['nMotors']
+
+    if pop_size is None:
+        pop_size = settings['pop_size']
+    if numKill is None:
+        numKill = settings['numKill']
+
     
     '''
     !!!fitness function!!!
     '''
+
     if settings['energy_model']:
         I_sorted = sorted(I_old, key=operator.attrgetter('avg_energy'), reverse=True)
     else:
         I_sorted = sorted(I_old, key=operator.attrgetter('fitness'), reverse=True)
     I_new = []
 
-    alive_num = int(settings['pop_size'] - settings['numKill']) #numKill = 30 --> alive num = 20 --> elitism num = 10
+    alive_num = int(pop_size - numKill) #numKill = 30 --> alive num = 20 --> elitism num = 10
     elitism_num = int(alive_num/2)  # only the top half of the living orgs can duplicate
 
-    numMate = int(settings['numKill'] * settings['mateDupRatio']) # 15
-    numDup = settings['numKill'] - numMate #15
+    numMate = int(numKill * settings['mateDupRatio']) # 15
+    numDup = numKill - numMate #15
 
     # Make isings (I_new) of len 20
     # Fittest 20 agents are copied
@@ -1682,7 +1735,7 @@ def evolve(settings, I_old, gen):
         I_new.append(I_sorted[i])
 
     # --- GENERATE NEW ORGANISMS ---------------------------+
-    orgCount = settings['pop_size'] + gen * settings['numKill']
+    orgCount = pop_size + gen * numKill
 
     # DUPLICATION OF ELITE POPULATION (iterating 15 times)
     for dup in range(0, numDup):
