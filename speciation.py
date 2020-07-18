@@ -98,7 +98,9 @@ def genetic_distance(I1, I2, settings):
         largest_genome_size = I1.size
     else:
         largest_genome_size = I2.size
-    beta_diff = np.abs(I1.Beta - I2.Beta)
+    #beta_diff = np.abs(I1.Beta - I2.Beta)
+    #Beta differences on log scale:
+    beta_diff = np.abs(np.log(I1.Beta) - np.log(I2.Beta))
 
     delta = (c_top*topology_difference(I1.maskJ, I2.maskJ)/largest_genome_size) + c_weight*weight_difference(I1, I2) + c_beta*beta_diff
 
