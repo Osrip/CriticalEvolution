@@ -18,7 +18,7 @@ import plot_anythingXY_scatter_animation
 '''!!!!!!!!ONLY CHANGE, WHEN SIMULATION IS NOT RUNNING!!!!!!!   gets called via os to prevent memory leak'''
 
 
-def main(sim_name, only_top_isings=20, load_isings_list=True, final=False):
+def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
