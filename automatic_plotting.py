@@ -11,7 +11,7 @@ import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
 import sys
 import numpy as np
-
+import operator
 
 import plot_anythingXY_scatter_animation
 
@@ -34,6 +34,7 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
             f.close()
         else:
             isings_list = load_isings(sim_name)
+            isings_list_fittest = sorted(isings_list, key=operator.attrgetter('avg_energy'), reverse=True)[:20]
             #isings_list = load_isings_from_list(sim_name, [0])
     plot_vars = ['Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
@@ -56,7 +57,7 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
         print('Could not calculate norm_avg_energy (Do isings lack attribute I.time_steps?)')
 
     try:
-        plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list, autoLoad=False)
+        plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list_fittest, autoLoad=False)
     except Exception:
        print('Could not create generational plots')
 
@@ -91,7 +92,7 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
 def plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad = True):
     for plot_var_x, plot_var_y in plot_var_tuples:
         plot_anythingXY_scatter.main(sim_name, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.05,
-                                     autoLoad=autoLoad, name_extension='')
+                                     autoLoad=autoLoad, name_extension='all_inds')
 
 def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLoad = True):
     '''
@@ -101,13 +102,16 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
 
     if settings['energy_model']:
         #os.system("python plot__anything_combined {} avg_energy".format(sim_name))
-        plot_anything_combined.main([sim_name], 'avg_energy', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
+        plot_anything_combined.main([sim_name], 'avg_energy', settings=settings, isings_lists=[isings_list],
+                                    autoLoad=autoLoad, name_extension='fittest_inds')
     else:
         #os.system("python plot__anything_combined {} fitness".format(sim_name))
-        plot_anything_combined.main([sim_name], 'fitness', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
+        plot_anything_combined.main([sim_name], 'fitness', settings=settings, isings_lists=[isings_list],
+                                    autoLoad=autoLoad, name_extension='fittest_inds')
 
     for plot_var in plot_vars:
-        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list], autoLoad=autoLoad, scatter=True)
+        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list],
+                                    autoLoad=autoLoad, scatter=True, name_extension='fittest_inds')
 
 
 

@@ -76,8 +76,10 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0
 
     folder = 'save/' + loadfile
     savefolder = folder + '/figs/' + plot_var_x + '_vs_' + plot_var_y + '_line/'
-    savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
-        iter_list[-1]) + name_extension + '.png'
+    # savefilename = savefolder + plot_var_x + '_vs_' + plot_var_y + '_gen' + str(iter_list[0]) + '-' + str(
+    #     iter_list[-1]) + name_extension + '.png'
+    savefilename = savefolder + '{}_vs_{}_gen{}-{}_inds_{}_{}.png'.format(
+        plot_var_x, plot_var_y, iter_list[0], iter_list[-1], len(isings_list), name_extension)
     if not path.exists(savefolder):
         makedirs(savefolder)
 

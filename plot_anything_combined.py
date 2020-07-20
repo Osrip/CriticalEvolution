@@ -24,7 +24,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
 
 
 def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
-         sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter = True):
+         sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter = True, name_extension=''):
 
     '''
     Can either plot one or multiple simulations in a combined plot
@@ -128,7 +128,9 @@ def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
         savefolder = folder + '/figs/' + plot_var + '_line/'
 
 
-    savefilename = savefolder + plot_var + '_gen' + str(iter_list[0]) + '-' + str(iter_list[-1]) + '.png'
+    #savefilename = savefolder + plot_var + '_gen' + str(iter_list[0]) + '-' + str(iter_list[-1]) + '.png'
+    savefilename = savefolder + '{}_gen{}-{}-total-inds{}_{}.png'.format(
+        plot_var, str(iter_list[0]), str(iter_list[-1]), len(isings_list), name_extension)
     if not path.exists(savefolder):
         makedirs(savefolder)
 
