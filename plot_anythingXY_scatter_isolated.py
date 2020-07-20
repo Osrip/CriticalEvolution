@@ -56,6 +56,8 @@ def main(sim_name, isings_list, attr_triple, name_extension=''):
                                       markerfacecolor=colors[i], markersize=5, alpha=0.75))
 
     # plt.legend(loc="lower right", bbox_to_anchor=(0.95, 0.05), handles=legend_elements)
+    if attr_y == 'Beta':
+        plt.yscale('log')
     plt.legend(handles=legend_elements)
     plt.xlabel(attr_x)
     plt.ylabel(attr_y)
