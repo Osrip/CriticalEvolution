@@ -316,15 +316,14 @@ def wait_for_enough_memory(sim_name):
         max_waited_seconds = np.random.randint(1200, 3600)
         while available_memory < size_isings_folder:
             print('Not enough memory to load in isings files. \nWaiting for memory to be free before loading isings files... '
-                  '\nIf within {} seconds} chosen amount of time there is not enough memory will attempt loading them '
-                  'anyways'.format(max_waited_seconds))
+                  '\nIf within {} seconds chosen amount of time there is not enough memory will attempt loading them '
+                  'anyways'.format(max_waited_seconds-waited_seconds))
             time.sleep(10)
             waited_seconds += 10
             if waited_seconds > max_waited_seconds:
                 warnings.warn('''After {} seconds there is still not enough memory available for plotting,
                  trying to plot now anyways hoping for enough swap space.'''.format(max_waited_seconds))
                 break
-
 
 
 
