@@ -584,7 +584,7 @@ class ising:
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
             #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
             if np.random.uniform(0, 1) < 0.1:
-                self.Beta = np.random.uniform(0.1, 10)
+                self.Beta = 10 ** np.random.uniform(-1, 1)
 
 
             #biases GA pushing towards lower betas (artifical pressure to small betas)
@@ -700,8 +700,8 @@ class ising:
             deltaB = np.abs(np.random.normal(1, settings['sigB']))
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
             # #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
-            if np.random.uniform(0,1) < 0.1:
-                self.Beta = np.random.uniform(0.1, 10)
+            if np.random.uniform(0, 1) < 0.1:
+                self.Beta = 10 ** np.random.uniform(-1, 1)
             #biases GA pushing towards lower betas (artifical pressure to small betas)
 
     # End of mutate2
