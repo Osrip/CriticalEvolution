@@ -43,14 +43,14 @@ def main(sim_name, settings, generation_list, recorded):
             generation_list = automatic_generation_generation_list(folder + '/C')
     iter_gen = generation_list
 
-    # TODO: !!!!!How are REPEATS AVERAGED here??? Looks like only last repeat is plotted!!!!!!
+    # TODO: Repeat averaging seems to work
     C = np.zeros((R, numAgents, Nbetas, len(iter_gen)))
 
 
     print('Loading data...')
     for ii, iter in enumerate(iter_gen):
         #for bind in np.arange(0, 100):
-        for bind in np.arange(1, 100):
+        for bind in np.arange(1, Nbetas):
             if recorded:
                 #  Depending on whether we are dealing with recorded or dream heat capacity
                 filename = folder + '/C_recorded/C_' + str(iter) + '/C-size_' + str(size) + '-Nbetas_' + \
@@ -142,7 +142,8 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    generation_list = [0, 4000]
+    sim_name = 'sim-20200714-154508-g_2_-t_2000_-rec_c_1_-l_sim-20200710-202252-g_6000_-b_10_-spec_-rand_ts_-ref_500_-n_rand_ts_speciation_-li_1400_-c_1_-n_calc_rec_c'
+    generation_list = [0]
     settings = load_settings(sim_name)
-    main(sim_name, settings, None, False)
+    recorded = True
+    main(sim_name, settings, None, recorded)
