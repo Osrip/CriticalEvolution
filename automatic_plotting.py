@@ -34,16 +34,19 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
             f.close()
         else:
             isings_list = load_isings(sim_name)
-            isings_list_fittest = sorted(isings_list, key=operator.attrgetter('avg_energy'), reverse=True)[:20]
+            isings_list_fittest = [sorted(isings, key=operator.attrgetter('avg_energy'), reverse=True)[:20] for isings in isings_list]
             #isings_list = load_isings_from_list(sim_name, [0])
     plot_vars = ['Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
                        ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
 
-    if settings['speciation']:
-        append_species_stuff = [('species', 'shared_fitness'), ('species', 'avg_energy'), ('generation', 'species')]
-        for tup in append_species_stuff:
-            plot_var_tuples.append(tup)
+    try:
+        if settings['speciation']:
+            append_species_stuff = [('species', 'shared_fitness'), ('species', 'avg_energy'), ('generation', 'species')]
+            for tup in append_species_stuff:
+                plot_var_tuples.append(tup)
+    except KeyError:
+        print('Older version, when speciation was not implemented')
 
 
     # Try plotting norm_avg_energy in case dataset already has I.time_steps
@@ -56,10 +59,10 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     except Exception:
         print('Could not calculate norm_avg_energy (Do isings lack attribute I.time_steps?)')
 
-    try:
-        plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list_fittest, autoLoad=False)
-    except Exception:
-       print('Could not create generational plots')
+    # try:
+    plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list_fittest, autoLoad=False)
+    # except Exception:
+    #    print('Could not create generational plots')
 
 
     try:
@@ -112,6 +115,7 @@ def plot_anything_auto(sim_name, plot_vars, settings, isings_list = None, autoLo
     for plot_var in plot_vars:
         plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list],
                                     autoLoad=autoLoad, scatter=True, name_extension='fittest_inds')
+
 
 
 

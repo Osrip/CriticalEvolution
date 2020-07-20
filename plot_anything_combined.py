@@ -24,7 +24,7 @@ loadfiles = ['beta_experiment/beta-0-1/sim-20180512-105719',
 
 
 def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
-         sim_labels = [r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter = True, name_extension=''):
+         sim_labels=[r'$\beta_i = 0.1$', r'$\beta_i = 1$', r'$\beta_i = 10$'], scatter=True, name_extension=''):
 
     '''
     Can either plot one or multiple simulations in a combined plot
@@ -65,7 +65,7 @@ def main(loadfiles, plot_var, settings=None, isings_lists=None, autoLoad=True,
     for loadfile, isings_list in zip(loadfiles, isings_lists):
         iter_list = detect_all_isings(loadfile)  # iter_list = np.arange(0, 2000, 1)
         #settings = load_settings(loadfile)
-        numAgents = settings['pop_size']
+        numAgents = len(isings_list[0]) # settings['pop_size']
         f = fitness(loadfile, iter_list, isings_list, numAgents, autoLoad, saveFigBool, plot_var)
         # FIX THE DOUBLE COUNTING PROBLEM
         if f.shape[0] > 2000 and fixGen2000:
