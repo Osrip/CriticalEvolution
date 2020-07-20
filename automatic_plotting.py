@@ -38,7 +38,8 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
             #isings_list = load_isings_from_list(sim_name, [0])
     plot_vars = ['Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
-                       ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+                       ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'),
+                       ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
 
     try:
         if settings['speciation']:

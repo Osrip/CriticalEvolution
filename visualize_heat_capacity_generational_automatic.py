@@ -73,7 +73,7 @@ def main(sim_name, settings, generation_list, recorded):
     for ii, iter in enumerate(iter_gen):
 
         fig, ax = plt.subplots(1, 1, figsize=(11, 10), sharex=True)
-        fig.text(0.51, 0.035, r'$\beta$', ha='center', fontsize=28)
+        fig.text(0.51, 0.035, r'$\beta_{fac}$', ha='center', fontsize=28)
         fig.text(0.005, 0.5, r'$C/N$', va='center', rotation='vertical', fontsize=28)
         title = 'Specific Heat of Foraging Community\n Generation: ' + str(iter)
         fig.suptitle(title)

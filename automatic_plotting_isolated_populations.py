@@ -3,45 +3,48 @@ import matplotlib as mpl
 mpl.use('Agg') #For server use
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import load_isings
-from automatic_plot_helper import  load_top_isings
+from automatic_plot_helper import load_top_isings
 from automatic_plot_helper import load_isings_from_list
 import compute_and_plot_heat_capacity_automatic
-import plot_anything_combined
+import plot_avg_attr_generational_isolated
 import plot_anythingXY_scatter
 import plot_anythingXY_scatter_food_velocity_optimized
 import sys
 import numpy as np
-
+import operator
+from isolated_population_helper import fittest_in_isolated_populations
+from isolated_population_helper import seperate_isolated_populations
 
 import plot_anythingXY_scatter_animation
 
 '''!!!!!!!!ONLY CHANGE, WHEN SIMULATION IS NOT RUNNING!!!!!!!   gets called via os to prevent memory leak'''
 
 
-def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
+def main(sim_name, load_isings_list=True, final=False):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
     settings = load_settings(sim_name)
     if load_isings_list:
-        if only_top_isings is not None:
-            isings_list = load_top_isings(sim_name, only_top_isings)
-            settings['pop_size'] = only_top_isings
-            save_txt_path = 'save/{}/figs/'.format(sim_name)
-            if not os.path.exists(save_txt_path):
-                os.makedirs(save_txt_path)
-            f = open(save_txt_path + "Only_first_{}_fittest_individuals_have_been_plotted.txt".format(only_top_isings), "w+")
-            f.close()
-        else:
-            isings_list = load_isings(sim_name)
-            #isings_list = load_isings_from_list(sim_name, [0])
 
+        isings_list = load_isings(sim_name)
+        isings_list_dict = seperate_isolated_populations(isings_list)
+        isings_list_dict_fittest = fittest_in_isolated_populations(isings_list_dict)
 
-    isings_list_dict = seperate_isolated_populations(isings_list)
-
-    plot_vars = ['Beta', 'avg_velocity', 'food']
+        # isings_list_fittest = [sorted(isings, key=operator.attrgetter('avg_energy'), reverse=True)[:20] for isings in isings_list]
+        # isings_list = load_isings_from_list(sim_name, [0])
+    plot_vars = ['avg_energy', 'Beta', 'avg_velocity', 'food']
     plot_var_tuples = [('generation', 'avg_energy'), ('generation', 'avg_velocity'), ('generation', 'food'),
-                       ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'), ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+                       ('generation', 'Beta'), ('Beta', 'avg_energy'), ('Beta', 'avg_velocity'),
+                       ('avg_energy', 'avg_velocity'), ('avg_energy', 'food')]
+
+    try:
+        if settings['speciation']:
+            append_species_stuff = [('species', 'shared_fitness'), ('species', 'avg_energy'), ('generation', 'species')]
+            for tup in append_species_stuff:
+                plot_var_tuples.append(tup)
+    except KeyError:
+        print('Older version, when speciation was not implemented')
 
 
     # Try plotting norm_avg_energy in case dataset already has I.time_steps
@@ -55,9 +58,11 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
         print('Could not calculate norm_avg_energy (Do isings lack attribute I.time_steps?)')
 
     try:
-        plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list, autoLoad=False)
+        for plot_var in plot_vars:
+            plot_avg_attr_generational_isolated.main(sim_name, isings_list_dict_fittest, plot_var,
+                                                     name_extension='fittest')
     except Exception:
-        print('Could not create generational plots')
+       print('Could not create generational plots')
 
 
     try:
@@ -70,45 +75,17 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
     except Exception:
         print('Could not create food velocity scatter plot')
 
-    if final:
-        pass
-        # try:
-        #     if settings['cores'] != 0:
-        #         compute_and_plot_heat_capacity_automatic.main(sim_name, settings)
-        #
-        # except Exception:
-        #     print('Could not compute and plot heat capacity')
 
-    #  Trying to fix memory leak:
     del isings_list
     del settings
 
     #plot_anythingXY_scatter_animation.main(sim_name, settings, isings_list, autoLoad=False, x_lim=None, y_lim=None)
     #  TODO: Animation dies not work for some reasone when called from here but does work when it is called itself... WHY???
 
-
 def plot_scatter_auto(sim_name, settings, plot_var_tuples, isings_list, autoLoad = True):
     for plot_var_x, plot_var_y in plot_var_tuples:
         plot_anythingXY_scatter.main(sim_name, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0.05,
-                                     autoLoad=autoLoad, name_extension='')
-
-
-def plot_anything_auto(sim_name, plot_vars, settings, isings_list=None, autoLoad=True):
-    '''
-    :param plot_vars: List of string of which each represents an attribute of the isings class
-    :param isings_list: List of all isings generations in case it has been loaded previously
-    '''
-
-    if settings['energy_model']:
-        #os.system("python plot__anything_combined {} avg_energy".format(sim_name))
-        plot_anything_combined.main([sim_name], 'avg_energy', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
-    else:
-        #os.system("python plot__anything_combined {} fitness".format(sim_name))
-        plot_anything_combined.main([sim_name], 'fitness', settings=settings, isings_lists=[isings_list], autoLoad=autoLoad)
-
-    for plot_var in plot_vars:
-        plot_anything_combined.main([sim_name], plot_var, settings=settings, isings_lists=[isings_list],
-                                    autoLoad=autoLoad, scatter=True)
+                                     autoLoad=autoLoad, name_extension='all_inds')
 
 
 def plot_all_in_folder(folder_name):
@@ -121,38 +98,6 @@ def plot_all_in_folder(folder_name):
         if 'sim-' in sim_name:
             sim_name = sim_name.replace('save/', '')
             main(sim_name)
-
-
-def seperate_isolated_populations(isings_list):
-    '''
-    Sorts all isngs objects in ising lists to a dict of ising_lists that only contain one isolated_population
-
-    @return: A dict of isings_lists, with one isings_list for each isolated_population
-    '''
-    iso_pop_names = set()
-    for isings in isings_list:
-        for I in isings:
-            iso_pop_names.add(I.isolated_population)
-
-    iso_pops_dict_isings_list = {}
-    for i, isings in enumerate(isings_list):
-        iso_pops_dict_isings = {}
-        for iso_pop_name in iso_pop_names:
-            curr_isolated_isings = []
-            for I in isings:
-                if I.isolated_population == iso_pop_name:
-                    curr_isolated_isings.append(I)
-            iso_pops_dict_isings[iso_pop_name] = curr_isolated_isings
-
-        if i == 0:
-            for iso_pop_name in iso_pop_names:
-                iso_pops_dict_isings_list[iso_pop_name] = [iso_pops_dict_isings[iso_pop_name]]
-        else:
-            for iso_pop_name in iso_pop_names:
-                iso_pops_dict_isings_list[iso_pop_name].append(iso_pops_dict_isings[iso_pop_name])
-
-    return iso_pops_dict_isings_list
-
 
 if __name__ == '__main__':
     '''
@@ -172,5 +117,4 @@ if __name__ == '__main__':
     #             'sim-20200209-124814-ser_-b_1_-f_10_-n_1']
     # for sim_name in sim_names:
     #     main(sim_name)
-    #plot_all_in_folder('seasons_training_one_season')
-
+    # plot_all_in_folder('seasons_training_one_season')
