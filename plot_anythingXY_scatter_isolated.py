@@ -11,12 +11,13 @@ from isolated_population_helper import fittest_in_isolated_populations
 from isolated_population_helper import seperate_isolated_populations
 
 
-def main(sim_name, isings_list, attr_triple, name_extension=''):
+def main(sim_name, isings_list, attr_tuple, attr_c ='isolated_population', name_extension=''):
 
-    attr_x, attr_y, attr_c = attr_triple
+    attr_x, attr_y = attr_tuple
+    attr_tuple = (attr_x, attr_y, attr_c)
     iter_list = detect_all_isings(sim_name)
     folder = 'save/' + sim_name
-    savefolder = folder + '/figs/' + attr_x + '_vs_' + attr_y + '/'
+    savefolder = folder + '/figs/' + attr_x + '_vs_' + attr_y + '_line/'
 
     savefilename = savefolder + '{}_vs_{}_color_{}_gen{}-{}-_{}.png'.format(
         attr_x, attr_y, attr_c, str(iter_list[0]), str(iter_list[-1]), name_extension)
@@ -33,7 +34,7 @@ def main(sim_name, isings_list, attr_triple, name_extension=''):
     tot_ind_num = 0
     for isings in isings_list:
         for I in isings:
-            for i, attr in enumerate(attr_triple):
+            for i, attr in enumerate(attr_tuple):
                 exec('all_inds_plot_arr[tot_ind_num, i] = I.{}'.format(attr))
             tot_ind_num += 1
 
@@ -71,7 +72,7 @@ def generate_colors_from_var_c(var_c):
 
 if __name__ == '__main__':
     sim_name = 'sim-20200714-210215-g_6000_-rand_ts_-iso_-ref_500_-rec_c_250_-a_100_250_500_1000_-no_trace_-n_different_betas_from_scratch_isolated' #'sim-20200714-190003-g_100_-t_5_-iso_-n_test'
-    isings_list = load_isings(sim_name, wait_for_memory=False)
-    # isings_list = load_isings_from_list(sim_name, np.arange(100))
-    attr_triple = ('generation', 'Beta', 'isolated_population')
+    # isings_list = load_isings(sim_name, wait_for_memory=False)
+    isings_list = load_isings_from_list(sim_name, np.arange(10))
+    attr_triple = ('generation', 'Beta')
     main(sim_name, isings_list, attr_triple)

@@ -1,3 +1,4 @@
+import operator
 def fittest_in_isolated_populations(isings_list_dict, fittest_percent_of_isings = 0.4):
     '''
 

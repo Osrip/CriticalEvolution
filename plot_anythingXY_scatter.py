@@ -68,6 +68,8 @@ def main(loadfile, settings, isings_list, plot_var_x, plot_var_y, s=0.8, alpha=0
             plt.xscale('log')
         if ylog:
             plt.yscale('log')
+        if plot_var_y == 'Beta':
+            plt.yscale('log')
         #TODO:colour acc to generation!!
     plt.xlim(x_lim)
     plt.ylim(y_lim)

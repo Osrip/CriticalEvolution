@@ -63,10 +63,11 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
         attrs_gen_b10_rand = loaded_plot_attrs['attrs_gen_b10_rand']
         attrs_gen_b1_rand = loaded_plot_attrs['attrs_gen_b1_rand']
 
-    attrs_gen_b10_fix = list(map(lambda x: x*1000, attrs_gen_b10_fix))
-    attrs_gen_b1_fix = list(map(lambda x: x*1000, attrs_gen_b1_fix))
-    attrs_gen_b10_rand = list(map(lambda x: x*1000, attrs_gen_b10_rand))
-    attrs_gen_b1_rand = list(map(lambda x: x*1000, attrs_gen_b1_rand))
+    # Increasing scale
+    # attrs_gen_b10_fix = list(map(lambda x: x*1000, attrs_gen_b10_fix))
+    # attrs_gen_b1_fix = list(map(lambda x: x*1000, attrs_gen_b1_fix))
+    # attrs_gen_b10_rand = list(map(lambda x: x*1000, attrs_gen_b10_rand))
+    # attrs_gen_b1_rand = list(map(lambda x: x*1000, attrs_gen_b1_rand))
 
     ylim = plot_generational_avg(attrs_gen_b10_fix, colour_b10, save_folder, 'fixed_time_steps_b10', alpha, s,
                                  get_axis=True)
@@ -86,18 +87,20 @@ def all_plots(sim_name_b1_fix, sim_name_b10_fix, sim_name_b1_rand, sim_name_rand
 
 def load_ising_stuff(sim_name, only_top_isings):
     isings_avg_energy_list = load_top_isings_attr(sim_name, only_top_isings, 'avg_energy')
+
     # Load this in order to have something to compute the number of time steps of current generation with
 
     # TODO Always fit this to current data format... only in latest version time steps of current generation are saved as attributes in isings
     #Getting number of time steps for each generation:
     try:
         # Get rid of double list (usually several individuals are in there but now only one is in there, which is why we can remove one nesting)
+        time_steps_first_ind = load_top_isings_attr(sim_name, 1, 'time_steps')
+        time_steps_each_gen = [time_steps[0] for time_steps in time_steps_first_ind]
+    except Exception:
         energies_first_ind = load_top_isings_attr(sim_name, 1, 'energies')
         energies_first_ind = [energies[0] for energies in energies_first_ind]
         time_steps_each_gen = list(map(lambda x: len(x), energies_first_ind))
-    except Exception:
-        time_steps_first_ind = load_top_isings_attr(sim_name, 1, 'time_steps')
-        time_steps_each_gen = [time_steps[0] for time_steps in time_steps_first_ind]
+
 
     settings = load_settings(sim_name)
     settings['pop_size'] = only_top_isings
@@ -124,6 +127,7 @@ def plot_generational_avg(y_axis, colour, save_folder, add_save_name, alpha, s, 
     plt.figure(figsize=(19, 10))
     ax = plt.scatter(x_axis, y_axis, alpha=alpha, c=colour, s=s)
 
+    # Replace ticks with larger numbers
     locs, labels = plt.yticks()
     if set_labels is not None:
         labels = set_labels
@@ -196,15 +200,20 @@ def create_small_isings(isings_avg_energy_list, time_steps_each_gen):
 
 
 if __name__ == '__main__':
-    sim_name_b10_fix = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    sim_name_b1_fix = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
-    # sim_name_b10_rand = 'sim-20200621-130735-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1990_1999_--nomutb_-n_random_time_steps_save_energies_nomutb' #'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    # sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
-    sim_name_b10_rand = 'sim-20200702-113213-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_10_-noplt_-n_huge_random_ts_run_ts_saved'
-    sim_name_b1_rand = 'sim-20200702-113206-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_1_-noplt_-n_huge_random_ts_run_ts_saved'
+    # sim_name_b10_fix = 'sim-20200604-235433-g_2000_-t_2000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # sim_name_b1_fix = 'sim-20200604-235424-g_2000_-t_2000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-n_energies_velocities_saved'
+    # # sim_name_b10_rand = 'sim-20200621-130735-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1990_1999_--nomutb_-n_random_time_steps_save_energies_nomutb' #'sim-20200619-173340-g_2001_-ref_0_-noplt_-b_10_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    # # sim_name_b1_rand = 'sim-20200619-173349-g_2001_-ref_0_-noplt_-b_1_-dream_c_500_-c_4_-a_1995_1996_1997_1998_1999_-n_random_time_steps_save_energies_4'
+    # sim_name_b10_rand = 'sim-20200702-113213-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_10_-noplt_-n_huge_random_ts_run_ts_saved'
+    # sim_name_b1_rand = 'sim-20200702-113206-g_10000_-rand_ts_-rand_ts_lim_100_8000_-b_1_-noplt_-n_huge_random_ts_run_ts_saved'
 
+    sim_name_b1_fix = 'sim-20200715-151540-g_4000_-t_2000_-b_1_-ref_500_-rec_c_500_-n_beta_uniform_mutations_added_normal_run'
+    sim_name_b10_fix = 'sim-20200715-151426-g_4000_-t_2000_-b_10_-ref_500_-rec_c_500_-n_beta_uniform_mutations_added_normal_run'
+    sim_name_b1_rand = 'sim-20200715-151519-g_4000_-rand_ts_-b_1_-ref_500_-rec_c_500_-n_beta_uniform_mutations_added_normal_run'
+    sim_name_b10_rand = 'sim-20200715-151458-g_4000_-rand_ts_-b_10_-ref_500_-rec_c_500_-n_beta_uniform_mutations_added_normal_run'
 
-    pre_folder = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/'
+    #pre_folder = 'Energies_Velocities_saved_during_2d_sim_random_time_steps_cut_off_animations/'
+    pre_folder = ''
 
     # sim_name_b10_rand = pre_folder + sim_name_b10_rand
     # sim_name_b1_rand = pre_folder + sim_name_b1_rand

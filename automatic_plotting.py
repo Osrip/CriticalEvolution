@@ -33,7 +33,7 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
             f = open(save_txt_path + "Only_first_{}_fittest_individuals_have_been_plotted.txt".format(only_top_isings), "w+")
             f.close()
         else:
-            isings_list = load_isings(sim_name)
+            isings_list = load_isings(sim_name, wait_for_memory=True)
             isings_list_fittest = [sorted(isings, key=operator.attrgetter('avg_energy'), reverse=True)[:20] for isings in isings_list]
             #isings_list = load_isings_from_list(sim_name, [0])
     plot_vars = ['Beta', 'avg_velocity', 'food']
