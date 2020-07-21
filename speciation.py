@@ -189,5 +189,3 @@ def pick_rand_inds_from_prev_gen(isings_old):
         rand_inds_all_species.append(random_ind_curr_species)
 
     return rand_inds_all_species
-
-#-------Speciation over--------

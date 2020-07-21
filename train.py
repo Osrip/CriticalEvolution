@@ -95,7 +95,7 @@ def create_settings():
     settings['mutateB'] = not args.no_mut_beta  # toggle to allow Beta (temperature) mutations (toggle off if critical learning is on)
     settings['sigB'] = args.sig_beta #0.02  # std for Beta mutation
     settings['diff_init_betas'] = args.diff_init_betas
-    
+    settings['beta_jump_mutations'] = args.beta_jump_mutations
 
     #settings['loadfile'] = sim-20191114-000009_server
     settings['loadfile'] = args.loadfile
@@ -200,6 +200,10 @@ def parse():
                          is uniformly distributed''')
     parser.add_argument('-std_b', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
+    parser.add_argument('-b_jump', dest='beta_jump_mutations', action='store_true',
+                        help='Activate jump mutations for beta. Those are random mutations of beta, where old beta'
+                             'value is replaced by an exponentially distributed value of beta. This makes it easier'
+                             'for a population to "hop out" of its current regime during evolution')
     parser.add_argument('-nmb', '--nomutb', dest='no_mut_beta', action='store_true', help='Switch off beta mutation')
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
@@ -298,7 +302,7 @@ def parse():
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1,1,1], mutationRateDup=0.1,
-                        isolated_populations=False)
+                        isolated_populations=False, beta_jump_mutations=False)
     args = parser.parse_args()
     return args
 

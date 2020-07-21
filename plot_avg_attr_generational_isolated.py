@@ -10,7 +10,7 @@ from automatic_plot_helper import load_settings
 from matplotlib.lines import Line2D
 
 
-def main(sim_name, isings_list_dict, attr, name_extension=''):
+def main(sim_name, isings_list_dict, attr, colors=['red', 'blue', 'green'], name_extension=''):
 
     iter_list = detect_all_isings(sim_name)
     folder = 'save/' + sim_name
@@ -23,7 +23,7 @@ def main(sim_name, isings_list_dict, attr, name_extension=''):
     if not path.exists(savefolder):
         makedirs(savefolder)
 
-    colors = ['red', 'blue', 'green']
+    #colors = ['red', 'blue', 'green']
     plt.figure(figsize=(19, 10))
     legend_elements = []
     for i, iso_pop_name in enumerate(isings_list_dict):
@@ -52,7 +52,7 @@ def main(sim_name, isings_list_dict, attr, name_extension=''):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200714-210215-g_6000_-rand_ts_-iso_-ref_500_-rec_c_250_-a_100_250_500_1000_-no_trace_-n_different_betas_from_scratch_isolated' #'sim-20200714-190003-g_100_-t_5_-iso_-n_test'
+    sim_name = 'sim-20200714-210150-g_6000_-t_2000_-iso_-ref_500_-rec_c_250_-a_100_250_500_1000_-no_trace_-n_different_betas_from_scratch_isolated' #'sim-20200714-190003-g_100_-t_5_-iso_-n_test'
     isings_list = load_isings(sim_name, wait_for_memory=False)
     #isings_list = load_isings_from_list(sim_name, np.arange(100))
     isings_list_dict = seperate_isolated_populations(isings_list)

@@ -583,128 +583,15 @@ class ising:
             deltaB = np.abs(np.random.normal(1, settings['sigB']))
             self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
             #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
-            if np.random.uniform(0, 1) < 0.1:
-                self.Beta = 10 ** np.random.uniform(-1, 1)
+            if settings['beta_jump_mutations']:
+                if np.random.uniform(0, 1) < 0.1:
+                    self.Beta = 10 ** np.random.uniform(-1, 1)
 
 
             #biases GA pushing towards lower betas (artifical pressure to small betas)
 
     # End of mutate (1)
 
-    def mutate2(self, settings):
-        '''
-         3 Mutations happening at once:
-        CONNECTIVITY Mutations:
-        One of these things happen
-        - A new edge is removed (according to sparsity settings more or less likely)
-        - or added (if no adding is possible some random edge gets new edge weight)
-
-        EDGE MUTATIONS
-        currently in an edge mutation means, that the whole edge weight is replaced by a randomly generated weight
-
-
-        BETA Mutations
-        Beta is mutated
-        '''
-
-        # ADDS/REMOVES RANDOM EDGE DEPENDING ON SPARSITY SETTING, RANDOMLY MUTATES ANOTHER RANDOM EDGE
-
-        # expected number of disconnected edges
-        numDisconnectedEdges = len(list(combinations(range(settings['numDisconnectedNeurons']), 2)))
-        totalPossibleEdges = len(list(combinations(range(self.size - self.Ssize - self.Msize), 2)))
-
-        # number of (dis)connected edges
-        connected = copy.deepcopy(self.maskJ)
-
-        disconnected = ~connected #disconnected not connected
-        np.fill_diagonal(disconnected, 0)
-        disconnected = np.triu(disconnected)
-
-        # things that need to be connected and not flagged to change
-        connected[0:self.Ssize, :] = 0
-        connected[:, -self.Msize:] = 0
-        # things that need to be disconnected and not flagged to change
-        disconnected[0:self.Ssize, -self.Msize:] = 0
-        disconnected[0:self.Ssize, 0:self.Ssize] = 0
-
-        numEdges = np.sum(connected) #number of edges, that can actuall be disconnected (in beginning of simulatpn curr settings 3)
-        # positive value means too many edges, negative value means too little
-        edgeDiff = numEdges - (totalPossibleEdges - numDisconnectedEdges)
-        # edgeDiff = numEdges - numDisconnectedEdges
-
-        # TODO: investigate the empty connectivity matrix here
-        prob = sigmoid(edgeDiff)  #for numDisconnectedNeurons=0 this means 0.5 --> equal probability of adding edge and removing edge # probability near 1 means random edge will be removed, near 0 means random edge added
-        rand = np.random.rand()
-
-        if prob >= rand:
-            # remove random edge
-            i, j = np.nonzero(connected) #Indecies of neurons connected by edges that can be disconnected
-            if len(i) > 0:
-                randindex = np.random.randint(0, len(i))
-                ii = i[randindex]
-                jj = j[randindex]
-
-                self.maskJ[ii, jj] = False
-                self.J[ii, jj] = 0
-
-                # TODO: is this a good way of making the code multi-purpose?
-                # try:
-                #     self.C1[ii, jj] = 0
-                # except NameError:
-                #     pass'
-
-            else:
-                print('Connectivity Matrix Empty! Mutation Blocked.')
-
-        else:
-            #looking for disconnected neurons that can be connected
-            # add random edge
-            i, j = np.nonzero(disconnected)
-            if len(i) > 0:
-                randindex = np.random.randint(0, len(i))
-                ii = i[randindex]
-                jj = j[randindex]
-
-                self.maskJ[ii, jj] = True
-                self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
-                # I.J[ii, jj] = np.random.uniform(np.min(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) / 2,
-                #                                 np.max(I.J[I.Ssize:-I.Msize, I.Ssize:-I.Msize]) * 2)
-                # try:
-                #     self.C1[ii, jj] = settings['Cdist'][np.random.randint(0, len(settings['Cdist']))]
-                # except NameError:
-                #     pass
-
-            else:  # if connectivity matrix is full, just change an already existing edge
-                #This only happens, when alogorithm tries to add edge, but everything is connected
-                i, j = np.nonzero(connected)
-
-                randindex = np.random.randint(0, len(i))
-                ii = i[randindex]
-                jj = j[randindex]
-
-                self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
-
-
-        # MUTATE RANDOM EDGE
-        i, j = np.nonzero(self.maskJ)
-
-        randindex = np.random.randint(0, len(i))
-        ii = i[randindex]
-        jj = j[randindex]
-
-        self.J[ii, jj] = np.random.uniform(-1, 1) * self.max_weights
-        #Mutation of weights--> mutated weight is generated randomly from scratch
-
-        # MUTATE LOCAL TEMPERATURE
-        if settings['mutateB']:
-            deltaB = np.abs(np.random.normal(1, settings['sigB']))
-            self.Beta = self.Beta * deltaB  #TODO mutate beta not by multiplying? How was Beta modified originally?
-            # #TODO: ADDED POSIIBILITY OF RANDOM BETA TO GLOBALIZE SEARCH SPACE FOR BETA
-            if np.random.uniform(0, 1) < 0.1:
-                self.Beta = 10 ** np.random.uniform(-1, 1)
-            #biases GA pushing towards lower betas (artifical pressure to small betas)
-
-    # End of mutate2
 
 
     def reset_state(self, settings):
@@ -1477,12 +1364,18 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     if settings['plot_pipeline']:
         if settings['refresh_plot'] == 0:
             #automatic_plotting.main(sim_name)
-            os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+            if settings['isolated_populations']:
+                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+            else:
+                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
 
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
         elif (not rep % settings['refresh_plot'] == 0):
             #automatic_plotting.main(sim_name)
-            os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+            if settings['isolated_populations']:
+                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+            else:
+                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
 
 
@@ -1940,7 +1833,7 @@ def evolve2(settings, I_old, gen):
         # self.mutate mutates edge weights, adds/removes edges and mutates beta
         if np.random.random() < settings['mutationRateDup']: # settings['mutationRateDup'] = 0.1
             # !!!! MUTATE 2 !!!!!
-            I_new[-1].mutate2(settings)
+            I_new[-1].mutate(settings)
 
         # random mutations in duplication
 

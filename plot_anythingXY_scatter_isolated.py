@@ -11,7 +11,8 @@ from isolated_population_helper import fittest_in_isolated_populations
 from isolated_population_helper import seperate_isolated_populations
 
 
-def main(sim_name, isings_list, attr_tuple, attr_c ='isolated_population', name_extension=''):
+def main(sim_name, isings_list, attr_tuple, colors = ['red', 'blue', 'green'],
+         attr_c ='isolated_population', name_extension=''):
 
     attr_x, attr_y = attr_tuple
     attr_tuple = (attr_x, attr_y, attr_c)
@@ -42,7 +43,7 @@ def main(sim_name, isings_list, attr_tuple, attr_c ='isolated_population', name_
     plt.figure(figsize=(19, 10))
     legend_elements = []
 
-    colors = ['red', 'blue', 'green']
+
     plt.figure(figsize=(19, 10))
 
     plot_colors = list(map(generate_colors_from_var_c, all_inds_plot_arr[:, 2]))
