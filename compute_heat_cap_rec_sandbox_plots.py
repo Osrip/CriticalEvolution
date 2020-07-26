@@ -11,6 +11,7 @@ import glob
 from numba import jit
 from automatic_plot_helper import load_settings
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import matplotlib.colors as colors
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
@@ -114,6 +115,14 @@ def main():
 
     super_threshold_indices = C <= 0
     C[super_threshold_indices] = 1* 10 ** -10
+
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label=r'$C/N \leq 0.2$', markerfacecolor='blue',
+               markersize=25, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='$C/N > 0.2$', markerfacecolor='red',
+               markersize=25, alpha=0.75)
+    ]
+
     # I think plotting only works for 1 REPEAT!!!
     plot_c(C[0], betas[bind], loadfile)
     plot_all_E(all_Es, C[0], loadfile)
@@ -219,10 +228,11 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
 
     return s
 
-def plot_all_E(all_Es, C, sim_name):
+def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
+
 
     # norm=colors.LogNorm(vmin=min(C), vmax=max(C))
     # cmap = plt.get_cmap('plasma')
@@ -236,9 +246,11 @@ def plot_all_E(all_Es, C, sim_name):
         plt.plot(all_E, c=color)
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     save_name = 'all_energies.png'
+    plt.title(r'$E_{net} during thermalization for population with \beta_\mathrm{{fac}}$')
     plt.xscale('log')
     plt.xlabel('Thermal Time Step')
     plt.ylabel(r'$E_{net}$')
+    plt.legend(handles=legend_elements)
     if not path.exists(save_folder):
         makedirs(save_folder)
 
@@ -247,7 +259,7 @@ def plot_all_E(all_Es, C, sim_name):
 
 
 
-def plot_c(C, beta_new, sim_name):
+def plot_c(C, beta_new, sim_name, legent_elements):
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
@@ -263,6 +275,7 @@ def plot_c(C, beta_new, sim_name):
     plt.yscale('log')
     plt.ylabel(r'$C/N$')
     plt.xlabel(r'Organism number')
+    plt.legend(handles=legend_elements)
 
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if not path.exists(save_folder):
