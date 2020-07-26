@@ -10,6 +10,7 @@ import random
 import glob
 from numba import jit
 from automatic_plot_helper import load_settings
+import matplotlib.pyplot as plt
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -56,10 +57,11 @@ def main():
         # I.J = data['J'][()][(size, rep)]
 
         agentNum = 0
-
+        all_Es = []
+        all_step_Es = []
         for I in isings:
 
-             #TimeSteps in dream simulation T = 100000
+            #TimeSteps in dream simulation T = 100000
 
 
             betaVec = betas * I.Beta  # scale by org's local temperature
@@ -71,12 +73,11 @@ def main():
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            I.s = SequentialGlauberStepFast(int(thermal_time), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            # I.s = SequentialGlauberStepFast(int(thermal_time/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time / 10, I.s, I.h, I.J, beta_new, I.Ssize,
-                                                                 I.size)
-
+            I.s, Em, E2m, all_E = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
+            all_Es.append(all_E)
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):
             #     #  thermal time steps to get ANN to equilibrium
@@ -93,7 +94,9 @@ def main():
             #     # Why is this divided by T (total amount of time steps after thermalization)? --> mean calculation
 
             #  Claculate heat capacity
-            C[rep, agentNum] = beta_new ** 2 * (E2m - Em ** 2) / size
+            c = beta_new ** 2 * (E2m - Em ** 2) / size
+            C[rep, agentNum] = c
+
             agentNum += 1
 
 
@@ -110,6 +113,8 @@ def main():
 
     np.save(filename, C)
 
+    plot_c(C[0], betas[bind], loadfile)
+
 def initialize_sensors_from_record_randomize_neurons(I):
     '''
     Initialize sensors with randoms set of sensor values that have been recorded during simulation
@@ -123,28 +128,12 @@ def initialize_sensors_from_record_randomize_neurons(I):
     for i in range(len(chosen_sens_inputs)):
         I.s[i] = chosen_sens_inputs[i]
 
-    #TODO: Remove this, only for test purposes:
-    # random_rfood = (np.random.rand() * 360) - 180
-    # I.s[0] = random_rfood / 180
-    #
-    # random_dfood = np.random.rand() * I.maxRange
-    # I.s[1] = np.tanh(I.radius / (random_dfood ** 2 + 1e-6)) * 2 - 1
-    #
-    # random_v = np.random.rand() * I.v_max
-    # I.s[2] = np.tanh(random_v)
-    #
-    # # random_energy = np.random.rand() * self.food_num_env
-    # # TODO: Make this more flexible!!
-    # random_energy = np.random.rand() * 12
-    # I.s[3] = np.tanh(random_energy)
-
-
     I.s = s
     if not len(chosen_sens_inputs) == I.Ssize:
         raise Exception('''For some reason the number of sensors that
         recorded values exist for is different from the sensor size saved in the settings''')
 
-@jit(nopython=True)
+# @jit(nopython=True)
 def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, size):
     '''
     Energy calculation each thermal time step
@@ -161,7 +150,7 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
 
     Em = 0
     E2m = 0
-
+    all_E = []
     for i in range(thermalTime):
         #perms = perms_list[i]
         #Prepare a matrix of random variables for later use
@@ -180,7 +169,6 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
 
             if Beta * eDiff < np.log(1.0 / rand - 1):
-                # if rand < 1/(1+np.exp(eDiff * Beta)):
                 #transformed  P = 1/(1+e^(deltaE* Beta)
                 s[perm] = -s[perm]
 
@@ -188,8 +176,9 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
         E = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
         Em += E / float(thermalTime)   # <-- mean calculation??
         E2m += E ** 2 / float(thermalTime)
+        all_E.append(E)
 
-    return s, Em, E2m
+    return s, Em, E2m, all_E
 
 @jit(nopython=True)
 def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
@@ -219,10 +208,38 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
 
             if Beta * eDiff < np.log(1.0 / rand - 1):
+            # if rand < 1/(1+np.exp(eDiff * Beta)):
                 #transformed  P = 1/(1+e^(deltaE* Beta)
                 s[perm] = -s[perm]
 
     return s
+
+
+def plot_c(C, beta_new, sim_name):
+    plt.figure(figsize=(10, 12))
+    plt.rcParams.update({'font.size': 22})
+    plt.rc('text', usetex=True)
+    #plt.rc('font', family='serif')
+    x_axis = np.arange(len(C))
+    plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(beta_new))
+    for x, y in zip(x_axis, C):
+        if y > 10 ** (-4):
+            color = 'red'
+        else:
+            color = 'blue'
+        plt.scatter(x, y, c=color)
+    plt.yscale('log')
+    plt.ylabel(r'C/N')
+    plt.xlabel(r'Organism number')
+
+    save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
+    if not path.exists(save_folder):
+        makedirs(save_folder)
+    save_name = 'C_vec_beta_fac{}.png'.format(beta_new)
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+    plt.show()
+    pass
+
 
 # def from_list_of_arrs_to_arr(arr_list):
 #     return np.concatenate(arr_list, axis=0)

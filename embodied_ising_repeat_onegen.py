@@ -74,9 +74,7 @@ class ising:
         self.dy = 0
 
         self.name = name
-        '''
-        initial beta
-        '''
+        # initial beta
         self.Beta = settings['init_beta']
         #self.Beta = 1.0
         # self.defaultT = max(100, netsize * 20)
