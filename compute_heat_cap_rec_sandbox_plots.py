@@ -124,8 +124,8 @@ def main():
     ]
 
     # I think plotting only works for 1 REPEAT!!!
-    plot_c(C[0], betas[bind], loadfile)
-    plot_all_E(all_Es, C[0], loadfile)
+    plot_c(C[0], betas[bind], loadfile, legend_elements)
+    plot_all_E(all_Es, C[0], loadfile, legend_elements, betas[bind])
 
 
 
@@ -246,7 +246,7 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
         plt.plot(all_E, c=color)
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     save_name = 'all_energies.png'
-    plt.title(r'$E_{net} during thermalization for population with \beta_\mathrm{{fac}}$')
+    plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(beta_fac))
     plt.xscale('log')
     plt.xlabel('Thermal Time Step')
     plt.ylabel(r'$E_{net}$')
@@ -259,7 +259,7 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
 
 
 
-def plot_c(C, beta_new, sim_name, legent_elements):
+def plot_c(C, beta_new, sim_name, legend_elements):
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
