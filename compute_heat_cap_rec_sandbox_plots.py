@@ -11,6 +11,7 @@ import glob
 from numba import jit
 from automatic_plot_helper import load_settings
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -111,9 +112,13 @@ def main():
         makedirs(folder)
 
 
-    np.save(filename, C)
-
+    super_threshold_indices = C <= 0
+    C[super_threshold_indices] = 1* 10 ** -10
+    # I think plotting only works for 1 REPEAT!!!
     plot_c(C[0], betas[bind], loadfile)
+    plot_all_E(all_Es, C[0], loadfile)
+
+
 
 def initialize_sensors_from_record_randomize_neurons(I):
     '''
@@ -214,6 +219,33 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
 
     return s
 
+def plot_all_E(all_Es, C, sim_name):
+    plt.figure(figsize=(10, 12))
+    plt.rcParams.update({'font.size': 22})
+    plt.rc('text', usetex=True)
+
+    # norm=colors.LogNorm(vmin=min(C), vmax=max(C))
+    # cmap = plt.get_cmap('plasma')
+    # colors = []
+    for c, all_E in zip(C, all_Es):
+        #color = cmap(norm(c))
+        if c > 0.2:
+            color = 'red'
+        else:
+            color = 'blue'
+        plt.plot(all_E, c=color)
+    save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
+    save_name = 'all_energies.png'
+    plt.xscale('log')
+    plt.xlabel('Thermal Time Step')
+    plt.ylabel(r'$E_{net}$')
+    if not path.exists(save_folder):
+        makedirs(save_folder)
+
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+
+
+
 
 def plot_c(C, beta_new, sim_name):
     plt.figure(figsize=(10, 12))
@@ -223,13 +255,13 @@ def plot_c(C, beta_new, sim_name):
     x_axis = np.arange(len(C))
     plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(beta_new))
     for x, y in zip(x_axis, C):
-        if y > 10 ** (-4):
+        if y > 0.2:
             color = 'red'
         else:
             color = 'blue'
         plt.scatter(x, y, c=color)
     plt.yscale('log')
-    plt.ylabel(r'C/N')
+    plt.ylabel(r'$C/N$')
     plt.xlabel(r'Organism number')
 
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
