@@ -246,7 +246,7 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
         plt.plot(all_E, c=color)
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     save_name = 'all_energies.png'
-    plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(beta_fac))
+    plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
     plt.xscale('log')
     plt.xlabel('Thermal Time Step')
     plt.ylabel(r'$E_{net}$')
@@ -259,13 +259,13 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
 
 
 
-def plot_c(C, beta_new, sim_name, legend_elements):
+def plot_c(C, beta_fac, sim_name, legend_elements):
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
     #plt.rc('font', family='serif')
     x_axis = np.arange(len(C))
-    plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(beta_new))
+    plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
     for x, y in zip(x_axis, C):
         if y > 0.2:
             color = 'red'
@@ -280,7 +280,7 @@ def plot_c(C, beta_new, sim_name, legend_elements):
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if not path.exists(save_folder):
         makedirs(save_folder)
-    save_name = 'C_vec_beta_fac{}.png'.format(beta_new)
+    save_name = 'C_vec_beta_fac{}.png'.format(beta_fac)
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
     plt.show()
     pass

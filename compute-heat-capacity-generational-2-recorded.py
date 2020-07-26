@@ -71,10 +71,10 @@ def main():
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            I.s = SequentialGlauberStepFast(int(thermal_time), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            I.s = SequentialGlauberStepFast(int(10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time / 10, I.s, I.h, I.J, beta_new, I.Ssize,
+            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize,
                                                                  I.size)
 
             #Old, slow way of clculating it:
@@ -180,7 +180,6 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
 
             if Beta * eDiff < np.log(1.0 / rand - 1):
-                # if rand < 1/(1+np.exp(eDiff * Beta)):
                 #transformed  P = 1/(1+e^(deltaE* Beta)
                 s[perm] = -s[perm]
 
