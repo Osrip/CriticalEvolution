@@ -11,14 +11,14 @@ from isolated_population_helper import fittest_in_isolated_populations
 from isolated_population_helper import seperate_isolated_populations
 
 
-def main(sim_name, isings_list, attr_tuple, colors = ['red', 'blue', 'green'],
+def main(sim_name, isings_list, attr_tuple, colors=['darkorange', 'royalblue', 'maroon'],
          attr_c ='isolated_population', name_extension=''):
 
     attr_x, attr_y = attr_tuple
     attr_tuple = (attr_x, attr_y, attr_c)
     iter_list = detect_all_isings(sim_name)
     folder = 'save/' + sim_name
-    savefolder = folder + '/figs/' + attr_x + '_vs_' + attr_y + '_line/'
+    savefolder = folder + '/figs/' + attr_x + '_vs_' + attr_y + '/' # + '_line/'
 
     savefilename = savefolder + '{}_vs_{}_color_{}_gen{}-{}-_{}.png'.format(
         attr_x, attr_y, attr_c, str(iter_list[0]), str(iter_list[-1]), name_extension)
@@ -68,7 +68,7 @@ def main(sim_name, isings_list, attr_tuple, colors = ['red', 'blue', 'green'],
     plt.show()
 
 def generate_colors_from_var_c(var_c):
-    colors = ['red', 'blue', 'green']
+    colors = ['darkorange', 'royalblue', 'maroon']
     return(colors[int(var_c)])
 
 if __name__ == '__main__':

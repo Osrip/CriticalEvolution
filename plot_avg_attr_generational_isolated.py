@@ -14,7 +14,7 @@ def main(sim_name, isings_list_dict, attr, colors=['darkorange', 'royalblue', 'm
 
     iter_list = detect_all_isings(sim_name)
     folder = 'save/' + sim_name
-    savefolder = folder + '/figs/' + attr + '_line/'
+    savefolder = folder + '/figs/' + attr + '/' # + '_line/'
 
     savefilename = savefolder + '{}_gen{}-{}-_{}.png'.format(
         attr, str(iter_list[0]), str(iter_list[-1]), name_extension)
