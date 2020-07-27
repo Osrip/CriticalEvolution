@@ -298,10 +298,10 @@ def parse():
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
                         years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
-                        natural_heat_capacity_beta_fac_props=[-1, 1, 102], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
+                        natural_heat_capacity_beta_fac_props=[-1, 1, 100], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
-                        delta_threshold_speciation=1, shared_fitness_constants=[1,1,1], mutationRateDup=0.1,
+                        delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False)
     args = parser.parse_args()
     return args

@@ -71,11 +71,10 @@ def main():
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            I.s = SequentialGlauberStepFast(int(10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            I.s = SequentialGlauberStepFast(int(10000), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize,
-                                                                 I.size)
+            I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
 
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):
@@ -95,7 +94,6 @@ def main():
             #  Claculate heat capacity
             C[rep, agentNum] = beta_new ** 2 * (E2m - Em ** 2) / size
             agentNum += 1
-
 
     # print(np.mean(C, 0))
     # TODO: CHANGE THIS SO THERE IS NO CONFLICT WITH OTHER DREAM HEAT CAP CALCULATION
@@ -122,22 +120,6 @@ def initialize_sensors_from_record_randomize_neurons(I):
     chosen_sens_inputs = I.all_recorded_inputs[rand_index]
     for i in range(len(chosen_sens_inputs)):
         I.s[i] = chosen_sens_inputs[i]
-
-    #TODO: Remove this, only for test purposes:
-    # random_rfood = (np.random.rand() * 360) - 180
-    # I.s[0] = random_rfood / 180
-    #
-    # random_dfood = np.random.rand() * I.maxRange
-    # I.s[1] = np.tanh(I.radius / (random_dfood ** 2 + 1e-6)) * 2 - 1
-    #
-    # random_v = np.random.rand() * I.v_max
-    # I.s[2] = np.tanh(random_v)
-    #
-    # # random_energy = np.random.rand() * self.food_num_env
-    # # TODO: Make this more flexible!!
-    # random_energy = np.random.rand() * 12
-    # I.s[3] = np.tanh(random_energy)
-
 
     I.s = s
     if not len(chosen_sens_inputs) == I.Ssize:

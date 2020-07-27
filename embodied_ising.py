@@ -1414,7 +1414,10 @@ def plotting_pipeline(rep, sim_name, settings):
 
                 #automatic_plotting.main(sim_name)
                 #  WRONGLY ALSO ACTIVATED final_true on purpose
-                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+                if settings['isolated_populations']:
+                    os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+                else:
+                    os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
                 #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
             except Exception:
                 print('Something went wrong when refreshing plot at generation{}'.format(rep))
