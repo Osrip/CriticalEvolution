@@ -80,6 +80,7 @@ def create_settings():
     settings['frameRate'] = 1
     settings['animation_fps'] = args.fps
     settings['fading_traces_animation'] = args.fading_traces_animation
+    settings['animation_dpi'] = args.animation_dpi
     
     settings['size'] = 12 #Total number of neurons in NN
     settings['nSensors'] = 4
@@ -208,10 +209,11 @@ def parse():
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
+    parser.add_argument('-a_dpi', dest='animation_dpi', type=int, help='Quality of animation in dpi')
     parser.add_argument('-no_trace', '--animation_no_trace', dest='fading_traces_animation', action='store_false',
                         help='Deactivate fading traces in animation. This significantly speeds up computational time'
                              ', This calls completely differnt animation module, so other things might vary as well.')
-    parser.add_argument('-fps', type=int, dest='fps', help='FPS in animation')
+    parser.add_argument('-a_fps', type=int, dest='fps', help='FPS in animation')
     parser.add_argument('-l','--load', type=str, dest = 'loadfile',
                         help='Filename of previously saved simulation in save folder. Specify iteration using -li')
     parser.add_argument('-li', '--loadi', type=str, dest='loaditer',
@@ -302,7 +304,7 @@ def parse():
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
-                        isolated_populations=False, beta_jump_mutations=False)
+                        isolated_populations=False, beta_jump_mutations=False, animation_dpi=150)
     args = parser.parse_args()
     return args
 

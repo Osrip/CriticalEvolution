@@ -51,14 +51,22 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
     design_figure(settings, fig, ax)
     initial_plot(isings_all_timesteps[0], foods_all_timesteps[0], settings, ax, alpha=1)
     #plt.savefig('firstframe.png', dpi =100, bbox_inches = 'tight')
-    ani = animation.FuncAnimation(fig, __update_plot, fargs=[isings_all_timesteps, foods_all_timesteps, settings, ax, fig], interval=1, frames=len(isings_all_timesteps))
+
+    if settings['fading_traces_animation']:
+        update_func = __update_plot_fading
+    else:
+        update_func = __update_plot_no_fading
+
+    ani = animation.FuncAnimation(fig, update_func, fargs=[isings_all_timesteps, foods_all_timesteps, settings, ax, fig], interval=1, frames=len(isings_all_timesteps))
+
+
 
     if True:
         #ffmpeg does not work on server, therefore default writer used
         Writer = animation.FFMpegFileWriter
         writer = Writer(fps=settings['animation_fps'], metadata=dict(artist='Sina Abdollahi, Jan Prosi'), bitrate=1800)
         writer.frame_format = 'png'
-        ani.save(savepath, writer=writer, dpi=250)  # Good quality: dpi = 500
+        ani.save(savepath, writer=writer, dpi=settings['animation_dpi'])  # Good quality: dpi = 500
     elif False:
         #Using defaul writer instead of imagemagick
         ani.save(savepath, dpi=100, writer='imagemagick', fps=settings['animation_fps']) #TODO: dpi=100 writer='imagemagick',
@@ -92,8 +100,18 @@ def animate_plot(all_artists, settings, ax, fig):
     del ani
     print('Animation successfully saved at {}'.format(savepath))
 
+def __update_plot_no_fading(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fig):
+    #[a.remove for a in reversed(ax.artists)]
 
-def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fig):
+    isings = isings_all_timesteps[t]
+    foods = foods_all_timesteps[t]
+    ax.cla()
+    design_figure(settings, fig, ax)
+    initial_plot(isings, foods, settings, ax, alpha=1)
+
+    return ax.artists
+
+def __update_plot_fading(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fig):
     #[a.remove for a in reversed(ax.artists)]
 
     # fade_out_frames = 20
@@ -107,7 +125,9 @@ def __update_plot(t, isings_all_timesteps, foods_all_timesteps, settings, ax, fi
     #     alpha = (fade_out_frames + 1 - i) / fade_out_frames
     #     frame = t - i
 
+
     fade_out_iter = 20
+
     ax.cla()
 
     if t > fade_out_iter:
@@ -171,51 +191,51 @@ def design_figure(settings, fig, ax):
     #plt.clf()
     #frame.close()
 
-def plot_frame(settings, folder, fig, ax, isings, foods, time, rep):
-    # fig, ax = plt.subplots()
-    fig.set_size_inches(9.6, 5.4)
-
-    # plt.xlim([settings['x_min'] + settings['x_min'] * 0.25,
-    #           settings['x_max'] + settings['x_max'] * 0.25])
-    # plt.ylim([settings['y_min'] + settings['y_min'] * 0.25,
-    #           settings['y_max'] + settings['y_max'] * 0.25])
-    pad = 0.5
-
-    plt.xlim([settings['x_min'] - pad,
-              settings['x_max'] + pad])
-    plt.ylim([settings['y_min'] - pad,
-              settings['y_max'] + pad])
-
-    # PLOT ORGANISMS
-
-    #plotting.initial_plot(isings, foods, settings, ax)
-
-
-
-
-    #line, = ax.plot(0,0)
-
-    # MISC PLOT SETTINGS
-    ax.set_aspect('equal')
-    frame = plt.gca()
-    frame.axes.get_xaxis().set_ticks([])
-    frame.axes.get_yaxis().set_ticks([])
-
-    plt.figtext(0.025, 0.90, r'T_STEP: ' + str(time))
-
-    # if settings['plotLive'] == True:
-    #     plt.show()
-    if settings['save_data'] == True:
-        filename = folder + 'figs/iter-' + str(rep) + 'time-' + str(time).zfill(4) + '.png'
-        plt.savefig(filename, dpi=300)
-        #plt.close()
-    #ax.plot()
-    plt.pause(1e-5)
-    #plt.draw()
-    plt.cla()
-    #plt.clf()
-    #frame.close()
-
+# def plot_frame(settings, folder, fig, ax, isings, foods, time, rep):
+#     # fig, ax = plt.subplots()
+#     fig.set_size_inches(9.6, 5.4)
+#
+#     # plt.xlim([settings['x_min'] + settings['x_min'] * 0.25,
+#     #           settings['x_max'] + settings['x_max'] * 0.25])
+#     # plt.ylim([settings['y_min'] + settings['y_min'] * 0.25,
+#     #           settings['y_max'] + settings['y_max'] * 0.25])
+#     pad = 0.5
+#
+#     plt.xlim([settings['x_min'] - pad,
+#               settings['x_max'] + pad])
+#     plt.ylim([settings['y_min'] - pad,
+#               settings['y_max'] + pad])
+#
+#     # PLOT ORGANISMS
+#
+#     #plotting.initial_plot(isings, foods, settings, ax)
+#
+#
+#
+#
+#     #line, = ax.plot(0,0)
+#
+#     # MISC PLOT SETTINGS
+#     ax.set_aspect('equal')
+#     frame = plt.gca()
+#     frame.axes.get_xaxis().set_ticks([])
+#     frame.axes.get_yaxis().set_ticks([])
+#
+#     plt.figtext(0.025, 0.90, r'T_STEP: ' + str(time))
+#
+#     # if settings['plotLive'] == True:
+#     #     plt.show()
+#     if settings['save_data'] == True:
+#         filename = folder + 'figs/iter-' + str(rep) + 'time-' + str(time).zfill(4) + '.png'
+#         plt.savefig(filename, dpi=settings['animation_dpi'])
+#         #plt.close()
+#     #ax.plot()
+#     plt.pause(1e-5)
+#     #plt.draw()
+#     plt.cla()
+#     #plt.clf()
+#     #frame.close()
+#
 
 
 
