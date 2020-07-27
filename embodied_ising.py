@@ -1,6 +1,6 @@
 import compute_and_plot_heat_capacity_automatic
-import plotting
-import plotting_fading_traces
+
+import animate
 import numpy as np
 import operator
 from itertools import combinations, product
@@ -956,7 +956,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
         #plotting.animate_plot(artist_list, settings, ax, fig)
         # try:
         # if settings['fading_traces_animation']:
-        plotting_fading_traces.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
+        animate.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
         # else:
         #     plotting.animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, fig, rep, t, folder)
 

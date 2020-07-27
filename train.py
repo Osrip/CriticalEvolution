@@ -209,7 +209,8 @@ def parse():
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
-    parser.add_argument('-a_dpi', dest='animation_dpi', type=int, help='Quality of animation in dpi')
+    parser.add_argument('-a_dpi', dest='animation_dpi', type=int,
+                        help='Quality of animation in dpi. 150 is default medium quality, 300 is high quality')
     parser.add_argument('-no_trace', '--animation_no_trace', dest='fading_traces_animation', action='store_false',
                         help='Deactivate fading traces in animation. This significantly speeds up computational time'
                              ', This calls completely differnt animation module, so other things might vary as well.')
