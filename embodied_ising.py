@@ -158,6 +158,7 @@ class ising:
         self.selected = False  # Those, that were selected in previous generation and copied into current get this
 
         self.species = 0  # INT species name
+        self.isolated_population = 0 # INT Isolated population name
 
         self.shared_fitness = 0  # Fitness calculated by speciation algorithm
 
@@ -838,9 +839,9 @@ def extract_plot_information(isings, foods, settings):
     foods_info = []
     for I in isings:
         if settings['energy_model']:
-            isings_info.append([I.xpos, I.ypos, I.r, I.energy])
+            isings_info.append([I.xpos, I.ypos, I.r, I.energy, I.isolated_population, I.species])
         else:
-            isings_info.append([I.xpos, I.ypos, I.r, I.fitness])
+            isings_info.append([I.xpos, I.ypos, I.r, I.fitness, I.isolated_population, I.species])
     for f in foods:
         foods_info.append([f.xpos, f.ypos])
     return isings_info, foods_info
