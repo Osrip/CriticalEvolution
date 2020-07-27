@@ -264,7 +264,7 @@ def __plot_organism_init(settings,I, ax, alpha):
     #color2 = cmap(norm(-(energy+1)))
     #org_size = settings['org_radius']
 
-    population_colors = [('lightgreen', 'darkgreen'), ('khaki', 'gold'), ('lightsalmon', 'sienna'),
+    population_colors = [('bisque', 'darkorange'), ('lightsteelblue', 'royalblue'), ('khaki', 'gold'), ('lightsalmon', 'sienna'),
                           ('orchid', 'mediumvioletred')]
 
 
@@ -275,7 +275,8 @@ def __plot_organism_init(settings,I, ax, alpha):
             colors = ('lightblue', 'lightslategrey')
             print('There are more than 4 populations... all populations from population 5 are plotted grey in animations...')
     else:
-        colors = ('lightgreen', 'darkgreen')
+        # colors = ('lightgreen', 'darkgreen')
+        colors = ('bisque', 'darkorange')
 
     # Log scaling tails / noses to energy:
     if settings['energy_model']:
@@ -301,15 +302,17 @@ def __plot_organism_init(settings,I, ax, alpha):
     y2 = sin(radians(theta)) * tail_len + y1
 
 
-    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='red', linewidth=1, zorder=10, alpha=alpha))
+    ax.add_line(lines.Line2D([x1,x2],[y1,y2], color='maroon', linewidth=1, zorder=10, alpha=alpha))
     #ax.add_line(lines.Line2D([x1, x2], [y1, y2], color='darkgreen', linewidth=1, zorder=10))
 
     pass
 
 
 def __plot_food_init(settings, x1, y1, ax):
-
-    circle = Circle([x1,y1], settings['food_radius']/2, edgecolor = 'darkslateblue', facecolor = 'mediumslateblue', zorder=5)
+    # old colors:
+    # food_colors = ('darkslateblue', 'mediumslateblue')
+    food_colors = ('darkgreen', 'lightgreen')
+    circle = Circle([x1, y1], settings['food_radius']/2, edgecolor=food_colors[0], facecolor=food_colors[1], zorder=5)
     ax.add_artist(circle)
     
     pass

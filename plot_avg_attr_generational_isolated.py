@@ -10,7 +10,7 @@ from automatic_plot_helper import load_settings
 from matplotlib.lines import Line2D
 
 
-def main(sim_name, isings_list_dict, attr, colors=['red', 'blue', 'green'], name_extension=''):
+def main(sim_name, isings_list_dict, attr, colors=['darkorange', 'royalblue', 'maroon'], name_extension=''):
 
     iter_list = detect_all_isings(sim_name)
     folder = 'save/' + sim_name
