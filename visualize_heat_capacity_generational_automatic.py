@@ -30,7 +30,7 @@ def main(sim_name, settings, generation_list, recorded):
 
     R, thermal_time, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
     #R = 10
-    Nbetas = 100
+    Nbetas = 102
     betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
     numAgents = settings['pop_size']
     size = settings['size']
