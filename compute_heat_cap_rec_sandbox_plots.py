@@ -252,11 +252,11 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
         plt.plot(all_E, c=color)
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if all_permutations:
-        save_name = 'for_each_thermal_time_step_all_energies.png'
+        save_name = 'beta_{}_for_each_thermal_time_step_all_energies.png'.format(np.round(beta_fac, decimals=2))
     else:
-        save_name = 'for_each_permutaion_all_energies.png'
+        save_name = 'beta_{}_for_each_permutaion_all_energies.png'.format(np.round(beta_fac, decimals=2))
     plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
-    plt.xscale('log')
+    # plt.xscale('log')
     if all_permutations:
         plt.xlabel('Permutation')
     else:
@@ -277,7 +277,7 @@ def plot_c(C, beta_fac, sim_name, legend_elements):
     plt.rc('text', usetex=True)
     #plt.rc('font', family='serif')
     x_axis = np.arange(len(C))
-    plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
+    plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=2)))
     for x, y in zip(x_axis, C):
         if y > 0.2:
             color = 'red'
