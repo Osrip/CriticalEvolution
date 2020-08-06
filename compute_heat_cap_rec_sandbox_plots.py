@@ -60,6 +60,7 @@ def main():
 
         agentNum = 0
         all_Es = []
+        all_Es_permuts = []
         all_step_Es = []
         for I in isings:
 
@@ -78,8 +79,9 @@ def main():
             # I.s = SequentialGlauberStepFast(int(thermal_time/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
-            I.s, Em, E2m, all_E = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
+            I.s, Em, E2m, all_E, all_E_permuts = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
             all_Es.append(all_E)
+            all_Es_permuts.append(all_E_permuts)
             #Old, slow way of clculating it:
             # for t in range(int(T / 10)):
             #     #  thermal time steps to get ANN to equilibrium
@@ -125,7 +127,8 @@ def main():
 
     # I think plotting only works for 1 REPEAT!!!
     plot_c(C[0], betas[bind], loadfile, legend_elements)
-    plot_all_E(all_Es, C[0], loadfile, legend_elements, betas[bind])
+    plot_all_E(all_Es, C[0], loadfile, legend_elements, betas[bind], all_permutations=False)
+    plot_all_E(all_Es_permuts, C[0], loadfile, legend_elements, betas[bind], all_permutations=True)
 
 
 
@@ -147,7 +150,7 @@ def initialize_sensors_from_record_randomize_neurons(I):
         raise Exception('''For some reason the number of sensors that
         recorded values exist for is different from the sensor size saved in the settings''')
 
-# @jit(nopython=True)
+@jit(nopython=True)
 def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, size):
     '''
     Energy calculation each thermal time step
@@ -165,6 +168,7 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
     Em = 0
     E2m = 0
     all_E = []
+    all_E_permuts = []
     for i in range(thermalTime):
         #perms = perms_list[i]
         #Prepare a matrix of random variables for later use
@@ -179,6 +183,8 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
         for j, perm in enumerate(perms):
             rand = random_vars[i, j]
             eDiff = 2 * s[perm] * (h[perm] + np.dot(J[perm, :] + J[:, perm], s))
+            E = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
+            all_E_permuts.append(E)
             #deltaE = E_f - E_i = -2 E_i = -2 * - SUM{J_ij*s_i*s_j}
             #self.J[i, :] + self.J[:, i] are added because value in one of both halfs of J seperated by the diagonal is zero
 
@@ -192,7 +198,7 @@ def SequentialGlauberStepFast_calc_energy(thermalTime, s, h, J, Beta, Ssize, siz
         E2m += E ** 2 / float(thermalTime)
         all_E.append(E)
 
-    return s, Em, E2m, all_E
+    return s, Em, E2m, all_E, all_E_permuts
 
 @jit(nopython=True)
 def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
@@ -228,7 +234,7 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
 
     return s
 
-def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
+def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations = False):
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
@@ -245,10 +251,16 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac):
             color = 'blue'
         plt.plot(all_E, c=color)
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
-    save_name = 'all_energies.png'
+    if all_permutations:
+        save_name = 'for_each_thermal_time_step_all_energies.png'
+    else:
+        save_name = 'for_each_permutaion_all_energies.png'
     plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
     plt.xscale('log')
-    plt.xlabel('Thermal Time Step')
+    if all_permutations:
+        plt.xlabel('Permutation')
+    else:
+        plt.xlabel('Thermal Time Step')
     plt.ylabel(r'$E_{net}$')
     plt.legend(handles=legend_elements)
     if not path.exists(save_folder):
@@ -291,3 +303,4 @@ def plot_c(C, beta_fac, sim_name, legend_elements):
 
 if __name__ == '__main__':
     main()
+    # sim-20200724-201710-g_2_-rec_c_1_-c_props_1_10000_-2_2_100_-c_11_-n_rec_c_recorded_sonsors_no_pre_thermalize 99 0
