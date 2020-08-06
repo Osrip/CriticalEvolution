@@ -6,6 +6,7 @@ import numpy as np
 from sklearn import manifold
 import matplotlib.pyplot as plt
 from os import path, makedirs
+import matplotlib.colors as colors
 
 def main(sim_name, gen):
     settings = load_settings(sim_name)
@@ -14,7 +15,7 @@ def main(sim_name, gen):
     s_list, s_list_sensors = all_states(I, settings, sensor_vals)
     energies = calculate_energies(I, settings, s_list_sensors)
     s_tsne = calc_tsne(s_list)
-    plot_tsne(s_tsne, sim_name)
+    plot_tsne(s_tsne, energies, sim_name)
 
 
 def load_ising(sim_name, gen):
@@ -40,9 +41,14 @@ def calc_tsne(s_list):
     s_tsne = tsne.fit_transform(s_arr)
     return s_tsne
 
-def plot_tsne(s_tsne, sim_name):
+def plot_tsne(s_tsne, energies, sim_name):
     plt.figure(figsize=(12, 12))
-    plt.scatter(s_tsne[0], s_tsne[1])
+    cmap = plt.get_cmap('jet')
+    energies = normalize_energy_values_positive(energies)
+    norm = colors.LogNorm(vmin=min(energies), vmax=max(energies))
+
+    energy_colors = list(map(lambda x: cmap(norm(x)), energies))
+    plt.scatter(s_tsne[:, 0], s_tsne[:, 1], c=energy_colors)
 
     save_folder = 'save/{}/figs/ising_tsne/'.format(sim_name)
     if not path.exists(save_folder):
@@ -51,11 +57,20 @@ def plot_tsne(s_tsne, sim_name):
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
     plt.show()
 
-
+def normalize_energy_values_positive(energies):
+    '''
+    Do this for norm function which is used for coloring
+    all energy values are added with the minimal energy +1 such that all energy values are >0
+    '''
+    add = np.abs(min(energies)) + 1
+    energies_positive = list(map(lambda x: x + add, energies))
+    return energies_positive
 
 def calc_energy(s, h, J):
     E = -(np.dot(s, h) + np.dot(np.dot(s, J), s))
     return E
+
+# def calc_solution_space(I, )
 
 
 def all_states(I, settings, sensor_vals):

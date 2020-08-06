@@ -244,7 +244,7 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
     # cmap = plt.get_cmap('plasma')
     # colors = []
     for c, all_E in zip(C, all_Es):
-        #color = cmap(norm(c))
+        # color = cmap(norm(c))
         if c > 0.2:
             color = 'red'
         else:
