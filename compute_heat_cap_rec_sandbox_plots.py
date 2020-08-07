@@ -12,7 +12,10 @@ from numba import jit
 from automatic_plot_helper import load_settings
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from scipy import signal
 import matplotlib.colors as colors
+from scipy import fft, arange
+from scipy import fftpack
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -130,6 +133,9 @@ def main():
     plot_all_E(all_Es, C[0], loadfile, legend_elements, betas[bind], all_permutations=False)
     plot_all_E(all_Es_permuts, C[0], loadfile, legend_elements, betas[bind], all_permutations=True)
 
+    plot_power_spectrum(all_Es_permuts[0], loadfile, betas[bind])
+    plotSpectrum(all_Es_permuts[0], loadfile, betas[bind])
+
 
 
 def initialize_sensors_from_record_randomize_neurons(I):
@@ -233,6 +239,69 @@ def SequentialGlauberStepFast(thermalTime, s, h, J, Beta, Ssize, size):
                 s[perm] = -s[perm]
 
     return s
+
+def plotSpectrum(sig, sim_name, beta_fac):
+    # The FFT of the signal
+    time_step = 0.02
+    sig_fft = fftpack.fft(sig)
+
+    # And the power (sig_fft is of complex dtype)
+    power = np.abs(sig_fft)
+
+    # The corresponding frequencies
+    sample_freq = fftpack.fftfreq(np.size(sig), d=time_step)
+
+    # Plot the FFT power
+    plt.figure(figsize=(6, 5))
+    plt.plot(sample_freq, power)
+    plt.xlabel('Frequency [Hz]')
+    plt.ylabel('plower')
+    plt.yscale('log')
+    plt.xscale('log')
+
+    # Find the peak frequency: we can focus on only the positive frequencies
+    pos_mask = np.where(sample_freq > 0)
+    freqs = sample_freq[pos_mask]
+    peak_freq = freqs[power[pos_mask].argmax()]
+
+
+
+    # An inner plot to show the peak frequency
+
+    # axes = plt.axes([0.55, 0.3, 0.3, 0.5])
+    # plt.title('Peak frequency')
+    # plt.plot(freqs[:8], power[:8])
+    # plt.setp(axes, yticks=[])
+
+    save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
+    save_name = 'beta_{}_spectrum.png'.format(np.round(beta_fac, decimals=2))
+
+    if not path.exists(save_folder):
+        makedirs(save_folder)
+
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+
+def plot_power_spectrum(energies, sim_name, beta_fac):
+
+    freqs, psd = signal.welch(energies)
+
+    plt.figure(figsize=(5, 4))
+    plt.loglog(freqs, psd)
+    #plt.semilogx(freqs, psd)
+    plt.title('PSD: power spectral density')
+    plt.xlabel('Frequency')
+    plt.ylabel('Power')
+    plt.tight_layout()
+
+    save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
+    save_name = 'beta_{}_power_spectrum.png'.format(np.round(beta_fac, decimals=2))
+
+    if not path.exists(save_folder):
+        makedirs(save_folder)
+
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+
+
 
 def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations = False):
     plt.figure(figsize=(10, 12))
