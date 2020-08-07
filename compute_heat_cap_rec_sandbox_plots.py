@@ -250,6 +250,11 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
         else:
             color = 'blue'
         plt.plot(all_E, c=color)
+        if all_permutations:
+            plt.xlim((0,5000))
+        else:
+            plt.xlim((0,500))
+        break
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if all_permutations:
         save_name = 'beta_{}_for_each_thermal_time_step_all_energies.png'.format(np.round(beta_fac, decimals=2))
