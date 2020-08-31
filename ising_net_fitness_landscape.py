@@ -8,7 +8,14 @@ import matplotlib.pyplot as plt
 from os import path, makedirs
 import matplotlib.colors as colors
 
+
+
+# !!!! These functions are also used in heat capacity calculations !!!!
+
 def main(sim_name, gen):
+    '''
+    This module plots a tsne- representation of the fitness landscape of an ising-network
+    '''
     settings = load_settings(sim_name)
     I = load_ising(sim_name, gen)
     sensor_vals = I.s[0:(settings['nSensors'])]

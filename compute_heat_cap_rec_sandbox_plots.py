@@ -16,6 +16,8 @@ from scipy import signal
 import matplotlib.colors as colors
 from scipy import fft, arange
 from scipy import fftpack
+from ising_net_fitness_landscape import all_states
+from ising_net_fitness_landscape import calculate_energies
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -69,13 +71,23 @@ def main():
 
             #TimeSteps in dream simulation T = 100000
 
-
             betaVec = betas * I.Beta  # scale by org's local temperature
             # print(agentNum)
             beta_new = betaVec[bind]
+
             #I.randomize_state()
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
+
+            # Initialize lowest energy state
+            if False:
+                sensor_vals = I.s[0:(settings['nSensors'])]
+                permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
+                energies_perm = calculate_energies(I, settings, permutated_states_with_sensors)
+                i_min_energy = np.argmin(energies_perm)
+                min_energy_state = permutated_states_with_sensors[i_min_energy]
+                I.s = min_energy_state
+
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
@@ -320,10 +332,10 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
             color = 'blue'
         plt.plot(all_E, c=color)
         if all_permutations:
-            plt.xlim((0,5000))
+            plt.xlim((0, 5000))
         else:
-            plt.xlim((0,500))
-        break
+            plt.xlim((0, 500))
+        # break
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if all_permutations:
         save_name = 'beta_{}_for_each_thermal_time_step_all_energies.png'.format(np.round(beta_fac, decimals=2))
