@@ -81,7 +81,7 @@ def main():
 
             # Thermalisation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            # I.s = SequentialGlauberStepFast(int(10000), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            # I.s = SequentialGlauberStepFast(int(10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)

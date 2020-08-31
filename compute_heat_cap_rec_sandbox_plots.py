@@ -90,8 +90,8 @@ def main():
 
 
             # Thermalosation to equilibrium before making energy measurements
-            #TODO LEave thermalization to equilibrium away before measurement?
-            # I.s = SequentialGlauberStepFast(int(thermal_time/10), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            #TODO LEave thermalization to equilibrium away before measurement? int(thermal_time/10)
+            # I.s = SequentialGlauberStepFast(10, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, Em, E2m, all_E, all_E_permuts = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)

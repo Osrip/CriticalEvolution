@@ -261,7 +261,7 @@ def parse():
     parser.add_argument('-rec_c', '--recorded_heat_cap_gen', dest='recorded_heat_capacity', type=int, help='''
                         Every nth generation that recorded heat capacity is calculated and plotted. 
                         If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
-                        input values are recorded during the simulation and subsequently used to calculate heat cap''')
+                        input values are recorded during the simulation and subsequently used to calculate heat cap.''')
     parser.add_argument('-c_props', dest='heat_capacity_props', type=int, nargs='+', help='''Properties of dream and recorded heat 
                         capacity calculation. As blank spaced integer list: R, thermal_time, beta_low, beta_high, y_lim_high 
                         R = number of repititions (with newly initialized sensor values) thermal_time = number of thermal iterations used
