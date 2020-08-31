@@ -10,6 +10,8 @@ import random
 import glob
 from numba import jit
 from automatic_plot_helper import load_settings
+from ising_net_fitness_landscape import all_states
+from ising_net_fitness_landscape import calculate_energies
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -69,9 +71,17 @@ def main():
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
 
-            # Thermalosation to equilibrium before making energy measurements
+            if True:
+                sensor_vals = I.s[0:(settings['nSensors'])]
+                permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
+                energies_perm = calculate_energies(I, settings, permutated_states_with_sensors)
+                i_min_energy = np.argmin(energies_perm)
+                min_energy_state = permutated_states_with_sensors[i_min_energy]
+                I.s = np.array(min_energy_state)
+
+            # Thermalisation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement?
-            I.s = SequentialGlauberStepFast(int(10000), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            # I.s = SequentialGlauberStepFast(int(10000), I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, Em, E2m = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)

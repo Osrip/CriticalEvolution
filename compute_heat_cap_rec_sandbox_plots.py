@@ -80,13 +80,13 @@ def main():
             initialize_sensors_from_record_randomize_neurons(I)
 
             # Initialize lowest energy state
-            if False:
+            if True:
                 sensor_vals = I.s[0:(settings['nSensors'])]
                 permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
                 energies_perm = calculate_energies(I, settings, permutated_states_with_sensors)
                 i_min_energy = np.argmin(energies_perm)
                 min_energy_state = permutated_states_with_sensors[i_min_energy]
-                I.s = min_energy_state
+                I.s = np.array(min_energy_state)
 
 
             # Thermalosation to equilibrium before making energy measurements

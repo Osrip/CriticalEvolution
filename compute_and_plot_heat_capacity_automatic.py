@@ -31,10 +31,10 @@ if __name__ == '__main__':
     #              'sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps',
     #              'sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
     #              ]
-    sim_names = ['sim-20200710-202252-g_6000_-b_10_-spec_-rand_ts_-ref_500_-n_rand_ts_speciation']
+    sim_names = ['sim-20200724-201710-g_2_-rec_c_1_-c_props_1_10000_-2_2_100_-c_11_-n_rec_c_recorded_sonsors_no_pre_thermalize_SANDBOX_HEAT_CAP_PLOTS']
     for sim_name in sim_names :
-        cores = 4
-        generation_list = [0, 250, 500, 1000, 2000, 2999]
+        cores = 20
+        generation_list = [0]
         settings = load_settings(sim_name)
-        compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded=False)
+        compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded=True)
 
