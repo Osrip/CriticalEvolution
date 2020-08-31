@@ -1614,7 +1614,7 @@ def flat(alist):
 
 def evolve(settings, I_old, gen, pop_size=None, numKill=None):
     '''
-    Fittest 10 individuals are copied into next generation --> FIRST 10 POSITION OF NEW GENERATION
+    Fittest 20 individuals are copied into next generation --> FIRST 20 POSITION OF NEW GENERATION
     Fittest 10 are again copied 15 times, those copies are mutated by a probability of 10 % --> NEXT 15 POSITION OF NEW GENERATION
     For mutation see self.mutate. This includes edge weight mutations, adding/removing of edges, beta mutations (again for certain probabilities)
     The 25 individuals that were created this way will be parents to the last 15 individuals
