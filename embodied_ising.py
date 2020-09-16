@@ -46,6 +46,11 @@ from speciation import speciation
 from speciation import calculate_shared_fitness
 from speciation import calculate_shared_fitness_continuous_species
 
+# This is needed to initialize lowest energy network state, which is used for natural heat capacity calculations
+from ising_net_fitness_landscape import all_states
+from ising_net_fitness_landscape import calculate_energies
+
+
 
 
 # ------------------------------------------------------------------------------+
@@ -1024,7 +1029,17 @@ def prepare_natural_heat_capacity(settings, isings, beta_facs):
     for I_d, I_n in zip(dream_isings, isings):
         beta_vec = beta_facs * I_d.Beta
         int_energy_vec = np.zeros(len(beta_facs))
+        # Initialize network state with lowest energy network energy state
+        # if True:
+        #     sensor_vals = I_d.s[0:(settings['nSensors'])]
+        #     permutated_states, permutated_states_with_sensors = all_states(I_d, settings, sensor_vals)
+        #     energies_perm = calculate_energies(I_d, settings, permutated_states_with_sensors)
+        #     i_min_energy = np.argmin(energies_perm)
+        #     min_energy_state = permutated_states_with_sensors[i_min_energy]
+        #     I_d.s = np.array(min_energy_state)
+
         for j, new_beta in enumerate(beta_vec):
+
             #I_d_copy = copy.deepcopy(I_d)
             # TODO: inheriting states from previous dream ising?????
             I_d.Beta = new_beta

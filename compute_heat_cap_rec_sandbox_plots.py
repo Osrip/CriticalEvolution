@@ -80,7 +80,7 @@ def main():
             initialize_sensors_from_record_randomize_neurons(I)
 
             # Initialize lowest energy state
-            if True:
+            if False:
                 sensor_vals = I.s[0:(settings['nSensors'])]
                 permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
                 energies_perm = calculate_energies(I, settings, permutated_states_with_sensors)
@@ -91,7 +91,7 @@ def main():
 
             # Thermalosation to equilibrium before making energy measurements
             #TODO LEave thermalization to equilibrium away before measurement? int(thermal_time/10)
-            # I.s = SequentialGlauberStepFast(10, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
+            # I.s = SequentialGlauberStepFast(1000, I.s, I.h, I.J, I.Beta, I.Ssize, I.size)
 
             #  Measuring energy between Glaubersteps
             I.s, Em, E2m, all_E, all_E_permuts = SequentialGlauberStepFast_calc_energy(thermal_time, I.s, I.h, I.J, beta_new, I.Ssize, I.size)
@@ -134,9 +134,9 @@ def main():
     C[super_threshold_indices] = 1* 10 ** -10
 
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', label=r'$C/N \leq 0.2$', markerfacecolor='blue',
+        Line2D([0], [0], marker='o', color='w', label=r'$C/N \leq 0.1$', markerfacecolor='blue',
                markersize=25, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', label='$C/N > 0.2$', markerfacecolor='red',
+        Line2D([0], [0], marker='o', color='w', label='$C/N > 0.1$', markerfacecolor='red',
                markersize=25, alpha=0.75)
     ]
 
@@ -319,22 +319,24 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
     plt.figure(figsize=(10, 12))
     plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
-
+    plt.xscale('log')
 
     # norm=colors.LogNorm(vmin=min(C), vmax=max(C))
     # cmap = plt.get_cmap('plasma')
     # colors = []
     for c, all_E in zip(C, all_Es):
         # color = cmap(norm(c))
-        if c > 0.2:
+        if c > 0.1:
             color = 'red'
         else:
             color = 'blue'
         plt.plot(all_E, c=color)
         if all_permutations:
-            plt.xlim((0, 5000))
+            # plt.xlim((0, 5000))
+            pass
         else:
-            plt.xlim((0, 500))
+            # plt.xlim((0, 500))
+            pass
         # break
     save_folder = 'save/{}/figs/C_recorded_anaylze/'.format(sim_name)
     if all_permutations:
@@ -342,7 +344,7 @@ def plot_all_E(all_Es, C, sim_name, legend_elements, beta_fac, all_permutations 
     else:
         save_name = 'beta_{}_for_each_permutaion_all_energies.png'.format(np.round(beta_fac, decimals=2))
     plt.title(r'$E_{{net}}$ during thermalization of population with $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=4)))
-    # plt.xscale('log')
+
     if all_permutations:
         plt.xlabel('Permutation')
     else:
@@ -365,7 +367,7 @@ def plot_c(C, beta_fac, sim_name, legend_elements):
     x_axis = np.arange(len(C))
     plt.title(r'$C/N$ for $\beta_\mathrm{{fac}}={}$'.format(np.round(beta_fac, decimals=2)))
     for x, y in zip(x_axis, C):
-        if y > 0.2:
+        if y > 0.1:
             color = 'red'
         else:
             color = 'blue'

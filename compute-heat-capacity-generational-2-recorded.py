@@ -71,6 +71,7 @@ def main():
             #  Initialize sensors with randoms set of sensor values that have been recorded during simulation
             initialize_sensors_from_record_randomize_neurons(I)
 
+            # Initialize network state with lowest energy network energy state
             if True:
                 sensor_vals = I.s[0:(settings['nSensors'])]
                 permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
