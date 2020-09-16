@@ -28,13 +28,13 @@ def main():
 
     settings = load_settings(loadfile)
 
-    R, thermal_time, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
+    R, thermal_time, beta_low, beta_high, beta_num, y_lim_high = settings['heat_capacity_props']
 
     #R = 100 # Number of Repetitions, each initialising with new recorded sensor value
     mode = 'MonteCarlo'
 
     #Is there a bug here? Nbetas = 101 originally Nbetas = 102 solves index error?
-    Nbetas = 102
+    Nbetas = beta_num
     betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
     loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 

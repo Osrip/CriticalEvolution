@@ -13,6 +13,7 @@
 sim=$1
 generations=$2
 cores=$3
+beta_num=$4
 
 
 args=("$@")
@@ -31,7 +32,7 @@ gens=(save/$sim/isings/*)
 #j14 <-- Number of procesors
 #0 600 780 1600 1999 
 
-parallel --bar --eta -j${cores} "python3 compute-heat-capacity-generational-2-recorded.py ${sim} {1} {2}" ::: $(seq 101) ::: $2
+parallel --bar --eta -j${cores} "python3 compute-heat-capacity-generational-2-recorded.py ${sim} {1} {2}" ::: $(seq ${beta_num}) ::: $2
 
 #$generations
 #0 4000

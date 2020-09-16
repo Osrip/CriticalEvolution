@@ -14,9 +14,10 @@ def main(sim_name, settings, generations = None, recorded = False):
 
 def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recorded):
     gens_str = list_to_blank_seperated_str(generation_list)
+    R, thermal_time, beta_low, beta_high, beta_num, y_lim_high = settings['heat_capacity_props']
     if recorded:
-        os.system('bash bash-heat-capacity-generational-automatic-recorded.sh {} "{}" {}'
-                  .format(sim_name, gens_str, cores))
+        os.system('bash bash-heat-capacity-generational-automatic-recorded.sh {} "{}" {} {}'
+                  .format(sim_name, gens_str, cores, beta_num-1))
     else:
         os.system('bash bash-heat-capacity-generational-automatic.sh {} "{}" {}'.format(sim_name, gens_str, cores))
     visualize_heat_capacity_generational_automatic.main(sim_name, settings, None, recorded)

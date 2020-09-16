@@ -263,9 +263,10 @@ def parse():
                         If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
                         input values are recorded during the simulation and subsequently used to calculate heat cap.''')
     parser.add_argument('-c_props', dest='heat_capacity_props', type=int, nargs='+', help='''Properties of dream and recorded heat 
-                        capacity calculation. As blank spaced integer list: R, thermal_time, beta_low, beta_high, y_lim_high 
+                        capacity calculation. As blank spaced integer list: R, thermal_time, beta_low, beta_high, num_betas, y_lim_high 
                         R = number of repititions (with newly initialized sensor values) thermal_time = number of thermal iterations used
-                        for energy measurements  beta_low = log lower bound for x axis  beta_high = log upper bound  y_lim_high = upper bound for plot/100''')
+                        for energy measurements  beta_low = log lower bound for x axis  beta_num = number of betas, 
+                        corresponds on resolution of plot  beta_high = log upper bound  y_lim_high = upper bound for plot/100''')
     parser.add_argument('-nat_c', '--natural_heat_cap_gen', dest='natural_heat_capacity_Nth_gen', help='''natural heat capacity 
                         is calculated for every nth generation, if 0 no heat capacity is calculated''', type=int)
     parser.add_argument('-nat_c_props', '--nat_heat_cap_beta_props', dest='natural_heat_capacity_beta_fac_props', nargs='+',
@@ -303,7 +304,7 @@ def parse():
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 100], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
-                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 40], speciation=False,
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 100, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150)
     args = parser.parse_args()

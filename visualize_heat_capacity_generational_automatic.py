@@ -28,9 +28,9 @@ def main(sim_name, settings, generation_list, recorded):
     #            2250, 2500, 2750, 3000, 3250, 3500, 3750, 3999]
     #iter_gen = [1, 2, 3, 10, 20, 30, 40, 300, 600, 900, 1000, 1300, 1600, 1900, 2300, 2500, 2800, 3100, 3400, 3700, 3990]
 
-    R, thermal_time, beta_low, beta_high, y_lim_high = settings['heat_capacity_props']
+    R, thermal_time, beta_low, beta_high, beta_num, y_lim_high = settings['heat_capacity_props']
     #R = 10
-    Nbetas = 102
+    Nbetas = beta_num
     betas = 10 ** np.linspace(beta_low, beta_high, Nbetas)
     numAgents = settings['pop_size']
     size = settings['size']
@@ -89,7 +89,7 @@ def main(sim_name, settings, generation_list, recorded):
         for numOrg in range(numAgents):
             c = np.dot(np.random.random(), [1, 1, 1])
             ax.scatter(betas, np.mean(C[:, numOrg, :, ii], axis=0),
-                       color=[0, 0, 0], s=30, alpha=alpha, marker='x', label=label)
+                       color=c, s=30, alpha=alpha, marker='.', label=label)
 
         xticks = [0.1, 0.5, 1, 2, 4, 10]
         ax.set_xscale("log", nonposx='clip')
