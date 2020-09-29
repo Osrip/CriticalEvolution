@@ -6,7 +6,8 @@ import matplotlib
 from os import path, makedirs
 from automatic_plot_helper import load_settings
 import os
-
+import cmocean
+from matplotlib.ticker import FuncFormatter
 
 
 
@@ -76,7 +77,8 @@ def main(sim_name, settings, generation_list, recorded):
         fig.text(0.51, 0.035, r'$\beta_{fac}$', ha='center', fontsize=28)
         fig.text(0.005, 0.5, r'$C/N$', va='center', rotation='vertical', fontsize=28)
         title = 'Specific Heat of Foraging Community\n Generation: ' + str(iter)
-        fig.suptitle(title)
+        # fig.suptitle(title)
+
 
         # CHANGE THIS TO CUSTOMIZE HEIGHT OF PLOT
         #upperbound = 1.5 * np.max(np.mean(np.mean(C[:, :, :-40, :], axis=0), axis=0))
@@ -86,15 +88,21 @@ def main(sim_name, settings, generation_list, recorded):
 
         label = iter
 
+        cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
+        ax.set_prop_cycle(color=[cm(1.*i/numAgents) for i in range(numAgents)])
         for numOrg in range(numAgents):
-            c = np.dot(np.random.random(), [1, 1, 1])
+            # c = np.dot(np.random.random(), [1, 1, 1])
             ax.scatter(betas, np.mean(C[:, numOrg, :, ii], axis=0),
-                       color=c, s=30, alpha=alpha, marker='.', label=label)
+                       s=30, alpha=0.3, marker='.', label=label)  # color=[0, 0, 0],
 
-        xticks = [0.1, 0.5, 1, 2, 4, 10]
+        xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
         ax.set_xscale("log", nonposx='clip')
         ax.set_xticks(xticks)
-        ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+        # ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+
+        formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+        ax.get_xaxis().set_major_formatter(formatter)
+
 
         low_xlim = 10 ** beta_low
         high_xlim = 10 ** beta_high
@@ -114,7 +122,7 @@ def main(sim_name, settings, generation_list, recorded):
         if not path.exists(savefolder):
             makedirs(savefolder)
 
-        plt.savefig(savefilename, bbox_inches='tight')
+        plt.savefig(savefilename, bbox_inches='tight', dpi=300)
         plt.close()
         # plt.clf()
         savemsg = 'Saving ' + savefilename
@@ -142,7 +150,7 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200714-154508-g_2_-t_2000_-rec_c_1_-l_sim-20200710-202252-g_6000_-b_10_-spec_-rand_ts_-ref_500_-n_rand_ts_speciation_-li_1400_-c_1_-n_calc_rec_c'
+    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
