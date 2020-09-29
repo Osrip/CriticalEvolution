@@ -14,7 +14,7 @@ import networkx as nx
 # !!!! These functions are also used in heat capacity calculations !!!!
 
 
-def main(sim_name, gen, ising_num):
+def normal_graph(sim_name, gen, ising_num):
     '''
     This module plots a tsne- representation of the fitness landscape of an ising-network
     '''
@@ -29,10 +29,35 @@ def main(sim_name, gen, ising_num):
     # plot_tsne(s_tsne, energies, sim_name)
 
 
+def graph_for_network_without_sensors(sim_name, gen, ising_num, only_1_in_J=True):
+    settings = load_settings(sim_name)
+    I = load_ising(sim_name, gen, ising_num)
+    if only_1_in_J:
+        I.J = convert_non_zero_to_1(I.J)
+    s_list_12 = all_states_for_s_without_sensors(I)
+    energies = calculate_energies(I, settings, s_list_12)
+    h_graph = create_hamming_graph(s_list_12)
+    plot_graph(h_graph, energies, sim_name, save_suffix='_no_sensors_1_J')
+
+
+
+
+
+def convert_to_1(x):
+    if x != 0:
+        return 1.0
+    else:
+        return 0.0
+convert_non_zero_to_1 = np.vectorize(convert_to_1)
+
+
 def load_ising(sim_name, gen, ising_num):
     isings = load_isings_from_list(sim_name, iter_list=[gen], wait_for_memory=False)[0]
     I = isings[ising_num]
     return I
+
+
+
 
 
 def calculate_energies(I, settings, s_list):
@@ -45,7 +70,7 @@ def calculate_energies(I, settings, s_list):
     return energies
 
 
-def plot_graph(h_graph, energies, sim_name):
+def plot_graph(h_graph, energies, sim_name, save_suffix=''):
 
     cmap = plt.get_cmap('jet')
     energies = normalize_energy_values_positive(energies)
@@ -59,7 +84,7 @@ def plot_graph(h_graph, energies, sim_name):
     save_folder = 'save/{}/figs/energy_landscape/'.format(sim_name)
     if not path.exists(save_folder):
         makedirs(save_folder)
-    save_name = 'energy_landscape_graph.png'
+    save_name = 'energy_landscape_graph{}.png'.format(save_suffix)
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -124,6 +149,12 @@ def calc_energy(s, h, J):
 
 # def calc_solution_space(I, )
 
+def all_states_for_s_without_sensors(I):
+    '''
+    For the version where we assume no sensors at all
+    '''
+    permutated_states = list(itertools.product([-1, 1], repeat=len(I.s)))
+    return permutated_states
 
 def all_states(I, settings, sensor_vals):
     # all combinations:
@@ -136,4 +167,5 @@ if __name__ == '__main__':
     sim_name = 'sim-20200929-172113-g_2_-t_20_-rec_c_1_-c_props_1_10_-2_2_20_40_-c_20_-noplt_-n_test_delete'
     generation = 0
     ising_num = 0
-    main(sim_name, generation, ising_num)
+    normal_graph(sim_name, generation, ising_num)
+    graph_for_network_without_sensors(sim_name, generation, ising_num)
