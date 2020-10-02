@@ -40,6 +40,16 @@ def graph_for_network_without_sensors(sim_name, gen, ising_num, only_1_in_J=True
     plot_graph(h_graph, energies, sim_name, save_suffix='_no_sensors_1_J')
 
 
+def tsne_without_sensors(sim_name, gen, ising_num, only_1_in_J=True):
+    settings = load_settings(sim_name)
+    I = load_ising(sim_name, gen, ising_num)
+    if only_1_in_J:
+        I.J = convert_non_zero_to_1(I.J)
+    s_list_12 = all_states_for_s_without_sensors(I)
+    energies = calculate_energies(I, settings, s_list_12)
+    s_tsne = calc_tsne(s_list_12)
+    plot_tsne(s_tsne, energies, sim_name)
+
 
 
 
@@ -125,7 +135,8 @@ def plot_tsne(s_tsne, energies, sim_name):
     norm = colors.LogNorm(vmin=min(energies), vmax=max(energies))
 
     energy_colors = list(map(lambda x: cmap(norm(x)), energies))
-    plt.scatter(s_tsne[:, 0], s_tsne[:, 1], c=energy_colors)
+    # plt.scatter(s_tsne[:, 0], s_tsne[:, 1], c=energy_colors, s=2, alpha=1)
+    plt.scatter(s_tsne[:, 0], s_tsne[:, 1], c=energy_colors, s=0.05, alpha=1)
 
     save_folder = 'save/{}/figs/ising_tsne/'.format(sim_name)
     if not path.exists(save_folder):
@@ -164,8 +175,9 @@ def all_states(I, settings, sensor_vals):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200929-172113-g_2_-t_20_-rec_c_1_-c_props_1_10_-2_2_20_40_-c_20_-noplt_-n_test_delete'
+    sim_name = 'sim-20200930-202441-g_1_-p_10_-noplt_-t_20_-n_18_neurons_fractal_tsne_energy_space'
     generation = 0
     ising_num = 0
-    normal_graph(sim_name, generation, ising_num)
-    graph_for_network_without_sensors(sim_name, generation, ising_num)
+    # normal_graph(sim_name, generation, ising_num)
+    # graph_for_network_without_sensors(sim_name, generation, ising_num)
+    tsne_without_sensors(sim_name, generation, ising_num)

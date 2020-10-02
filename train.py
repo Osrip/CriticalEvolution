@@ -291,7 +291,7 @@ def parse():
                              'this mutation rate')
     parser.add_argument('-iso', dest='isolated_populations', action='store_true',
                         help='This command only works for "train_different_betas.py" and "evolve_two_simulations_together.py'
-                             'but nit with "train.py". If this is active all different initial populations are evolved'
+                             'but not with "train.py". If this is active all different initial populations are evolved'
                              'isolated from each other, meaning that they live in the same 2D environment but do not compete'
                              'in the Evolutionary Algorithm')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.

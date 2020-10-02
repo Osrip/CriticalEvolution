@@ -88,6 +88,6 @@ def all_states(I, settings, sensor_vals):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200721-184203-g_4000_-rand_ts_-iso_-ref_500_-rec_c_250_-a_50_100_500_1000_-no_trace_-n_different_nbetas_from_scratch_isolated_no_beta_jump_GOOD'
+    sim_name = 'sim-20200930-182946-g_1_-p_10_-noplt_-t_20_-n_20_neurons_fractal_tsne_energy_space'
     generation = 0
     main(sim_name, generation)
