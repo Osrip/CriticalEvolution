@@ -1,8 +1,9 @@
 repeats=5
-cores=5
+cores=10
 
 # subfolder="plot_many_functions"
-subfolder="sim-$(date '+%d%m%Y-%H%M%S')test"
+subfolder_add="test"
+subfolder="sim-$(date '+%Y%m%d-%H%M%S')_parallel_$subfolder_add"
 # date="date +%s"
 # subfolder="$date$subfolder"
 
