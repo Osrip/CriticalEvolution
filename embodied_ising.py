@@ -1239,6 +1239,9 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
 
             foods = abrupt_seasons(settings, foods, rep, abrupt_seasons_arr)
 
+        if settings['random_food_seasons']:
+            foods, isings = random_food_seasons(settings, isings)
+
         record = set_record_boo(rep, settings)
 
         TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo,
@@ -1463,6 +1466,15 @@ def plotting_pipeline(rep, sim_name, settings):
 
             # except Exception:
             #     print('Something went wrong when computing and plotting recorded heat capacity at generation{}'.format(rep))
+
+
+def random_food_seasons(settings, isings):
+    lower_lim, upper_lim = settings['rand_food_season_limits']
+    food_num = np.random.randint(lower_lim, upper_lim)
+    foods = [food(settings) for _ in range(food_num)]
+    for I in isings:
+        I.food_in_env = food_num
+    return foods, isings
 
 
 def abrupt_seasons(settings, foods, rep, abrupt_seasons_arr):

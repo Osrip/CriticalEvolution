@@ -49,7 +49,7 @@ def create_settings():
     # switch_season_repeat_pipeline
 
     settings['repeat_pipeline_switched_boo'] = None
-    settings['save_subfolder'] = ''
+    settings['save_subfolder'] = args.save_subfolder
     settings['switch_seasons_repeat_pipeline'] = False  #  This has to be activated For the repeat runs of switch_season_repeat_pipeline
     settings['commands_in_folder_name'] = True
 
@@ -112,6 +112,10 @@ def create_settings():
     settings['chg_food_gen'] = args.chg_food_gen
 
     settings['abrupt_seasons_len'] = args.abrupt_seasons_len
+
+    # Random food seasons
+    settings['random_food_seasons'] = args.random_food_seasons
+    settings['rand_food_season_limits'] = args.rand_food_season_limits
     
     settings['parallel_computing'] = False #BOO
     
@@ -225,6 +229,10 @@ def parse():
     parser.add_argument('-aseas_len', dest='abrupt_seasons_len', type=int,
                         help='''Abrupt seasons - changes between summer and winter. Argument defines length of each 
                         seasonin generations (int). When 0 abrupt seasons are switched off''')
+    parser.add_argument('-rand_seas', dest='random_food_seasons', action='store_true', help='''Activates random food 
+                        seasons, meaning that every generation a random amount of food is spawned''')
+    parser.add_argument('-rand_seas_lim', dest='rand_food_season_limits', nargs='+', type=int, help='''Expacts blank
+                        seperated list, which gives limits for random food seasons: [lower_limit upper_limit]''')
     parser.add_argument('-ypi', dest='years_per_iteration', type=float,
                         help='''Number of years per generation when seasons is activated. When <0 one year is longer 
                         than an iteration''')
@@ -294,6 +302,7 @@ def parse():
                              'but not with "train.py". If this is active all different initial populations are evolved'
                              'isolated from each other, meaning that they live in the same 2D environment but do not compete'
                              'in the Evolutionary Algorithm')
+    parser.add_argument('-subfolder', dest='save_subfolder', help='Subfolder, that the simulation is saved in')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -306,7 +315,8 @@ def parse():
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 100, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
-                        isolated_populations=False, beta_jump_mutations=False, animation_dpi=150)
+                        isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
+                        random_food_seasons=False, rand_food_season_limits=[1, 200], save_subfolder='')
     args = parser.parse_args()
     return args
 
