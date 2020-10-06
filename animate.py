@@ -29,8 +29,14 @@ def animate_plot_Func(isings_all_timesteps, foods_all_timesteps, settings, ax, f
     elif settings['laptop_mode']:
         plt.rcParams['animation.ffmpeg_path'] = "D:/Program Files/ffmpeg-20191217-bd83191-win64-static/bin/ffmpeg.exe"
 
+
     if settings['LoadIsings']:
-        path = '/save/{}/animation_loaded_gen{}/'.format(settings['loadfile'], int(settings['iter']) + rep)
+        try:
+            if settings['dynamic_range_pipeline']:
+                path = '/save/{}/animation_dynamic_range_food_num_{}'.format(settings['loadfile'], settings['food_num'])
+        except Exception:
+            path = '/save/{}/animation_loaded_gen{}/'.format(settings['loadfile'], int(settings['iter']) + rep)
+
         #  when loading file generation counting starts from 0 again, thats why we have to add the iteration that was loaded
     else:
         path = '/{}animation_gen{}/'.format(save_folder, rep)

@@ -1964,10 +1964,13 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
     # TODO: Fix where new ising files are saved
     # s = sys.argv[1:]
     # command_input = '_'.join([str(elem) for elem in s])
-    if settings['repeat_pipeline_switched_boo'] is False:
-        switched_name_addition = 'same_season'
-    elif settings['repeat_pipeline_switched_boo'] is True:
-        switched_name_addition = 'switched_season'
+    if settings['repeat_pipeline_switched_boo'] != None:
+        if settings['repeat_pipeline_switched_boo'] is False:
+            switched_name_addition = 'same_season'
+        elif settings['repeat_pipeline_switched_boo'] is True:
+            switched_name_addition = 'switched_season'
+    else:
+        switched_name_addition = settings['dynamic_range_pipeline_save_name']
 
     # cut off current sim_name and replace it with loadfile (loaded sim)
 
