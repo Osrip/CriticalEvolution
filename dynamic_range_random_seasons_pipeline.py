@@ -22,7 +22,6 @@ def dynamic_pipeline(sim_name, pipeline_settings):
 def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     settings['TimeSteps'] = 5
 
-
     settings['random_food_seasons'] = False
     settings = copy.deepcopy(settings)
 
@@ -62,17 +61,25 @@ def run_all_repeats(settings, pipeline_settings):
 def run_repeat(num_foods, settings, pipeline_settings):
 
     settings['food_num'] = num_foods
-    settings['dynamic_range_pipeline_save_name'] = 'dynamic_range_run_{}_foods'.format(num_foods)
+    settings['dynamic_range_pipeline_save_name'] = 'dynamic_range_run_foods_{}'.format(num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
 
 if __name__=='__main__':
+    '''
+    This module explores the dynamic range of random food simulations: 
+    It expects a file with with random food season parameter active
+    It then takes the last generation of that simulation and puts it into different environments with fixed amount of 
+    foods. There the organisms do not evolve but the experiment is repeated from scratch a given amount of times, which
+    is defined by "num_repeats" to get statistically meaningful results.
+    Cores should be about equal to the resolution, which should also be int
+    '''
     sim_name = 'sim-20201005-115245-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas1_TEST_COPY'
     pipeline_settings = {}
-    pipeline_settings['cores'] = 15
-    pipeline_settings['num_repeats'] = 4
-    pipeline_settings['lowest_food_num'] = 1
+    pipeline_settings['cores'] = 18
+    pipeline_settings['num_repeats'] = 200
+    pipeline_settings['lowest_food_num'] = 4
     pipeline_settings['highest_food_num'] = 500
-    pipeline_settings['resolution'] = 5
+    pipeline_settings['resolution'] = 18
     dynamic_pipeline(sim_name, pipeline_settings)
