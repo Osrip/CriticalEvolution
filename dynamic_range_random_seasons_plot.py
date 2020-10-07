@@ -59,5 +59,5 @@ def make_2d_list_1d(in_list):
 
 if __name__ == '__main__':
     plot_settings = {}
-    sim_name = 'sim-20201005-115245-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas1_TEST_COPY'
+    sim_name = 'sim-20201005-115242-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas2_TEST_COPY'
     plot_dynamic_range(sim_name)
