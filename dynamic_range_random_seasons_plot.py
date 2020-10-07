@@ -12,6 +12,7 @@ from matplotlib.lines import Line2D
 import seaborn as sns
 import re
 
+
 def plot_dynamic_range(sim_name):
     attrs_list_each_food_num, food_num_list = load_data('avg_energy', sim_name)
     plot_averages(attrs_list_each_food_num, food_num_list)
@@ -22,6 +23,7 @@ def plot_averages(attrs_list_each_food_num, food_num_list):
     plt.scatter(food_num_list, avg_attr_list)
     plt.savefig('moinsen.png')
     # TODO: Debuggen und hier weitermachen!!
+
 
 def load_data(attr, sim_name):
     sim_dir = 'save/{}'.format(sim_name)
@@ -49,6 +51,7 @@ def all_folders_in_dir_with(dir, including_name='foods_dynamic_range_run'):
                 directory_list.append(os.path.join(root, name))
     return directory_list
 
+
 def make_2d_list_1d(in_list):
     out_list = []
     for sub_list in in_list:
@@ -59,5 +62,5 @@ def make_2d_list_1d(in_list):
 
 if __name__ == '__main__':
     plot_settings = {}
-    sim_name = 'sim-20201005-115242-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas2_TEST_COPY'
+    sim_name = 'sim-20201005-115242-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas2_TEST_COPY_2'
     plot_dynamic_range(sim_name)

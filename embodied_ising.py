@@ -1988,6 +1988,14 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
     pickle.dump(isings, pickle_out)
     pickle_out.close()
 
+    # if settings['dynamic_range_pipeline'] and gen == 0:
+    #     filename = '{}/food_num.pickle'.format(dir_in_old_sim)
+    #     pickle_out = open(filename, 'wb')
+    #     pickle.dump(settings['food_num'], pickle_out)
+    #     pickle_out.close()
+
+
+
 
 def save_sim(settings, folder, isings, fitness_stat, mutationrate, fitC, fitm, gen):
 
