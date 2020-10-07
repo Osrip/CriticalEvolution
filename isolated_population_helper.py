@@ -48,3 +48,25 @@ def seperate_isolated_populations(isings_list):
                 iso_pops_dict_isings_list[iso_pop_name].append(iso_pops_dict_isings[iso_pop_name])
 
     return iso_pops_dict_isings_list
+
+
+# Accidentally did this twice...
+# def seperate_isings_isolated_populations(isings):
+#     '''
+#     Seperates list of ising objects into several lists, where each lsit includes all ising objects
+#     with other ising objects that they share the isolated population with.
+#     isolated population is introduced when using command -iso in train_different_betas.py or evolve_two_simulations
+#     together.py
+#     @param isings:
+#     @return [isings_population1, isings_population2, ...]:
+#     '''
+#     # different_iso_populations = {}
+#     different_iso_populations = {I.isolated_population for I in isings}
+#     seperated_isings = []
+#     for isolated_population_name in different_iso_populations:
+#         curr_isings_pop = []
+#         for I in isings:
+#             if I.isolated_population == isolated_population_name:
+#                 curr_isings_pop.append(I)
+#         seperated_isings.append(curr_isings_pop)
+#     return seperated_isings
