@@ -7,7 +7,7 @@ def main(sim_names, load_isings_list=True):
     settings = load_settings(sim_names[0])
     if load_isings_list:
         isings_lists = [load_isings(sim_name) for sim_name in sim_names]
-    plot_anything_auto(sim_names, ['Beta', 'avg_velocity'], settings, isings_lists = isings_lists, autoLoad=False)
+    plot_anything_auto(sim_names, ['Beta', 'avg_velocity'], settings, isings_lists=isings_lists, autoLoad=False)
 
 
 

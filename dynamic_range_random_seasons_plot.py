@@ -2,6 +2,7 @@ import os
 import numpy as np
 from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import attribute_from_isings
+from automatic_plot_helper import all_folders_in_dir_with
 import copy
 import pandas as pd
 import glob
@@ -37,8 +38,32 @@ def plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_f
                             sim_name, plot_settings):
     avg_attr_list_critical = [np.mean(attrs) for attrs in attrs_list_each_food_num_critical]
     avg_attr_list_sub_critical = [np.mean(attrs) for attrs in attrs_list_each_food_num_sub_critical]
-    plt.scatter(food_num_list, avg_attr_list_critical, c='red', label='critical')
-    plt.scatter(food_num_list, avg_attr_list_sub_critical, c='blue', label='sub-critical')
+    plt.figure(figsize=(12, 8))
+
+    # make list of list with similar food_num entries for plotting
+    food_num_list_extended_critical = [[food_num for i in range(len(attrs))]
+                              for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_critical)]
+    food_num_list_extended_sub_critical = [[food_num for i in range(len(attrs))]
+                                       for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_sub_critical)]
+    # food_num_list_extended = np.array(food_num_list_extended)
+    # attrs_list_each_food_num_critical = np.array(attrs_list_each_food_num_critical)
+    # attrs_list_each_food_num_sub_critical = np.array(attrs_list_each_food_num_sub_critical)
+    # for food_num_critical, food_num_sub_critical, attr_critical, attr_sub_critical in
+    #     zip(food_num_list_extended_critical, food_num_list_extended_critical,
+    #         attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critical)
+
+    plt.scatter(food_num_list_extended_critical, attrs_list_each_food_num_critical,
+                c=plot_settings['color']['critical'], s=2, alpha=0.4)
+    plt.scatter(food_num_list_extended_sub_critical, attrs_list_each_food_num_sub_critical, c=plot_settings['color']['sub_critical'],
+                s=2, alpha=0.4)
+
+    plt.scatter(food_num_list, avg_attr_list_critical, c=plot_settings['color']['critical'], label='critical')
+    plt.scatter(food_num_list, avg_attr_list_sub_critical, c=plot_settings['color']['sub_critical'],
+                label='sub-critical')
+
+    plt.ylabel('avg_energy (normalized for time steps)')
+    plt.xlabel('number food particles in simulation')
+
     plt.legend()
     save_dir = 'save/{}/figs/dynamic_range_plots{}/'.format(sim_name, plot_settings['add_save_name'])
     save_name = 'plot_averages_seperated.png'
@@ -58,7 +83,7 @@ def load_data(attr, sim_name):
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with(sim_dir)
+    dir_list = all_folders_in_dir_with(sim_dir, 'foods_dynamic_range_run')
     for dir in dir_list:
         isings_list = load_isings_specific_path(dir)
         isings = make_2d_list_1d(isings_list)
@@ -77,13 +102,6 @@ def get_int_end_of_str(s):
     return int(m.group()) if m else None
 
 
-def all_folders_in_dir_with(dir, including_name='foods_dynamic_range_run'):
-    directory_list = list()
-    for root, dirs, files in os.walk(dir, topdown=False):
-        for name in dirs:
-            if including_name in name:
-                directory_list.append(os.path.join(root, name))
-    return directory_list
 
 
 def make_2d_list_1d(in_list):
@@ -97,5 +115,6 @@ def make_2d_list_1d(in_list):
 if __name__ == '__main__':
     plot_settings = {}
     plot_settings['add_save_name'] = ''
-    sim_name = 'sim-20201005-115242-g_4000_-t_2000_-rand_seas_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_1001_10002_2000_3998_3999_-no_trace_-n_different_betas_rand_seas2_TEST_COPY_2'
+    plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
+    sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_&_DYNAMIC_RANGE'
     plot_dynamic_range(sim_name, plot_settings)

@@ -252,6 +252,7 @@ def list_to_blank_seperated_str(list):
 
 
 def load_isings_attributes_from_list(loadfile, iter_list, attribute):
+    # TODO: FIX MEMORY LEAK
     '''
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
@@ -272,6 +273,7 @@ def load_isings_attributes_from_list(loadfile, iter_list, attribute):
         print(startstr)
 
         try:
+            # TODO: THIs     still has shitty open function with MEMORY LEAK!!!!!!!
             isings = pickle.load(open(filename, 'rb'))
         except Exception:
             print("Error while loading %s. Skipped file" % filename)
@@ -325,6 +327,13 @@ def wait_for_enough_memory(sim_name):
                  trying to plot now anyways hoping for enough swap space.'''.format(max_waited_seconds))
                 break
 
+def all_folders_in_dir_with(dir, including_name):
+    directory_list = list()
+    for root, dirs, files in os.walk(dir, topdown=False):
+        for name in dirs:
+            if including_name in name:
+                directory_list.append(os.path.join(root, name))
+    return directory_list
 
 
 
