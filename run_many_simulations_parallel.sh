@@ -7,7 +7,7 @@ subfolder="sim-$(date '+%Y%m%d-%H%M%S')_parallel_$subfolder_add"
 # date="date +%s"
 # subfolder="$date$subfolder"
 
-command="python3 train_different_betas.py -g 1000 -rand_ts -rand_ts_lim 100 3900 -iso -no_trace -b_jump -noplt -subfolder ${subfolder} -n Run_{1}"
+command="python3 train_different_betas.py -g 4000 -rand_ts -rand_ts_lim 100 3900 -iso -no_trace -b_jump -noplt -subfolder ${subfolder} -n Run_{1}"
 
 
 

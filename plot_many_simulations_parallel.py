@@ -19,7 +19,9 @@ def plot_any_simulations_parallel(folder_name, plot_settings, load_plot_data_onl
     else:
         attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical = load_plot_data(folder_name, add_name)
 
-    plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
+    # plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
+
+    plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
 
 
 def save_plot_data(folder_name, plot_data, add_name):
@@ -63,6 +65,38 @@ def plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_
     plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
 
 
+def plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name):
+    plt.figure(figsize=(10, 7))
+    generations = np.arange(len(attrs_lists_all_sims_critical[0]))
+    for attrs_list_critical in attrs_lists_all_sims_critical:
+
+
+        mean_attrs_list_critical = [np.mean(gen_attrs) for gen_attrs in attrs_list_critical]
+
+
+        plt.plot(generations, attrs_list_critical, linewidth=0.2, alpha=0.2)
+
+
+        # plt.scatter(generations, mean_attrs_list_critical, c=plot_settings['color']['critical'], s=0.5, alpha=0.2)
+        # plt.scatter(generations, mean_attrs_list_sub_critical, c=plot_settings['color']['sub_critical'], s=0.5, alpha=0.2)
+
+    save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
+    save_name = 'several_sims_criticial.png'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+
+    plt.figure(figsize=(10, 7))
+    for attrs_list_sub_critical in attrs_lists_all_sims_sub_critical:
+        mean_attrs_list_sub_critical = [np.mean(gen_attrs) for gen_attrs in attrs_list_sub_critical]
+        plt.plot(generations, attrs_list_sub_critical, linewidth=0.2, alpha=0.2)
+
+    save_name = 'several_sims_sub_criticial.png'
+    plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+
+
+
 # def avg_every_generation(attrs_list):
 #     return [np.mean(gen_attrs) for gen_attrs in attrs_list]
 
@@ -100,7 +134,7 @@ def load_seperated_simulations(folder_name, plot_settings):
     return attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical
 
 if __name__ == '__main__':
-    load_plot_data_only = False
+    load_plot_data_only = True
     folder_name = 'sim-20201005-205252_parallel_g1000_rand_ts'
     plot_settings = {}
     plot_settings['add_save_name'] = ''
