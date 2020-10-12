@@ -57,8 +57,20 @@ def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
                 I.norm_avg_energy = I.avg_energy / I.time_steps
         plot_vars.append('norm_avg_energy')
         plot_var_tuples.append(('generation', 'norm_avg_energy'))
+
+        if settings['random_food_seasons']:
+            for isings in isings_list:
+                for I in isings:
+                    I.norm_food_and_ts_avg_energy = I.norm_avg_energy / I.food_in_env
+
+            plot_vars.append('norm_food_and_ts_avg_energy')
+            plot_var_tuples.append(('generation', 'norm_food_and_ts_avg_energy'))
+
     except Exception:
         print('Could not calculate norm_avg_energy (Do isings lack attribute I.time_steps?)')
+
+
+
 
     # try:
     plot_anything_auto(sim_name, plot_vars, settings, isings_list=isings_list_fittest, autoLoad=False)

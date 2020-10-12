@@ -134,8 +134,8 @@ def load_seperated_simulations(folder_name, plot_settings):
     return attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical
 
 if __name__ == '__main__':
-    load_plot_data_only = True
-    folder_name = 'sim-20201005-205252_parallel_g1000_rand_ts'
+    load_plot_data_only = False
+    folder_name = 'sim-20201009-205801_parallel_g4000_rand_ts'
     plot_settings = {}
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'avg_energy'
