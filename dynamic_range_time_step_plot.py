@@ -16,7 +16,7 @@ from isolated_population_helper import seperate_isolated_populations
 
 
 def plot_dynamic_range(sim_name, plot_settings):
-    attrs_list_each_food_num_all, attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list = load_data('avg_energy', sim_name)
+    attrs_list_each_food_num_all, attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list = load_data(plot_settings['attr'], sim_name)
     # plot_averages(attrs_list_each_food_num_all, food_num_list, sim_name, plot_settings)
     plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list,
                             sim_name, plot_settings)
@@ -42,9 +42,9 @@ def plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_f
 
     # make list of list with similar food_num entries for plotting
     food_num_list_extended_critical = [[food_num for i in range(len(attrs))]
-                              for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_critical)]
+                                       for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_critical)]
     food_num_list_extended_sub_critical = [[food_num for i in range(len(attrs))]
-                                       for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_sub_critical)]
+                                           for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_sub_critical)]
     # food_num_list_extended = np.array(food_num_list_extended)
     # attrs_list_each_food_num_critical = np.array(attrs_list_each_food_num_critical)
     # attrs_list_each_food_num_sub_critical = np.array(attrs_list_each_food_num_sub_critical)
@@ -61,11 +61,11 @@ def plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_f
     plt.scatter(food_num_list, avg_attr_list_sub_critical, c=plot_settings['color']['sub_critical'],
                 label='sub-critical')
 
-    plt.ylabel('avg_energy (normalized for time steps)')
-    plt.xlabel('number food particles in simulation')
+    plt.ylabel(plot_settings['attr'])
+    plt.xlabel('number of time steps in simulation')
 
     plt.legend()
-    save_dir = 'save/{}/figs/dynamic_range_plots_foods{}/'.format(sim_name, plot_settings['add_save_name'])
+    save_dir = 'save/{}/figs/dynamic_range_plots_time_steps{}/'.format(sim_name, plot_settings['add_save_name'])
     save_name = 'plot_averages_seperated.png'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -83,7 +83,7 @@ def load_data(attr, sim_name):
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with(sim_dir, 'foods_dynamic_range_run')
+    dir_list = all_folders_in_dir_with(sim_dir, 'dynamic_range_run_time_step')
     for dir in dir_list:
         isings_list = load_isings_specific_path(dir)
         isings = make_2d_list_1d(isings_list)
@@ -115,6 +115,7 @@ def make_2d_list_1d(in_list):
 if __name__ == '__main__':
     plot_settings = {}
     plot_settings['add_save_name'] = ''
+    plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
-    sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_&_DYNAMIC_RANGE'
+    sim_name = 'sim-20201003-000440-g_4000_-t_4000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_4000_fixed_ts_2_COMPARE'
     plot_dynamic_range(sim_name, plot_settings)
