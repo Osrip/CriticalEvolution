@@ -19,7 +19,7 @@ def plot_any_simulations_parallel(folder_name, plot_settings, load_plot_data_onl
     else:
         attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical = load_plot_data(folder_name, add_name)
 
-    # plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
+    plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
 
     plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical, folder_name)
 
@@ -57,9 +57,10 @@ def plot_seperated_sims(attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_
 
         plt.scatter(generations, mean_attrs_list_critical, c=plot_settings['color']['critical'], s=0.5, alpha=0.2)
         plt.scatter(generations, mean_attrs_list_sub_critical, c=plot_settings['color']['sub_critical'], s=0.5, alpha=0.2)
-
+    plt.xlabel('Generation')
+    plt.ylabel(plot_settings['attr'])
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims.png'
+    save_name = 'several_sims_{}.png'.format(plot_settings['attr'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
@@ -74,14 +75,17 @@ def plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_s
         mean_attrs_list_critical = [np.mean(gen_attrs) for gen_attrs in attrs_list_critical]
 
 
-        plt.plot(generations, attrs_list_critical, linewidth=0.2, alpha=0.2)
-
+        # plt.plot(generations, mean_attrs_list_critical, linewidth=0.2, alpha=0.2)
+        plt.scatter(generations, mean_attrs_list_critical, s=2, alpha=0.2)
 
         # plt.scatter(generations, mean_attrs_list_critical, c=plot_settings['color']['critical'], s=0.5, alpha=0.2)
         # plt.scatter(generations, mean_attrs_list_sub_critical, c=plot_settings['color']['sub_critical'], s=0.5, alpha=0.2)
 
+    plt.xlabel('Generation')
+    plt.ylabel(plot_settings['attr'])
+
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial.png'
+    save_name = 'several_sims_criticial_{}.png'.format(plot_settings['attr'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -90,9 +94,12 @@ def plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_s
     plt.figure(figsize=(10, 7))
     for attrs_list_sub_critical in attrs_lists_all_sims_sub_critical:
         mean_attrs_list_sub_critical = [np.mean(gen_attrs) for gen_attrs in attrs_list_sub_critical]
-        plt.plot(generations, attrs_list_sub_critical, linewidth=0.2, alpha=0.2)
+        # plt.plot(generations, mean_attrs_list_sub_critical, linewidth=0.2, alpha=0.2)
+        plt.scatter(generations, mean_attrs_list_sub_critical, s=2, alpha=0.2)
 
-    save_name = 'several_sims_sub_criticial.png'
+    plt.xlabel('Generation')
+    plt.ylabel(plot_settings['attr'])
+    save_name = 'several_sims_sub_criticial_{}.png'.format(plot_settings['attr'])
     plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
 
 
@@ -114,6 +121,20 @@ def load_simulations_single_population(folder_name, plot_settings):
     return attrs_lists_sims
 
 
+def calc_normalized_fitness(isings_list, plot_settings):
+
+    for isings in isings_list:
+        for I in isings:
+            I.norm_avg_energy = I.avg_energy / I.time_steps
+
+
+    if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
+        for isings in isings_list:
+            for I in isings:
+                I.norm_food_and_ts_avg_energy = I.norm_avg_energy / I.food_in_env
+
+
+
 def load_seperated_simulations(folder_name, plot_settings):
     folder_dir = 'save/{}'.format(folder_name)
     dir_list = all_folders_in_dir_with(folder_dir, 'sim')
@@ -121,6 +142,8 @@ def load_seperated_simulations(folder_name, plot_settings):
     attrs_lists_all_sims_sub_critical = []
     for dir in dir_list:
         isings_list = load_isings_specific_path('{}/isings'.format(dir))
+        if  plot_settings['attr'] == 'norm_avg_energy' or  plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
+            calc_normalized_fitness(isings_list, plot_settings)
         isings_list_seperated = seperate_isolated_populations(isings_list)
         isings_list_critical = isings_list_seperated[0]
         isings_list_sub_critical = isings_list_seperated[1]
@@ -134,11 +157,11 @@ def load_seperated_simulations(folder_name, plot_settings):
     return attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical
 
 if __name__ == '__main__':
-    load_plot_data_only = False
-    folder_name = 'sim-20201009-205801_parallel_g4000_rand_ts'
+    load_plot_data_only = True
+    folder_name = 'sim-20201012-220954_parallel_g1000_fixed_ts' #'sim-20201005-205252_parallel_g1000_rand_ts' # 'sim-20201012-220954_parallel_g1000_fixed_ts'
     plot_settings = {}
     plot_settings['add_save_name'] = ''
-    plot_settings['attr'] = 'avg_energy'
+    plot_settings['attr'] = 'norm_avg_energy' # 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
 
     plot_any_simulations_parallel(folder_name, plot_settings, load_plot_data_only)
