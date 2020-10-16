@@ -117,5 +117,5 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
-    sim_name = 'sim-20201003-000440-g_4000_-t_4000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_4000_fixed_ts_2_COMPARE'
+    sim_name = 'sim-20201007-230728-g_4000_-t_8000_-iso_-ref_500_-rec_c_1000_-a_200_500_1000_2000_3000_3999_-c_3_-n_different_betas_DO_LONG_TIME_STEPS_WEAKEN_SUB_CRITICAL_and_DYNAMIC_RANGE_FOOD'
     plot_dynamic_range(sim_name, plot_settings)

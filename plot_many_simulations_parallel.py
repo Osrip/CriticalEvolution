@@ -83,6 +83,7 @@ def plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_s
 
     plt.xlabel('Generation')
     plt.ylabel(plot_settings['attr'])
+    plt.ylim(plot_settings['ylim'])
 
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
     save_name = 'several_sims_criticial_{}.png'.format(plot_settings['attr'])
@@ -99,6 +100,7 @@ def plot_seperated_sims_2_plots(attrs_lists_all_sims_critical, attrs_lists_all_s
 
     plt.xlabel('Generation')
     plt.ylabel(plot_settings['attr'])
+    plt.ylim(plot_settings['ylim'])
     save_name = 'several_sims_sub_criticial_{}.png'.format(plot_settings['attr'])
     plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
 
@@ -158,10 +160,11 @@ def load_seperated_simulations(folder_name, plot_settings):
 
 if __name__ == '__main__':
     load_plot_data_only = True
-    folder_name = 'sim-20201012-220954_parallel_g1000_fixed_ts' #'sim-20201005-205252_parallel_g1000_rand_ts' # 'sim-20201012-220954_parallel_g1000_fixed_ts'
+    folder_name = 'sim-20201014-004324_parallel_g1000_random_ts' #'sim-20201014-004136_parallel_g1000_fixed_ts' #'sim-20201005-205252_parallel_g1000_rand_ts' # 'sim-20201012-220954_parallel_g1000_fixed_ts'
     plot_settings = {}
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_avg_energy' # 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
+    plot_settings['ylim'] = (-0.001, 0.015)
 
     plot_any_simulations_parallel(folder_name, plot_settings, load_plot_data_only)

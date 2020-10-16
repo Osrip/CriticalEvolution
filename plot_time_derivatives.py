@@ -175,6 +175,7 @@ if __name__ == '__main__':
     sim_name = 'sim-20200621-205056-g_1_-t_120000_-li_1999_-l_sim-20200606-014815-g_2000_-t_4000_-b_1_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps_-noplt_-n_very_long_last_gen_from_4000'
     sim_name = 'sim-20200619-174456-g_2001_-t_6000_-b_10_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
     #sim_name = 'sim-20200619-174503-g_2001_-t_6000_-b_1_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
+    sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_and_DYNAMIC_RANGE_FOOD_TS'
     win_size = 2000#500#2000#500
     generations = [2000] #np.arange(1990, 2000)
     inds = np.arange(10)

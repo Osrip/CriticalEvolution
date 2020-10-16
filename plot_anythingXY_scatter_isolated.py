@@ -60,6 +60,8 @@ def main(sim_name, isings_list, attr_tuple, colors=['darkorange', 'royalblue', '
     # plt.legend(loc="lower right", bbox_to_anchor=(0.95, 0.05), handles=legend_elements)
     if attr_y == 'Beta':
         plt.yscale('log')
+    elif attr_y == 'norm_food_and_ts_avg_energy':
+        plt.ylim(0, 0.0002)
     plt.legend(handles=legend_elements)
     plt.xlabel(attr_x)
     plt.ylabel(attr_y)

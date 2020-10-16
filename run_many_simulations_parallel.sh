@@ -1,13 +1,13 @@
-repeats=10
-cores=10
+repeats=5
+cores=5
 
 # subfolder="plot_many_functions"
-subfolder_add="g1000_fixed_ts"
+subfolder_add="g2000_fixed_ts_only_sub_critical"
 subfolder="sim-$(date '+%Y%m%d-%H%M%S')_parallel_$subfolder_add"
 # date="date +%s"
 # subfolder="$date$subfolder"
 
-command="python3 train_different_betas.py -g 1000 -t 2000 -iso -no_trace -b_jump -noplt -subfolder ${subfolder} -n Run_{1}"
+command="python3 train.py -b 1 -g 2000 -t 4000 -rand_ts_lim 100 7900 -noplt -subfolder ${subfolder} -n Run_{1}"
 
 
 

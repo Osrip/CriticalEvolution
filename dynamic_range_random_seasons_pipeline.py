@@ -75,11 +75,11 @@ if __name__=='__main__':
     is defined by "num_repeats" to get statistically meaningful results.
     Cores should be about equal to the resolution, which should also be int
     '''
-    sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_&_DYNAMIC_RANGE'
+    sim_name = 'sim-20201012-220717-g_2000_-f_1000_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_1000'
     pipeline_settings = {}
-    pipeline_settings['cores'] = 15
+    pipeline_settings['cores'] = 18
     pipeline_settings['num_repeats'] = 1
     pipeline_settings['lowest_food_num'] = 1
-    pipeline_settings['highest_food_num'] = 5000
-    pipeline_settings['resolution'] = 300
+    pipeline_settings['highest_food_num'] = 2000
+    pipeline_settings['resolution'] = 18
     dynamic_pipeline(sim_name, pipeline_settings)
