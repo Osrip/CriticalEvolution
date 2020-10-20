@@ -156,6 +156,8 @@ def create_settings():
     settings['add_save_name'] = ''
 
     settings['isolated_populations'] = args.isolated_populations
+
+    settings['save_energies_velocities_gens'] = args.save_energies_velocities_gens
     Iterations = args.iterations
 
 
@@ -303,6 +305,9 @@ def parse():
                              'isolated from each other, meaning that they live in the same 2D environment but do not compete'
                              'in the Evolutionary Algorithm')
     parser.add_argument('-subfolder', dest='save_subfolder', help='Subfolder, that the simulation is saved in')
+    parser.add_argument('-energies', dest='save_energies_velocities_gens', nargs='+', type=int, help='''Expects blank seperated list of 
+                        generation numbers, that energies and velocities dhall be saved for. This means, that the velocity
+                        and energy of each organism is saved for each time_step''')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -316,7 +321,8 @@ def parse():
                         random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 100, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
-                        random_food_seasons=False, rand_food_season_limits=[1, 200], save_subfolder='')
+                        random_food_seasons=False, rand_food_season_limits=[1, 200], save_subfolder='',
+                        save_energies_velocities_gens=None)
     args = parser.parse_args()
     return args
 

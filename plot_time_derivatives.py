@@ -1,5 +1,6 @@
 from automatic_plot_helper import load_isings_from_list
 from automatic_plot_helper import load_isings_attributes_from_list
+from automatic_plot_helper import load_settings
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -176,8 +177,10 @@ if __name__ == '__main__':
     sim_name = 'sim-20200619-174456-g_2001_-t_6000_-b_10_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
     #sim_name = 'sim-20200619-174503-g_2001_-t_6000_-b_1_-dream_c_1000_-ref_0_-noplt_-c_4_-a_2000_-n_long_run_save_energies'
     sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_and_DYNAMIC_RANGE_FOOD_TS'
+    sim_name = 'sim-20201016-191232-g_2_-energies_1_-t_200_-noplt_-n_test_velocities'
     win_size = 2000#500#2000#500
-    generations = [2000] #np.arange(1990, 2000)
+    settings = load_settings(sim_name)
+    generations = settings['save_energies_velocities_gens'] #np.arange(1990, 2000)
     inds = np.arange(10)
     #inds = [0]
     main(sim_name, list_attr, generations, inds, win_size)

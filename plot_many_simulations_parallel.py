@@ -159,8 +159,8 @@ def load_seperated_simulations(folder_name, plot_settings):
     return attrs_lists_all_sims_critical, attrs_lists_all_sims_sub_critical
 
 if __name__ == '__main__':
-    load_plot_data_only = True
-    folder_name = 'sim-20201014-004324_parallel_g1000_random_ts' #'sim-20201014-004136_parallel_g1000_fixed_ts' #'sim-20201005-205252_parallel_g1000_rand_ts' # 'sim-20201012-220954_parallel_g1000_fixed_ts'
+    load_plot_data_only = False
+    folder_name = 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts' #'sim-20201014-004324_parallel_g1000_random_ts' #'sim-20201014-004136_parallel_g1000_fixed_ts' #'sim-20201005-205252_parallel_g1000_rand_ts' # 'sim-20201012-220954_parallel_g1000_fixed_ts'
     plot_settings = {}
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_avg_energy' # 'avg_energy'

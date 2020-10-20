@@ -855,7 +855,7 @@ def extract_plot_information(isings, foods, settings):
 
 
 def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo,
-               record):
+               record, save_energies_velocities):
     [ising.reset_state(settings) for ising in isings]
 
     if settings['random_time_steps']:
@@ -879,6 +879,7 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
         foods_all_timesteps = []
 
     #  This switches on natural heat capacity calculations
+
 
 
 
@@ -909,6 +910,10 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
             foods_all_timesteps.append(foods_info)
 
         interact(settings, isings, foods)
+
+        if save_energies_velocities:
+            for I in isings:
+                I.velocities.append(I.v)
 
         if record:
             num_sensors = settings['nSensors']
@@ -1242,10 +1247,17 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if settings['random_food_seasons']:
             foods, isings = random_food_seasons(settings, isings)
 
+        save_energies_velocities = False
+        if not settings['save_energies_velocities_gens'] is None:
+            if rep in settings['save_energies_velocities_gens']:
+                save_energies_velocities = True
+                for I in isings:
+                    I.velocities = []
+
         record = set_record_boo(rep, settings)
 
         TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_gens, beta_facs, calc_heat_cap_boo,
-                   record)
+                   record,save_energies_velocities)
 
         if settings['energy_model']:
 
@@ -1300,6 +1312,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 isings_copy = deepcopy(isings)
                 #  Delete unnecessary information before saving isings to cut down on memory
                 for I in isings_copy:
+
                     I.energies = []
                     I.cumulative_int_energy_vec = np.array([])
                     I.cumulative_int_energy_vec_quad = np.array([])
@@ -1314,7 +1327,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 isings_copy = deepcopy(isings)
                 #  Delete unnecessary information before saving isings to cut down on memory
                 for I in isings_copy:
-                    I.energies = []
+                    if not save_energies_velocities:
+                        I.energies = []
                     I.cumulative_int_energy_vec = np.array([])
                     I.cumulative_int_energy_vec_quad = np.array([])
                     #I.beta_vec = np.array([])
