@@ -167,6 +167,8 @@ class ising:
 
         self.shared_fitness = 0  # Fitness calculated by speciation algorithm
 
+        self.prev_mutation = 'init' # Previous Mutation, can either be 'init', 'copy', 'point' or 'mate'
+
         #self.assign_critical_values(settings) (attribute ising.C1)
 
 
@@ -1375,7 +1377,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                     calculate_shared_fitness(isings)
                     isings_old = copy.deepcopy(isings)
                     # Evolve_new_isings
-                    isings = evolve2(settings, isings, rep)
+                    isings = evolve(settings, isings, rep)
                     # Assign species to newly evolved isings
                     max_species_num_ever = speciation(isings_old, isings, max_species_num_ever, settings)
                     del isings_old
@@ -1691,6 +1693,7 @@ def evolve(settings, I_old, gen, pop_size=None, numKill=None):
     # Make isings (I_new) of len 20
     # Fittest 20 agents are copied
     for i in range(0, alive_num):
+        I_sorted[i].prev_mutation = 'copy'
         I_new.append(I_sorted[i])
 
     # --- GENERATE NEW ORGANISMS ---------------------------+
@@ -1725,8 +1728,9 @@ def evolve(settings, I_old, gen, pop_size=None, numKill=None):
 
         # MUTATE SOMETIMES
         # self.mutate mutates edge weights, adds/removes edges and mutates beta
-        if np.random.random() < settings['mutationRateDup']: # settings['mutationRateDup'] = 0.1
+        if np.random.random() < settings['mutationRateDup']:  # settings['mutationRateDup'] = 0.1
             I_new[-1].mutate(settings)
+            I_new[-1].prev_mutation = 'point'
 
         # random mutations in duplication
 
@@ -1801,12 +1805,14 @@ def evolve(settings, I_old, gen, pop_size=None, numKill=None):
         # MUTATE IN GENERAL
         I_new[-1].mutate(settings)
 
+        I_new[-1].prev_mutation = 'mate'
+
         orgCount += 1
 
     for I in I_new:
         I.fitness = 0
 
-
+    # The first 20 positions are marked as 'copied', the following 15 positions were already marked
     return I_new
 # End of evolve (1)
 

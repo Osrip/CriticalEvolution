@@ -8,6 +8,7 @@ import psutil
 from pathlib import Path
 import time
 import warnings
+import operator
 
 '''
 This is a library with useful functions to load ising objects and extract information from them.
@@ -327,6 +328,7 @@ def wait_for_enough_memory(sim_name):
                  trying to plot now anyways hoping for enough swap space.'''.format(max_waited_seconds))
                 break
 
+
 def all_folders_in_dir_with(dir, including_name):
     directory_list = list()
     for root, dirs, files in os.walk(dir, topdown=False):
@@ -336,5 +338,12 @@ def all_folders_in_dir_with(dir, including_name):
     return directory_list
 
 
+def choose_copied_isings(isings):
 
+    isings_new = [I for I in isings if I.prev_mutation == 'copy']
+    # For the initial population just choose 20 "random" organims instead
+    if isings_new == [] and all([I.prev_mutation == 'init' for I in isings]):
+        isings_new = isings[0:20]
+        # isings_new = sorted(isings, key=operator.attrgetter('avg_energy'), reverse=True)[0:19]
+    return isings_new
 
