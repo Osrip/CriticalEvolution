@@ -44,7 +44,7 @@ def load_attrs(folder_name, plot_settings):
     attrs_list_all_sims = []
     settings_list = []
     for dir in dir_list:
-        sim_name = dir[(dir.rfind('/')+1):-1]
+        sim_name = dir[(dir.rfind('save/')+5):]
         isings_list = load_isings_specific_path('{}/isings'.format(dir))
         if plot_settings['only_copied']:
             isings_list = [choose_copied_isings(isings) for isings in isings_list]
@@ -64,12 +64,15 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_food_and_ts_avg_energy' #'norm_avg_energy'
     # plot_settings['only_plot_fittest']
-    plot_settings['ylim'] = (-0.001, 0.015)
+    if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
+        plot_settings['ylim'] = (-0.001, 0.000250)
+    else:
+        plot_settings['ylim'] = (-0.001, 0.015)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['only_copied'] = False
 
     folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
-    folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
+    # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     for folder_name in folder_names:
 
         main_plot_parallel_sims(folder_name, plot_settings)

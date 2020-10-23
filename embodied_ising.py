@@ -1253,12 +1253,17 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if settings['random_food_seasons']:
             foods, isings = random_food_seasons(settings, isings)
 
+        # Save all energies and velocities during 2D simulation for specified generations and last generation
         save_energies_velocities = False
         if not settings['save_energies_velocities_gens'] is None:
             if rep in settings['save_energies_velocities_gens']:
                 save_energies_velocities = True
                 for I in isings:
                     I.velocities = []
+        elif rep == Iterations-1:
+            save_energies_velocities = True
+            for I in isings:
+                I.velocities = []
 
         record = set_record_boo(rep, settings)
 

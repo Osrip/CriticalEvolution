@@ -133,7 +133,7 @@ def load_seperated_simulations(folder_name, plot_settings):
     attrs_lists_all_sims_critical = []
     attrs_lists_all_sims_sub_critical = []
     for dir in dir_list:
-        sim_name = dir[(dir.rfind('/')+1):-1]
+        sim_name = dir[(dir.rfind('save/')+5):]
         isings_list = load_isings_specific_path('{}/isings'.format(dir))
         if plot_settings['attr'] == 'norm_avg_energy' or  plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
             settings = load_settings(sim_name)
