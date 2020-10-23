@@ -4,6 +4,8 @@ from automatic_plot_helper import all_folders_in_dir_with
 from automatic_plot_helper import load_isings_attr
 from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import attribute_from_isings
+from automatic_plot_helper import load_settings
+from automatic_plot_helper import calc_normalized_fitness
 import matplotlib.pylab as plt
 import pickle
 
@@ -123,18 +125,6 @@ def load_simulations_single_population(folder_name, plot_settings):
     return attrs_lists_sims
 
 
-def calc_normalized_fitness(isings_list, plot_settings):
-
-    for isings in isings_list:
-        for I in isings:
-            I.norm_avg_energy = I.avg_energy / I.time_steps
-
-
-    if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
-        for isings in isings_list:
-            for I in isings:
-                I.norm_food_and_ts_avg_energy = I.norm_avg_energy / I.food_in_env
-
 
 
 def load_seperated_simulations(folder_name, plot_settings):
@@ -143,9 +133,11 @@ def load_seperated_simulations(folder_name, plot_settings):
     attrs_lists_all_sims_critical = []
     attrs_lists_all_sims_sub_critical = []
     for dir in dir_list:
+        sim_name = dir[(dir.rfind('/')+1):-1]
         isings_list = load_isings_specific_path('{}/isings'.format(dir))
         if plot_settings['attr'] == 'norm_avg_energy' or  plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
-            calc_normalized_fitness(isings_list, plot_settings)
+            settings = load_settings(sim_name)
+            calc_normalized_fitness(isings_list, plot_settings, settings)
         isings_list_seperated = seperate_isolated_populations(isings_list)
         isings_list_critical = isings_list_seperated[0]
         isings_list_sub_critical = isings_list_seperated[1]

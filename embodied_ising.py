@@ -860,7 +860,11 @@ def TimeEvolve(isings, foods, settings, folder, rep, total_timesteps, nat_heat_g
                record, save_energies_velocities):
     [ising.reset_state(settings) for ising in isings]
 
-    if settings['random_time_steps']:
+    if settings['random_time_steps_power_law']:
+        low_limit, high_limit, a = settings['random_time_steps_power_law_limits']
+        T = int((1-np.random.power(a))*high_limit + low_limit)
+
+    elif settings['random_time_steps']:
         random_ts_limits = settings['random_time_step_limits']
         T = np.random.randint(random_ts_limits[0], random_ts_limits[1])
     else:

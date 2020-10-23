@@ -141,6 +141,10 @@ def create_settings():
     settings['random_time_steps'] = args.random_time_steps
     settings['random_time_step_limits'] = args.random_time_step_limits
 
+    settings['random_time_steps_power_law'] = args.random_time_steps_power_law
+    settings['random_time_steps_power_law_limits'] = args.random_time_steps_power_law_limits
+
+
     settings['mutation_robustness_path'] = ''  # Special setting for mutation_robustness.py otherwise always =''
 
     # name that is added to folder that simulation is saved in
@@ -288,6 +292,12 @@ def parse():
     parser.add_argument('-rand_ts_lim', dest='random_time_step_limits', nargs='+', type=int,
                         help='Expacts blank seperated list X Y, where X is the lower and Y the upper limit of the '
                              'uniform random distribution, which is used for random time steps')
+    parser.add_argument('-rand_ts_power', dest='random_time_steps_power_law', action='store_true',
+                        help='Activate random time steps sampled from power law distribution')
+    parser.add_argument('-rand_ts_power_lim', dest='random_time_steps_power_law_limits', nargs='+', type=int,
+                        help='Limits of power law distribution, expects blank seperated list low_lim high_lim a'
+                             'a is a parameter of the probability distribution. The larger a, the more likely are'
+                             'small values')
     parser.add_argument('-spec', '--speciation', dest='speciation', action='store_true', help='Activates speciation in evolutionary algorithm')
     parser.add_argument('-delta', dest='delta_threshold_speciation', type=float, help='Threshold at which genetic distance '
                                                                                       'species are seperated')
@@ -322,7 +332,8 @@ def parse():
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
-                        save_energies_velocities_gens=None)
+                        save_energies_velocities_gens=None, random_time_steps_power_law=False,
+                        random_time_steps_power_law_limits=[1, 1000000, 1000])
     args = parser.parse_args()
     return args
 
