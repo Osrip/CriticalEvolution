@@ -1575,7 +1575,9 @@ def handle_total_timesteps(folder, settings, save_value = None):
     #if count > 0 or (settings['loadfile'] is ''):
     if save_value is None:
         #  total_timesteps = pickle.load(open('{}total_timesteps.pickle'.format(folder)), 'rb')
-        total_timesteps = pickle.load(open('{}total_timesteps.pickle'.format(folder), 'rb'))
+        file = open('{}total_timesteps.pickle'.format(folder), 'rb')
+        total_timesteps = pickle.load(file)
+        file.close()
     else:
         total_timesteps = save_value
     total_timesteps += settings['TimeSteps']

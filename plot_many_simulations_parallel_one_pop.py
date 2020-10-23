@@ -11,11 +11,41 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import os
+import pickle
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
-    attrs_lists = load_attrs(folder_name, plot_settings)
+    if plot_settings['only_copied']:
+        plot_settings['only_copied_str'] = '_only_copied_orgs'
+    else:
+        plot_settings['only_copied_str'] = '_all_orgs'
+
+    if not plot_settings['only_plot']:
+        attrs_lists = load_attrs(folder_name, plot_settings)
+        save_plot_data(folder_name, attrs_lists, plot_settings)
+    else:
+        attrs_lists = load_plot_data(folder_name, plot_settings)
     plot(attrs_lists, plot_settings)
+
+
+def save_plot_data(folder_name, attrs_lists, plot_settings):
+    save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
+    save_name = 'plot_data_{}{}.pickle'.format(plot_settings['attr'], plot_settings['only_copied_str'])
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    pickle_out = open(save_dir + save_name, 'wb')
+    pickle.dump(attrs_lists, pickle_out)
+    pickle_out.close()
+
+
+def load_plot_data(folder_name, plot_settings):
+    save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
+    save_name = 'plot_data_{}{}.pickle'.format(plot_settings['attr'], plot_settings['only_copied_str'])
+    print('Load plot data from: {}{}'.format(save_dir, save_name))
+    file = open(save_dir+save_name, 'rb')
+    attrs_lists = pickle.load(file)
+    file.close()
+    return attrs_lists
 
 
 
@@ -30,8 +60,11 @@ def plot(attrs_lists, plot_settings):
     plt.xlabel('Generation')
     plt.ylabel(plot_settings['attr'])
     plt.ylim(plot_settings['ylim'])
+
+
+
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}.png'.format(plot_settings['attr'])
+    save_name = 'several_sims_criticial_{}{}_{}.png'.format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -61,18 +94,21 @@ def load_attrs(folder_name, plot_settings):
 if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
+    plot_settings['only_plot'] = False
+
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_food_and_ts_avg_energy' #'norm_avg_energy'
     # plot_settings['only_plot_fittest']
     if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
-        plot_settings['ylim'] = (-0.001, 0.000250)
+        plot_settings['ylim'] = (-0.0001, 0.00025)
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['only_copied'] = False
 
-    folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
+    # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
+    folder_names = ['sim-20201023-150039_parallel_Power_law_seasons']
     for folder_name in folder_names:
-
+        plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)

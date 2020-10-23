@@ -37,6 +37,7 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     # Animations:
     settings['plot_generations'] = [1]
     settings['repeat_pipeline_switched_boo'] = None
+    settings['random_time_steps_power_law'] = False
     settings['commands_in_folder_name'] = False
     settings['plot_pipeline'] = False
     # switches off animation:
@@ -68,6 +69,7 @@ def run_repeat(num_foods, settings, pipeline_settings):
 
 if __name__=='__main__':
     '''
+    BETTER NAME: FOOD DENSITY RESPONSE CURVE
     This module explores the dynamic range of random food simulations: 
     It expects a file with with random food season parameter active
     It then takes the last generation of that simulation and puts it into different environments with fixed amount of 
@@ -75,9 +77,9 @@ if __name__=='__main__':
     is defined by "num_repeats" to get statistically meaningful results.
     Cores should be about equal to the resolution, which should also be int
     '''
-    sim_name = 'sim-20201012-220717-g_2000_-f_1000_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_1000'
+    sim_name = 'sim-20201019-120215-g_3200_-f_1000_-iso_-rec_c_1000_-ref_1000_-a_1000_3199_-c_3_-li_896_-l_sim-20201012-220717-g_2000_-f_1000_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_1000_-n_co'
     pipeline_settings = {}
-    pipeline_settings['cores'] = 18
+    pipeline_settings['cores'] = 3
     pipeline_settings['num_repeats'] = 1
     pipeline_settings['lowest_food_num'] = 1
     pipeline_settings['highest_food_num'] = 2000

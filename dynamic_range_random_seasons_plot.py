@@ -3,6 +3,7 @@ import numpy as np
 from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import attribute_from_isings
 from automatic_plot_helper import all_folders_in_dir_with
+from automatic_plot_helper import load_settings
 import copy
 import pandas as pd
 import glob
@@ -17,9 +18,13 @@ from isolated_population_helper import seperate_isolated_populations
 
 def plot_dynamic_range(sim_name, plot_settings):
     attrs_list_each_food_num_all, attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list = load_data('avg_energy', sim_name)
-    # plot_averages(attrs_list_each_food_num_all, food_num_list, sim_name, plot_settings)
-    plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list,
-                            sim_name, plot_settings)
+    settings = load_settings(sim_name)
+    if settings['isolated_populations']:
+        plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critcal, food_num_list,
+                                sim_name, plot_settings)
+    else:
+        plot_averages(attrs_list_each_food_num_all, food_num_list, sim_name, plot_settings)
+
 
 
 def plot_averages(attrs_list_each_food_num, food_num_list, sim_name, plot_settings):
@@ -117,4 +122,6 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     sim_name = 'sim-20201012-220717-g_2000_-f_1000_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_1000'
-    plot_dynamic_range(sim_name, plot_settings)
+    sim_names = ['sim-20201019-120959-g_2000_-iso_-f_200_-ref_1000_-rec_c_1000_-a_1000_1999_-c_3_-n_different_betas_MANY_FOODS_200', 'sim-20201019-120517-g_2300_-f_500_-iso_-rec_c_1000_-ref_1000_-a_2299_-c_3_-li_1724_-l_sim-20201012-220516-g_2000_-f_500_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_500_-n_continue', 'sim-20201019-120215-g_3200_-f_1000_-iso_-rec_c_1000_-ref_1000_-a_1000_3199_-c_3_-li_896_-l_sim-20201012-220717-g_2000_-f_1000_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_1000_-n_co']
+    for sim_name in sim_names:
+        plot_dynamic_range(sim_name, plot_settings)

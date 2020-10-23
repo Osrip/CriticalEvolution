@@ -275,7 +275,9 @@ def load_isings_attributes_from_list(loadfile, iter_list, attribute):
 
         try:
             # TODO: THIs     still has shitty open function with MEMORY LEAK!!!!!!!
-            isings = pickle.load(open(filename, 'rb'))
+            file = open(filename, 'rb')
+            isings = pickle.load(file)
+            file.close()
         except Exception:
             print("Error while loading %s. Skipped file" % filename)
             # Leads to the previous datapoint being drawn twice!!

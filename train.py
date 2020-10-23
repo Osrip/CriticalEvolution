@@ -82,7 +82,7 @@ def create_settings():
     settings['fading_traces_animation'] = args.fading_traces_animation
     settings['animation_dpi'] = args.animation_dpi
     
-    settings['size'] = 12 #Total number of neurons in NN
+    settings['size'] = args.num_neurons #Total number of neurons in NN
     settings['nSensors'] = 4
     settings['nMotors'] = 4
     settings['learningrate'] = 0.01  # 0.01
@@ -201,6 +201,9 @@ def parse():
     parser.add_argument('-g', '--gen', type=int, dest='iterations', help='Number of generations in simulation')
     parser.add_argument('-t', '--ts', type=int, dest='time_steps',
                         help='Number of time steps in simulation')
+    parser.add_argument('-num_neurons', dest='num_neurons', type=int,
+                        help='Total number of neurons. There are 4 Sensor neurons and 4 Motor neurons, which are included,'
+                             'therefore at least 9')
     parser.add_argument('-noevo', '--no_evolution', dest='switch_off_evolution', action='store_true',
                         help='''This boolean argument deactivates evolution. If command -l loadfile is active, isings 
                         are saved in folder of loaded simulation''')
