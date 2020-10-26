@@ -423,7 +423,7 @@ if __name__ == '__main__':
     t2 = time.time()
     print('total time:', t2-t1)
     if settings['save_data'] and settings['plot_pipeline']:
-        automatic_plotting.main(sim_name)
+        automatic_plotting.main(settings['save_subfolder'] + '/' + sim_name)
 
 
 

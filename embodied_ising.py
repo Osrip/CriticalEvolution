@@ -1409,17 +1409,17 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         if settings['refresh_plot'] == 0:
             #automatic_plotting.main(sim_name)
             if settings['isolated_populations']:
-                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
             else:
-                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+                os.system('python3 automatic_plotting.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
 
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
         elif (not rep % settings['refresh_plot'] == 0):
             #automatic_plotting.main(sim_name)
             if settings['isolated_populations']:
-                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+                os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
             else:
-                os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+                os.system('python3 automatic_plotting.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
             #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
 
 
@@ -1459,9 +1459,9 @@ def plotting_pipeline(rep, sim_name, settings):
                 #automatic_plotting.main(sim_name)
                 #  WRONGLY ALSO ACTIVATED final_true on purpose
                 if settings['isolated_populations']:
-                    os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(sim_name))
+                    os.system('python3 automatic_plotting_isolated_populations.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
                 else:
-                    os.system('python3 automatic_plotting.py {} final_true'.format(sim_name))
+                    os.system('python3 automatic_plotting.py {} final_true'.format(settings['save_subfolder'] + '/' + sim_name))
                 #subprocess.Popen(['python3', 'automatic_plotting.py', sim_name])
             except Exception:
                 print('Something went wrong when refreshing plot at generation{}'.format(rep))

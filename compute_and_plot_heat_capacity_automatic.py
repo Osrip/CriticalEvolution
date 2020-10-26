@@ -6,6 +6,7 @@ import visualize_heat_capacity_generational_automatic_recorded
 import os
 
 def main(sim_name, settings, generations = None, recorded = False):
+    sim_name = '{}/{}'.format(settings['save_subfolder'], sim_name)
     if generations is None:
         gen_nums = detect_all_isings(sim_name)
         generations = [gen_nums[-1]]

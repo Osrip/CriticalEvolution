@@ -18,10 +18,12 @@ import plot_anythingXY_scatter_animation
 '''!!!!!!!!ONLY CHANGE, WHEN SIMULATION IS NOT RUNNING!!!!!!!   gets called via os to prevent memory leak'''
 
 
-def main(sim_name, only_top_isings=None, load_isings_list=True, final=False):
+def main(sim_name, only_top_isings=None, load_isings_list=True, final=False, subfolder=None):
     '''
     final defines whether this is the final/ last generation of simulation is plotted
     '''
+    # if subfolder != None:
+    #     sim_name = sim_name + subfolder
     settings = load_settings(sim_name)
     if load_isings_list:
         if only_top_isings is not None:
@@ -156,7 +158,11 @@ if __name__ == '__main__':
     final = False
     if sys.argv[2] == 'final_true':
         final = True
-    main(sys.argv[1], final=final)
+    # if sys.argv[3] == 'no_subfolder':
+    #     subfolder = None
+    # else:
+    #     subfolder = sys.argv[3]
+    main(sys.argv[1], final=final) # , subfolder=subfolder
     # sim_names = ['sim-20200209-124814-ser_-b_10_-f_100_-n_1',
     #             'sim-20200209-124814-ser_-b_10_-f_10_-n_1',
     #             'sim-20200209-124814-ser_-b_1_-f_100_-n_1',
