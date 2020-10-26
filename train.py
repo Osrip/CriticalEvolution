@@ -336,7 +336,7 @@ def parse():
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, random_time_steps_power_law=False,
-                        random_time_steps_power_law_limits=[1, 1000000, 1000])
+                        random_time_steps_power_law_limits=[1, 1000000, 1000], num_neurons=12)
     args = parser.parse_args()
     return args
 
