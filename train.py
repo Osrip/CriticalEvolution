@@ -331,12 +331,12 @@ def parse():
                         a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
                         natural_heat_capacity_beta_fac_props=[-1, 1, 100], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
                         switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
-                        random_time_step_limits=[100, 8000], heat_capacity_props=[10, 1000, -2, 2, 100, 40], speciation=False,
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[100, 10, -2, 2, 100, 40], speciation=False,
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, random_time_steps_power_law=False,
-                        random_time_steps_power_law_limits=[1, 1000000, 1000], num_neurons=12)
+                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12)
     args = parser.parse_args()
     return args
 

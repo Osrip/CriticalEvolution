@@ -75,6 +75,39 @@ def load_isings_attr(loadfile, attr):
     return attrs_list
 
 
+def load_multiple_isings_attrs(loadfile, attr_names):
+    '''
+    :@param attrs List of all attribute names that should be loaded
+    Load all isings attributes from pickle files and return them as nested list
+    :param loadfile : simulation name
+    returns list. which contains dict of attributes lists for each generation
+    '''
+
+
+    iter_list = detect_all_isings(loadfile)
+    settings = load_settings(loadfile)
+    numAgents = settings['pop_size']
+    attrs_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        try:
+            diff_attr_names_one_gen = {}
+            for attr_name in attr_names:
+                file = open(filename, 'rb')
+                attr_vals = attribute_from_isings(pickle.load(file), attr_name)
+                diff_attr_names_one_gen[attr_name] = attr_vals
+                file.close()
+        except Exception:
+            print("Error while loading %s. Skipped file" % filename)
+            # Leads to the previous datapoint being drawn twice!!
+
+        attrs_list.append(diff_attr_names_one_gen)
+    return attrs_list
+
+
 def load_isings(loadfile, wait_for_memory = True):
     '''
     Load all isings pickle files and return them as list
@@ -296,7 +329,12 @@ def attribute_from_isings(isings, attribute):
     #exec('attribute_list = [I.{} for I in isings]'.format(attribute))
     attribute_list = []
     for I in isings:
+        # Added the if else statement afterwards, so remove this in case it throws an error at some point!
         exec('attribute_list.append(I.{})'.format(attribute))
+        # if I is not None:
+        #     exec('attribute_list.append(I.{})'.format(attribute))
+        # else:
+        #     attribute_list.append(np.nan)
 
     return attribute_list
 
