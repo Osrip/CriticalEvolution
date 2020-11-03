@@ -6,6 +6,7 @@ import copy
 from automatic_plot_helper import detect_all_isings
 from automatic_plot_helper import load_isings_from_list
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import all_sim_names_in_parallel_folder
 import time
 import ray
 from switch_season_repeat_plotting import plot_pipeline
@@ -13,11 +14,22 @@ import pickle
 from run_combi import RunCombi
 import numpy as np
 
-def dynamic_pipeline(sim_name, pipeline_settings):
+def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
+    for folder_name in folder_names:
+        sim_names = all_sim_names_in_parallel_folder(folder_name)
+        for i, sim_name in enumerate(sim_names):
+            if pipeline_settings['only_plot_certain_num_of_simulations'] is None:
+                dynamic_pipeline_one_sim(sim_name, pipeline_settings)
+            elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
+                dynamic_pipeline_one_sim(sim_name, pipeline_settings)
 
-    settings = load_settings(sim_name)
-    settings = create_settings_for_repeat(settings, sim_name, pipeline_settings)
-    run_all_repeats(settings, pipeline_settings)
+
+def dynamic_pipeline_one_sim(sim_name, pipeline_settings):
+
+    original_settings = load_settings(sim_name)
+    settings = create_settings_for_repeat(original_settings, sim_name, pipeline_settings)
+    run_all_repeats(settings, original_settings, pipeline_settings)
+
 
 def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     # settings['TimeSteps'] = 5
@@ -46,9 +58,13 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     return settings
 
 
-def run_all_repeats(settings, pipeline_settings):
-    lowest_food_num = pipeline_settings['lowest_food_num']
-    highest_food_num = pipeline_settings['highest_food_num']
+def run_all_repeats(settings, original_settings, pipeline_settings):
+    if not original_settings['random_food_seasons']:
+        original_mean_food_num = settings['food_num']
+    else:
+        original_mean_food_num = (settings['rand_food_season_limits'][0] + settings['rand_food_season_limits'][1]) / 2
+    lowest_food_num = original_mean_food_num * (pipeline_settings['lowest_food_percent'] / 100.0)
+    highest_food_num = original_mean_food_num * (pipeline_settings['highest_food_percent'] / 100.0)
     resolution = pipeline_settings['resolution']
 
     food_num_arr = np.linspace(lowest_food_num, highest_food_num, resolution).astype(int)
@@ -56,6 +72,7 @@ def run_all_repeats(settings, pipeline_settings):
     ray.init(num_cpus=pipeline_settings['cores'])
     ray_funcs = [run_repeat.remote(food_num, settings, pipeline_settings) for food_num in food_num_arr]
     ray.get(ray_funcs)
+    ray.shutdown()
     # run_repeat(20, settings, pipeline_settings)
 
 @ray.remote
@@ -77,11 +94,15 @@ if __name__=='__main__':
     is defined by "num_repeats" to get statistically meaningful results.
     Cores should be about equal to the resolution, which should also be int
     '''
-    sim_name = 'sim-20201019-120517-g_2300_-f_500_-iso_-rec_c_1000_-ref_1000_-a_2299_-c_3_-li_1724_-l_sim-20201012-220516-g_2000_-f_500_-t_2000_-iso_-ref_1000_-rec_c_1000_-a_500_1000_1999_-no_trace_-c_3_-n_different_betas_EVOLVE_MANY_FOODS_DYNAMIC_RANGE_500_-n_continue'
+
     pipeline_settings = {}
     pipeline_settings['cores'] = 20
     pipeline_settings['num_repeats'] = 1
-    pipeline_settings['lowest_food_num'] = 1
-    pipeline_settings['highest_food_num'] = 2000
+    pipeline_settings['lowest_food_percent'] = 1
+    pipeline_settings['highest_food_percent'] = 2000
     pipeline_settings['resolution'] = 18
-    dynamic_pipeline(sim_name, pipeline_settings)
+    # The following command allows to only plot a certain number of simulations in each parallel simulations folder
+    # If all simulations in those folders shall be plotted, set to None
+    pipeline_settings['only_plot_certain_num_of_simulations'] = None
+    folder_names = ['sim-20201022-184145_parallel_TEST']
+    dynamic_pipeline_all_sims(folder_names, pipeline_settings)

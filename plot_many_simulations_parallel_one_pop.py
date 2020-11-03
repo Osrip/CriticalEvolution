@@ -134,7 +134,7 @@ if __name__ == '__main__':
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
-    plot_settings['only_copied'] = False
+    plot_settings['only_copied'] = True
     plot_settings['sliding_window'] = True
     plot_settings['sliding_window_size'] = 200
 
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts', 'sim-20201026-224655_parallel_b1_random_100-7900ts', 'sim-20201026-224709_parallel_b10_fixed_4000ts', 'sim-20201026-224722_parallel_b10_random_100-7900ts', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201029-192538_parallel_b1_beta_jump_normal_run', 'sim-20201029-192551_parallel_b10_beta_jump_normal_run']
+    folder_names = ['sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts']
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)

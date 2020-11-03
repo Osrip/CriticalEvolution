@@ -379,6 +379,10 @@ def all_folders_in_dir_with(dir, including_name):
 
 
 def choose_copied_isings(isings):
+    '''
+    This function chooses only those ising objects, which have been copied by the Evolutionary Algorithm in the previous generation
+
+    '''
 
     isings_new = [I for I in isings if I.prev_mutation == 'copy']
     # For the initial population just choose 20 "random" organims instead
@@ -389,7 +393,10 @@ def choose_copied_isings(isings):
 
 
 def calc_normalized_fitness(isings_list, plot_settings, sim_settings):
+    '''
+    This function calculates two normalized fitness / avg_energy values, that are not in the ising object by default
 
+    '''
     for isings in isings_list:
         for I in isings:
             I.norm_avg_energy = I.avg_energy / I.time_steps
@@ -405,3 +412,18 @@ def calc_normalized_fitness(isings_list, plot_settings, sim_settings):
             for isings in isings_list:
                 for I in isings:
                     I.norm_food_and_ts_avg_energy = I.norm_avg_energy / food_num
+
+
+def all_sim_names_in_parallel_folder(folder_name):
+    '''
+    This function returns all simulation names within a given folder
+    @param folder_name: Folder name of folder with all simulations, whose names should be returned
+    '''
+
+    folder_dir = 'save/{}'.format(folder_name)
+    dir_list = all_folders_in_dir_with(folder_dir, 'sim')
+    sim_name_list = []
+    for dir in dir_list:
+        sim_name = dir[(dir.rfind('save/')+5):]
+        sim_name_list.append(sim_name)
+    return sim_name_list
