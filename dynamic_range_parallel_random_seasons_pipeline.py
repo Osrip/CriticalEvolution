@@ -79,7 +79,7 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
 def run_repeat(num_foods, settings, pipeline_settings):
 
     settings['food_num'] = num_foods
-    settings['dynamic_range_pipeline_save_name'] = 'dynamic_range_run_foods_{}'.format(num_foods)
+    settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
@@ -101,6 +101,7 @@ if __name__=='__main__':
     pipeline_settings['lowest_food_percent'] = 1
     pipeline_settings['highest_food_percent'] = 2000
     pipeline_settings['resolution'] = 18
+    pipeline_settings['add_save_file_name'] = 'first_try_'
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None

@@ -41,6 +41,7 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         save_plot_data(sim_data_list_each_folder, plot_settings)
     else:
         sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
+        plot_settings['savefolder_name'] = plot_settings['only_plot_folder_name']
     plot(sim_data_list_each_folder, plot_settings)
 
 
@@ -126,7 +127,7 @@ def load_data(sim_name, folder_name, plot_settings):
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with(sim_dir, plot_settings['dynamic_range_folder_name_includes'])
+    dir_list = all_folders_in_dir_with('{}/repeated_generations'.format(sim_dir), plot_settings['dynamic_range_folder_name_includes'])
     for dir in dir_list:
         isings_list = load_isings_specific_path(dir)
         if plot_settings['only_copied']:
@@ -165,14 +166,14 @@ if __name__ == '__main__':
     sub_critical_folder_name_list =[]
     plot_settings = {}
     plot_settings['only_plot'] = False
-    plot_settings['only_plot_folder_name'] = ''
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201103-225238'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', '*', '+']
-
+    # default: 'foods_dynamic_range_run', can be specified according to pipeline_settings['add_save_file_name'], if not all prevous runs should be plotted
     plot_settings['dynamic_range_folder_name_includes'] = 'foods_dynamic_range_run'
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
     dynamic_range_main(folder_name_dict, plot_settings)

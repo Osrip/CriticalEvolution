@@ -83,7 +83,7 @@ def load_data(attr, sim_name):
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with(sim_dir, 'dynamic_range_run_time_step')
+    dir_list = all_folders_in_dir_with('{}/repeated_generations'.format(sim_dir), 'dynamic_range_run_time_step')
     for dir in dir_list:
         isings_list = load_isings_specific_path(dir)
         isings = make_2d_list_1d(isings_list)

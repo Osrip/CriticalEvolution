@@ -2008,7 +2008,7 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
     #loaded_sim_with_subfolders = '{}/{}'.format(settings['save_subfolder'], settings['loadfile'])
     loaded_sim_with_subfolders = settings['loadfile']
 
-    dir_in_old_sim = "save/{}/repeat_isings_gen{}_{}foods_{}".format(loaded_sim_with_subfolders, settings['iter'],
+    dir_in_old_sim = "save/{}/repeated_generations/repeat_isings_gen{}_{}foods_{}".format(loaded_sim_with_subfolders, settings['iter'],
                                                                      settings['food_num'], switched_name_addition)
     if not os.path.exists(dir_in_old_sim):
         os.makedirs(dir_in_old_sim)
