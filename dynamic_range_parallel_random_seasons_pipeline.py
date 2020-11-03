@@ -64,6 +64,8 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
     else:
         original_mean_food_num = (settings['rand_food_season_limits'][0] + settings['rand_food_season_limits'][1]) / 2
     lowest_food_num = original_mean_food_num * (pipeline_settings['lowest_food_percent'] / 100.0)
+    if lowest_food_num == 0:
+        lowest_food_num = 1
     highest_food_num = original_mean_food_num * (pipeline_settings['highest_food_percent'] / 100.0)
     resolution = pipeline_settings['resolution']
 
@@ -96,14 +98,14 @@ if __name__=='__main__':
     '''
 
     pipeline_settings = {}
-    pipeline_settings['cores'] = 20
+    pipeline_settings['cores'] = 50
     pipeline_settings['num_repeats'] = 1
     pipeline_settings['lowest_food_percent'] = 1
-    pipeline_settings['highest_food_percent'] = 2000
-    pipeline_settings['resolution'] = 18
+    pipeline_settings['highest_food_percent'] = 1000
+    pipeline_settings['resolution'] = 50
     pipeline_settings['add_save_file_name'] = 'first_try_'
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
-    folder_names = ['sim-20201022-184145_parallel_TEST']
+    folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
