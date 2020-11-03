@@ -32,9 +32,20 @@ class ResponseCurveSimData:
         self.avg_attr_list = [np.mean(attrs) for attrs in attrs_list_each_food_num]
 
 
-def plot_dynamic_range(folder_name_dict, plot_settings):
-    plot_settings['savefolder_name'] = 'response_plot_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
-    os.makedirs('save/{}'.format(plot_settings['savefolder_name']))
+def dynamic_range_main(folder_name_dict, plot_settings):
+
+    if not plot_settings['only_plot']:
+        plot_settings['savefolder_name'] = 'response_plot_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
+        os.makedirs('save/{}'.format(plot_settings['savefolder_name']))
+        sim_data_list_each_folder = prepare_data(folder_name_dict, plot_settings)
+        save_plot_data(sim_data_list_each_folder, plot_settings)
+    else:
+        sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
+    plot(sim_data_list_each_folder, plot_settings)
+
+
+def prepare_data(folder_name_dict, plot_settings):
+
 
     sim_data_list_each_folder = []
     for key in folder_name_dict:
@@ -47,7 +58,28 @@ def plot_dynamic_range(folder_name_dict, plot_settings):
                 sim_data = ResponseCurveSimData(sim_name, folder_name, key, folder_num_in_key,  attrs_list_each_food_num_all, food_num_list)
                 attrs_food_num_lists_each_sim.append(sim_data)
             sim_data_list_each_folder.append(attrs_food_num_lists_each_sim)
-    plot(sim_data_list_each_folder, plot_settings)
+    return sim_data_list_each_folder
+
+
+
+def save_plot_data(plot_data, plot_settings):
+    save_dir = 'save/{}/plot_data/'.format(plot_settings['savefolder_name'])
+    save_name = 'plot_data.pickle'
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    pickle_out = open(save_dir + save_name, 'wb')
+    pickle.dump(plot_data, pickle_out)
+    pickle_out.close()
+
+
+def load_plot_data(folder_name):
+    save_dir = 'save/{}/plot_data/'.format(folder_name)
+    save_name = 'plot_data.pickle'
+    print('Load plot data from: {}{}'.format(save_dir, save_name))
+    file = open(save_dir+save_name, 'rb')
+    plot_data = pickle.load(file)
+    file.close()
+    return plot_data
 
 
 def plot(sim_data_list_each_folder, plot_settings):
@@ -78,67 +110,13 @@ def plot(sim_data_list_each_folder, plot_settings):
         # Plot averages of each folder
         plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=5, alpha=0.4, label=sim_data.folder_name)
 
+        plt.ylabel(plot_settings['attr'])
+        plt.xlabel('Percentage of food that population was originally trained on')
         save_name = 'response_plot.png'
         save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
         plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=150)
-
-
-
-def plot_averages(attrs_list_each_food_num, food_num_list, sim_name, plot_settings):
-    avg_attr_list = [np.mean(attrs) for attrs in attrs_list_each_food_num]
-    plt.scatter(food_num_list, avg_attr_list)
-    # plt.savefig('moinsen.png')
-    save_dir = 'save/{}/figs/dynamic_range_plots{}/'.format(sim_name, plot_settings['add_save_name'])
-    save_name = 'plot_averages.png'
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    plt.savefig(save_dir+save_name, bbox_inches='tight')
-    plt.show()
-
-
-def plot_seperated_averages(attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critical, food_num_list,
-                            sim_name, plot_settings):
-    avg_attr_list_critical = [np.mean(attrs) for attrs in attrs_list_each_food_num_critical]
-    avg_attr_list_sub_critical = [np.mean(attrs) for attrs in attrs_list_each_food_num_sub_critical]
-    plt.figure(figsize=(12, 8))
-
-    # make list of list with similar food_num entries for plotting
-    food_num_list_extended_critical = [[food_num for i in range(len(attrs))]
-                                       for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_critical)]
-    food_num_list_extended_sub_critical = [[food_num for i in range(len(attrs))]
-                                           for food_num, attrs in zip(food_num_list, attrs_list_each_food_num_sub_critical)]
-    # food_num_list_extended = np.array(food_num_list_extended)
-    # attrs_list_each_food_num_critical = np.array(attrs_list_each_food_num_critical)
-    # attrs_list_each_food_num_sub_critical = np.array(attrs_list_each_food_num_sub_critical)
-    # for food_num_critical, food_num_sub_critical, attr_critical, attr_sub_critical in
-    #     zip(food_num_list_extended_critical, food_num_list_extended_critical,
-    #         attrs_list_each_food_num_critical, attrs_list_each_food_num_sub_critical)
-
-    plt.scatter(food_num_list_extended_critical, attrs_list_each_food_num_critical,
-                c=plot_settings['color']['critical'], s=2, alpha=0.4)
-    plt.scatter(food_num_list_extended_sub_critical, attrs_list_each_food_num_sub_critical, c=plot_settings['color']['sub_critical'],
-                s=2, alpha=0.4)
-
-    plt.scatter(food_num_list, avg_attr_list_critical, c=plot_settings['color']['critical'], label='critical')
-    plt.scatter(food_num_list, avg_attr_list_sub_critical, c=plot_settings['color']['sub_critical'],
-                label='sub-critical')
-
-    plt.ylabel('avg_energy (normalized for time steps)')
-    plt.xlabel('number food particles in simulation')
-
-    plt.legend()
-    save_dir = 'save/{}/figs/dynamic_range_plots_foods{}/'.format(sim_name, plot_settings['add_save_name'])
-    save_name = 'plot_averages_seperated.png'
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    plt.savefig(save_dir+save_name, bbox_inches='tight')
-    plt.show()
-
-
-
-    # TODO: Debuggen und hier weitermachen!!
 
 
 def load_data(sim_name, folder_name, plot_settings):
@@ -148,7 +126,7 @@ def load_data(sim_name, folder_name, plot_settings):
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with(sim_dir, 'foods_dynamic_range_run')
+    dir_list = all_folders_in_dir_with(sim_dir, plot_settings['dynamic_range_folder_name_includes'])
     for dir in dir_list:
         isings_list = load_isings_specific_path(dir)
         if plot_settings['only_copied']:
@@ -186,11 +164,15 @@ if __name__ == '__main__':
     critical_folder_name_list = ['sim-20201022-184145_parallel_TEST']
     sub_critical_folder_name_list =[]
     plot_settings = {}
+    plot_settings['only_plot'] = False
+    plot_settings['only_plot_folder_name'] = ''
     plot_settings['add_save_name'] = ''
-    plot_settings['only_copied'] = False
+    plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', '*', '+']
+
+    plot_settings['dynamic_range_folder_name_includes'] = 'foods_dynamic_range_run'
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
-    plot_dynamic_range(folder_name_dict, plot_settings)
+    dynamic_range_main(folder_name_dict, plot_settings)
