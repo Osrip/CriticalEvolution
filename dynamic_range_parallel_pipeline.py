@@ -34,8 +34,11 @@ def dynamic_pipeline_one_sim(sim_name, pipeline_settings):
 
 def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     # settings['TimeSteps'] = 5
+    if pipeline_settings['varying_parameter'] == 'time_steps':
+        settings['random_time_steps'] = False
+    elif pipeline_settings['varying_parameter'] == 'food':
+        settings['random_food_seasons'] = False
 
-    settings['random_food_seasons'] = False
     settings = copy.deepcopy(settings)
 
     complete_sim_folder = sim_name
@@ -63,14 +66,30 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
 
 
 def run_all_repeats(settings, original_settings, pipeline_settings):
-    if not original_settings['random_food_seasons']:
-        original_mean_food_num = settings['food_num']
-    else:
-        original_mean_food_num = (settings['rand_food_season_limits'][0] + settings['rand_food_season_limits'][1]) / 2
+    # WATCH OUT !!! PARAMETERS WITH "FOOD" IN THEM CAN ALSO BECOME TIME STEPS !!!
+    if pipeline_settings['varying_parameter'] == 'time_steps':
+        if not original_settings['random_time_steps']:
+            original_mean_food_num = original_settings['TimeSteps']
+        else:
+            original_mean_food_num = (settings['random_time_step_limits'][0] + settings['random_time_step_limits'][1]) / 2
+
+        # if original_settings['random_time_steps_power_law']:
+        #     print('!!! random_time_steps_power_law is not supported !!!')
+
+
+    elif pipeline_settings['varying_parameter'] == 'food':
+        if not original_settings['random_food_seasons']:
+            original_mean_food_num = original_settings['food_num']
+        else:
+            original_mean_food_num = (settings['rand_food_season_limits'][0] + settings['rand_food_season_limits'][1]) / 2
+
+
     lowest_food_num = original_mean_food_num * (pipeline_settings['lowest_food_percent'] / 100.0)
     if lowest_food_num == 0:
         lowest_food_num = 1
     highest_food_num = original_mean_food_num * (pipeline_settings['highest_food_percent'] / 100.0)
+
+
     resolution = pipeline_settings['resolution']
 
     food_num_arr = np.linspace(lowest_food_num, highest_food_num, resolution).astype(int)
@@ -85,8 +104,15 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
 @ray.remote
 def run_repeat(num_foods, settings, pipeline_settings):
 
-    settings['food_num'] = num_foods
-    settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+    if pipeline_settings['varying_parameter'] == 'time_steps':
+        settings['TimeSteps'] = num_foods
+    elif pipeline_settings['varying_parameter'] == 'food':
+        settings['food_num'] = num_foods
+
+    if pipeline_settings['varying_parameter'] == 'food':
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+    elif pipeline_settings['varying_parameter'] == 'time_steps':
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
@@ -103,7 +129,8 @@ if __name__=='__main__':
     '''
 
     pipeline_settings = {}
-    pipeline_settings['cores'] = 50
+    pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
+    pipeline_settings['cores'] = 20
     pipeline_settings['num_repeats'] = 1
     pipeline_settings['lowest_food_percent'] = 1
     pipeline_settings['highest_food_percent'] = 1000
@@ -119,5 +146,5 @@ if __name__=='__main__':
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
-    folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_COPY_load_generation_100']
+    folder_names = ['sim-20201020-181300_parallel_TEST']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
