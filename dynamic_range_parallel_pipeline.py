@@ -18,13 +18,28 @@ import numpy as np
 def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
     for folder_name in folder_names:
         sim_names = all_sim_names_in_parallel_folder(folder_name)
-        for i, sim_name in enumerate(sim_names):
-            if pipeline_settings['only_plot_certain_num_of_simulations'] is None:
-                dynamic_pipeline_one_sim(sim_name, pipeline_settings)
-            elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
-                dynamic_pipeline_one_sim(sim_name, pipeline_settings)
+
+        if not pipeline_settings['parallelize_each_sim']:
+            for i, sim_name in enumerate(sim_names):
+                if pipeline_settings['only_plot_certain_num_of_simulations'] is None:
+                    dynamic_pipeline_one_sim(sim_name, pipeline_settings)
+                elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
+                    dynamic_pipeline_one_sim(sim_name, pipeline_settings)
+        else:
+            ray.init(num_cpus=pipeline_settings['cores'])
+            ray_funcs=[dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in sim_names]
+            ray.get(ray_funcs)
+            ray.shutdown()
+
+@ray.remote
+def dynamic_pipeline_one_sim_remote(sim_name, pipeline_settings):
+
+    original_settings = load_settings(sim_name)
+    settings = create_settings_for_repeat(original_settings, sim_name, pipeline_settings)
+    run_all_repeats(settings, original_settings, pipeline_settings)
 
 
+# Exact copy of run_repeat_remote but without ray.remote decorator
 def dynamic_pipeline_one_sim(sim_name, pipeline_settings):
 
     original_settings = load_settings(sim_name)
@@ -85,7 +100,7 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
 
 
     lowest_food_num = original_mean_food_num * (pipeline_settings['lowest_food_percent'] / 100.0)
-    if lowest_food_num == 0:
+    if lowest_food_num < 1:
         lowest_food_num = 1
     highest_food_num = original_mean_food_num * (pipeline_settings['highest_food_percent'] / 100.0)
 
@@ -93,15 +108,37 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
     resolution = pipeline_settings['resolution']
 
     food_num_arr = np.linspace(lowest_food_num, highest_food_num, resolution).astype(int)
-    np.append(food_num_arr, original_mean_food_num)
+    # Append food_num of original simulation if not already in list
+    if not original_mean_food_num in food_num_arr:
+        food_num_arr = np.append(food_num_arr, original_mean_food_num)
+        food_num_arr = np.sort(food_num_arr)
 
-    ray.init(num_cpus=pipeline_settings['cores'])
-    ray_funcs = [run_repeat.remote(food_num, settings, pipeline_settings) for food_num in food_num_arr]
-    ray.get(ray_funcs)
-    ray.shutdown()
+    if pipeline_settings['parallelize_run_repeats']:
+        ray.init(num_cpus=pipeline_settings['cores']) #, ignore_reinit_error=True
+        ray_funcs = [run_repeat_remote.remote(food_num, settings, pipeline_settings) for food_num in food_num_arr]
+        ray.get(ray_funcs)
+        ray.shutdown()
+    else:
+        [run_repeat(food_num, settings, pipeline_settings) for food_num in food_num_arr]
     # run_repeat(20, settings, pipeline_settings)
 
 @ray.remote
+def run_repeat_remote(num_foods, settings, pipeline_settings):
+
+    if pipeline_settings['varying_parameter'] == 'time_steps':
+        settings['TimeSteps'] = num_foods
+        print(num_foods)
+    elif pipeline_settings['varying_parameter'] == 'food':
+        settings['food_num'] = num_foods
+
+    if pipeline_settings['varying_parameter'] == 'food':
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+    elif pipeline_settings['varying_parameter'] == 'time_steps':
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+    Iterations = pipeline_settings['num_repeats']
+    train.run(settings, Iterations)
+
+# Exact copy of run_repeat_remote but without ray.remote decorator
 def run_repeat(num_foods, settings, pipeline_settings):
 
     if pipeline_settings['varying_parameter'] == 'time_steps':
@@ -115,7 +152,6 @@ def run_repeat(num_foods, settings, pipeline_settings):
         settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
-
 
 if __name__=='__main__':
     '''
@@ -132,8 +168,12 @@ if __name__=='__main__':
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
     pipeline_settings['cores'] = 20
     pipeline_settings['num_repeats'] = 1
-    pipeline_settings['lowest_food_percent'] = 1
-    pipeline_settings['highest_food_percent'] = 1000
+    if pipeline_settings['varying_parameter'] == 'food':
+        pipeline_settings['lowest_food_percent'] = 1
+        pipeline_settings['highest_food_percent'] = 1000
+    elif pipeline_settings['varying_parameter'] == 'time_steps':
+        pipeline_settings['lowest_food_percent'] = 10
+        pipeline_settings['highest_food_percent'] = 1000
     pipeline_settings['resolution'] = 50
     pipeline_settings['add_save_file_name'] = 'first_try_'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
@@ -146,5 +186,12 @@ if __name__=='__main__':
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
+    # The following settings define the level of parallelization. Use 'parallelize_run_repeats' for low level
+    # parallelization when plotting few simulations. use high level parallelization with 'parallelize_each_sim' when
+    # plotting many simulations.
+    pipeline_settings['parallelize_each_sim'] = True
+    pipeline_settings['parallelize_run_repeats'] = False
+
+
     folder_names = ['sim-20201020-181300_parallel_TEST']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
