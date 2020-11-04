@@ -42,6 +42,9 @@ def dynamic_range_main(folder_name_dict, plot_settings):
     else:
         sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
         plot_settings['savefolder_name'] = plot_settings['only_plot_folder_name']
+
+    settings_folder = 'save/{}/settings/'.format(plot_settings['savefolder_name'])
+    save_settings(settings_folder, plot_settings)
     plot(sim_data_list_each_folder, plot_settings)
 
 
@@ -61,6 +64,16 @@ def prepare_data(folder_name_dict, plot_settings):
             sim_data_list_each_folder.append(attrs_food_num_lists_each_sim)
     return sim_data_list_each_folder
 
+
+def save_settings(folder, settings):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    with open(folder + 'plot_settings.csv', 'w') as f:
+        for key in settings.keys():
+            f.write("%s,%s\n" % (key, settings[key]))
+    pickle_out = open('{}plot_settings.pickle'.format(folder), 'wb')
+    pickle.dump(settings, pickle_out)
+    pickle_out.close()
 
 
 def save_plot_data(plot_data, plot_settings):
@@ -84,6 +97,7 @@ def load_plot_data(folder_name):
 
 
 def plot(sim_data_list_each_folder, plot_settings):
+    plt.figure(figsize=(10, 7))
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
         list_of_food_num_list = []
@@ -96,6 +110,9 @@ def plot(sim_data_list_each_folder, plot_settings):
                 raise Exception('There seem to be files for different food numbers within the simulations of folder {}'
                                 .format(sim_data.folder_name))
 
+        # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
+        list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
+
         avg_of_avg_attr_list = []
         # This goes through all lists and takes averages of the inner nesting, such that instead of a list of lists
         # we have one list with average value of each entriy of the previous lists,
@@ -105,20 +122,38 @@ def plot(sim_data_list_each_folder, plot_settings):
 
         marker = plot_settings['marker'][sim_data.folder_num_in_key]
         color = plot_settings['color'][sim_data.key]
-        plt.figure(figsize=(10, 7))
+
+
+
         # Plot each simulation
-        plt.scatter(list_of_food_num_list, list_of_avg_attr_list, marker=marker, c=color, s=1, alpha=0.2)
+        plt.scatter(list_of_food_num_list, list_of_avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
+        for food_num_list, avg_attr_list in zip(list_of_food_num_list, list_of_avg_attr_list):
+            plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.2, linewidth=0.3)
         # Plot averages of each folder
-        plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=5, alpha=0.4, label=sim_data.folder_name)
+        plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=10, alpha=1,
+                    label=sim_data.folder_name)
 
-        plt.ylabel(plot_settings['attr'])
-        plt.xlabel('Percentage of food that population was originally trained on')
-        save_name = 'response_plot.png'
-        save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
-        if not os.path.exists(save_folder):
-            os.makedirs(save_folder)
-        plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=150)
+    plt.legend()
+    plt.ylabel(plot_settings['attr'])
+    # plt.xlabel('Percentage of food that population was originally trained on')
+    plt.xlabel('Number of foods')
+    save_name = 'response_plot.png'
+    save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=150)
 
+
+def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
+    ordered_order_list = []
+    ordered_second_list = []
+    for order_list, second_list in zip(listof_lists_that_defines_order, second_listof_lists):
+        order_list = np.array(order_list)
+        second_list = np.array(second_list)
+        order = np.argsort(order_list)
+        ordered_order_list.append(list(order_list[order]))
+        ordered_second_list.append(list(second_list[order]))
+    return ordered_order_list, ordered_second_list
 
 def load_data(sim_name, folder_name, plot_settings):
     sim_dir = 'save/{}'.format(sim_name)
@@ -162,18 +197,18 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-184145_parallel_TEST']
-    sub_critical_folder_name_list =[]
+    critical_folder_name_list = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000']
+    sub_critical_folder_name_list = ['sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
     plot_settings = {}
-    plot_settings['only_plot'] = False
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201103-225238'
+    plot_settings['only_plot'] = True
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201104-122502'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     # This setting defines the markers, which are used in the order that the folder names are listed
-    plot_settings['marker'] = ['.', '*', '+']
+    plot_settings['marker'] = ['.', 'x', '+']
     # default: 'foods_dynamic_range_run', can be specified according to pipeline_settings['add_save_file_name'], if not all prevous runs should be plotted
-    plot_settings['dynamic_range_folder_name_includes'] = 'foods_dynamic_range_run'
+    plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run'
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
     dynamic_range_main(folder_name_dict, plot_settings)
