@@ -197,10 +197,10 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000']
+    critical_folder_name_list = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_COPY_load_generation_100']
     sub_critical_folder_name_list = ['sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
     plot_settings = {}
-    plot_settings['only_plot'] = True
+    plot_settings['only_plot'] = False
     plot_settings['only_plot_folder_name'] = 'response_plot_20201104-122502'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
