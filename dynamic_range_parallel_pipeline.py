@@ -25,11 +25,16 @@ def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
                 elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
-        else:
-            ray.init(num_cpus=pipeline_settings['cores'])
-            ray_funcs=[dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in sim_names]
-            ray.get(ray_funcs)
-            ray.shutdown()
+    else:
+        all_sim_names = np.array([])
+        for folder_name in folder_names:
+            sim_names = all_sim_names_in_parallel_folder(folder_name)
+            all_sim_names = np.append(all_sim_names, sim_names)
+
+        ray.init(num_cpus=pipeline_settings['cores'])
+        ray_funcs=[dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+        ray.get(ray_funcs)
+        ray.shutdown()
 
 @ray.remote
 def dynamic_pipeline_one_sim_remote(sim_name, pipeline_settings):
@@ -166,14 +171,14 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 20
+    pipeline_settings['cores'] = 66
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 1000
     elif pipeline_settings['varying_parameter'] == 'time_steps':
-        pipeline_settings['lowest_food_percent'] = 10
-        pipeline_settings['highest_food_percent'] = 1000
+        pipeline_settings['lowest_food_percent'] = 1
+        pipeline_settings['highest_food_percent'] = 5000
     pipeline_settings['resolution'] = 50
     pipeline_settings['add_save_file_name'] = 'first_try_'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
@@ -193,5 +198,5 @@ if __name__=='__main__':
     pipeline_settings['parallelize_run_repeats'] = False
 
 
-    folder_names = ['sim-20201020-181300_parallel_TEST']
+    folder_names = ['sim-20201020-181300_parallel_TEST', 'sim-20201022-184145_parallel_TEST']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
