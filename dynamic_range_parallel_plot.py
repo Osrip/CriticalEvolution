@@ -35,7 +35,8 @@ class ResponseCurveSimData:
 def dynamic_range_main(folder_name_dict, plot_settings):
 
     if not plot_settings['only_plot']:
-        plot_settings['savefolder_name'] = 'response_plot_{}'.format(time.strftime("%Y%m%d-%H%M%S"))
+        plot_settings['savefolder_name'] = 'response_plot_{}_{}'\
+            .format(time.strftime("%Y%m%d-%H%M%S"), plot_settings['varying_parameter'])
         os.makedirs('save/{}'.format(plot_settings['savefolder_name']))
         sim_data_list_each_folder = prepare_data(folder_name_dict, plot_settings)
         save_plot_data(sim_data_list_each_folder, plot_settings)
@@ -136,7 +137,10 @@ def plot(sim_data_list_each_folder, plot_settings):
     plt.legend()
     plt.ylabel(plot_settings['attr'])
     # plt.xlabel('Percentage of food that population was originally trained on')
-    plt.xlabel('Number of foods')
+    if plot_settings['varying_parameter'] == 'time_steps':
+        plt.xlabel('Number of time_steps')
+    elif plot_settings['varying_parameter'] == 'food':
+        plt.xlabel('Number of foods')
     save_name = 'response_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
     if not os.path.exists(save_folder):
@@ -197,9 +201,10 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_COPY_load_generation_100']
-    sub_critical_folder_name_list = ['sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
+    critical_folder_name_list = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
+    sub_critical_folder_name_list = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     plot_settings = {}
+    plot_settings['varying_parameter'] = 'time_steps' # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
     plot_settings['only_plot_folder_name'] = 'response_plot_20201104-122502'
     plot_settings['add_save_name'] = ''
@@ -209,6 +214,9 @@ if __name__ == '__main__':
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', 'x', '+']
     # default: 'foods_dynamic_range_run', can be specified according to pipeline_settings['add_save_file_name'], if not all prevous runs should be plotted
-    plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run'
+    if plot_settings['varying_parameter'] == 'food':
+        plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_foods'
+    elif plot_settings['varying_parameter'] == 'time_steps':
+        plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_time_step'
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
     dynamic_range_main(folder_name_dict, plot_settings)
