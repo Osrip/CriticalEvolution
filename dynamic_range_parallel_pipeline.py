@@ -170,33 +170,33 @@ if __name__=='__main__':
     '''
 
     pipeline_settings = {}
-    pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 66
+    pipeline_settings['varying_parameter'] = 'food'  # 'food'
+    pipeline_settings['cores'] = 22
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 1000
     elif pipeline_settings['varying_parameter'] == 'time_steps':
         pipeline_settings['lowest_food_percent'] = 1
-        pipeline_settings['highest_food_percent'] = 5000
+        pipeline_settings['highest_food_percent'] = 2500
     pipeline_settings['resolution'] = 50
-    pipeline_settings['add_save_file_name'] = 'first_try_'
+    pipeline_settings['add_save_file_name'] = 'load_gen_250_first_try'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
     # This loads last / highest generation from trained simulation
     pipeline_settings['load_last_generation'] = True
     # Otherwise specify generation, that shall be loaded, make sure thsi generation exists in all loaded simulations:
-    pipeline_settings['load_generation'] = 100
+    pipeline_settings['load_generation'] = 250
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
     # The following settings define the level of parallelization. Use 'parallelize_run_repeats' for low level
     # parallelization when plotting few simulations. use high level parallelization with 'parallelize_each_sim' when
     # plotting many simulations.
-    pipeline_settings['parallelize_each_sim'] = True
-    pipeline_settings['parallelize_run_repeats'] = False
+    pipeline_settings['parallelize_each_sim'] = False
+    pipeline_settings['parallelize_run_repeats'] = True
 
 
-    folder_names = ['sim-20201020-181300_parallel_TEST', 'sim-20201022-184145_parallel_TEST']
+    folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_COPY_load_generation_250']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
