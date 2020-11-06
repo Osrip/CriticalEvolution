@@ -237,7 +237,7 @@ def parse():
                         help='[0,1] Minimal amount of food in winter relative to max_food (food_num)')
     parser.add_argument('-aseas_len', dest='abrupt_seasons_len', type=int,
                         help='''Abrupt seasons - changes between summer and winter. Argument defines length of each 
-                        seasonin generations (int). When 0 abrupt seasons are switched off''')
+                        season in generations (int). When 0 abrupt seasons are switched off''')
     parser.add_argument('-rand_seas', dest='random_food_seasons', action='store_true', help='''Activates random food 
                         seasons, meaning that every generation a random amount of food is spawned''')
     parser.add_argument('-rand_seas_lim', dest='rand_food_season_limits', nargs='+', type=int, help='''Expacts blank

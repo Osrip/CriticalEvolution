@@ -106,10 +106,10 @@ def plot(sim_data_list_each_folder, plot_settings):
             list_of_avg_attr_list.append(sim_data.avg_attr_list)
             list_of_food_num_list.append(sim_data.food_num_list)
 
-        for food_num_list in list_of_food_num_list:
-            if not food_num_list == list_of_food_num_list[0]:
-                raise Exception('There seem to be files for different food numbers within the simulations of folder {}'
-                                .format(sim_data.folder_name))
+        # for food_num_list in list_of_food_num_list:
+        #     if not food_num_list == list_of_food_num_list[0]:
+        #         raise Exception('There seem to be files for different food numbers within the simulations of folder {}'
+        #                         .format(sim_data.folder_name))
 
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
@@ -201,8 +201,8 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    sub_critical_folder_name_list = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
+    critical_folder_name_list = ['sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224639_parallel_b1_fixed_4000ts_']
+    sub_critical_folder_name_list = ['sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_']
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps' # 'time_steps' or 'food'
     plot_settings['only_plot'] = False

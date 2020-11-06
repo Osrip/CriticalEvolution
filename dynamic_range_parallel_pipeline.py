@@ -170,7 +170,7 @@ if __name__=='__main__':
     '''
 
     pipeline_settings = {}
-    pipeline_settings['varying_parameter'] = 'food'  # 'food'
+    pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
     pipeline_settings['cores'] = 22
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
@@ -180,7 +180,7 @@ if __name__=='__main__':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
     pipeline_settings['resolution'] = 50
-    pipeline_settings['add_save_file_name'] = 'load_gen_250_first_try'
+    pipeline_settings['add_save_file_name'] = 'first_try'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
@@ -193,10 +193,10 @@ if __name__=='__main__':
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
     # The following settings define the level of parallelization. Use 'parallelize_run_repeats' for low level
     # parallelization when plotting few simulations. use high level parallelization with 'parallelize_each_sim' when
-    # plotting many simulations.
-    pipeline_settings['parallelize_each_sim'] = False
-    pipeline_settings['parallelize_run_repeats'] = True
+    # plotting many simulations. Both does not work at the same time
+    pipeline_settings['parallelize_each_sim'] = True
+    pipeline_settings['parallelize_run_repeats'] = False
 
 
-    folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_COPY_load_generation_250']
+    folder_names = ['sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
