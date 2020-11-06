@@ -7,6 +7,7 @@ from automatic_plot_helper import attribute_from_isings
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import choose_copied_isings
 from automatic_plot_helper import calc_normalized_fitness
+from automatic_plot_helper import load_isings_from_list
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -20,6 +21,13 @@ def main_plot_parallel_sims(folder_name, plot_settings):
     else:
         plot_settings['only_copied_str'] = '_all_orgs'
 
+    if plot_settings['only_plot_certain_generations']:
+        plot_settings['plot_generations_str'] = 'gen_{}_to_{}'\
+            .format(plot_settings['lowest_and_highest_generations_to_be_plotted'][0],
+                    plot_settings['lowest_and_highest_generations_to_be_plotted'][1])
+    else:
+        plot_settings['plot_generations_str'] = 'gen_all'
+
     if not plot_settings['only_plot']:
         attrs_lists = load_attrs(folder_name, plot_settings)
         save_plot_data(folder_name, attrs_lists, plot_settings)
@@ -30,7 +38,9 @@ def main_plot_parallel_sims(folder_name, plot_settings):
 
 def save_plot_data(folder_name, attrs_lists, plot_settings):
     save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
-    save_name = 'plot_data_{}{}_min_ts{}_min_food{}.pickle'.format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'])
+    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle'\
+        .format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
+                plot_settings['min_food_for_plot'], plot_settings['plot_generations_str'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     pickle_out = open(save_dir + save_name, 'wb')
@@ -40,7 +50,9 @@ def save_plot_data(folder_name, attrs_lists, plot_settings):
 
 def load_plot_data(folder_name, plot_settings):
     save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
-    save_name = 'plot_data_{}{}_min_ts{}_min_food{}.pickle'.format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'])
+    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle'.\
+        format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
+               plot_settings['min_food_for_plot'], plot_settings['plot_generations_str'])
     print('Load plot data from: {}{}'.format(save_dir, save_name))
     file = open(save_dir+save_name, 'rb')
     attrs_lists = pickle.load(file)
@@ -67,7 +79,10 @@ def plot(attrs_lists, plot_settings):
 
 
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}.png'.format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'], plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'])
+    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'.\
+        format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
+               plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
+               plot_settings['plot_generations_str'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -82,7 +97,14 @@ def load_attrs(folder_name, plot_settings):
     for dir in dir_list:
         sim_name = dir[(dir.rfind('save/')+5):]
         settings = load_settings(sim_name)
-        isings_list = load_isings_specific_path('{}/isings'.format(dir))
+
+        if plot_settings['only_plot_certain_generations']:
+            load_generations = np.arange(plot_settings['lowest_and_highest_generations_to_be_plotted'][0],
+                                         plot_settings['lowest_and_highest_generations_to_be_plotted'][1]+1)
+            isings_list = load_isings_from_list(sim_name, load_generations)
+        else:
+            isings_list = load_isings_specific_path('{}/isings'.format(dir))
+
 
         if plot_settings['only_copied']:
             isings_list = [choose_copied_isings(isings) for isings in isings_list]
@@ -142,10 +164,13 @@ if __name__ == '__main__':
     plot_settings['min_ts_for_plot'] = 200
     plot_settings['min_food_for_plot'] = 0
 
+    plot_settings['only_plot_certain_generations'] = True
+    plot_settings['lowest_and_highest_generations_to_be_plotted'] = [0, 1000]
+
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    folder_names = ['sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts']
+    folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)
