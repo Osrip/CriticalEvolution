@@ -54,9 +54,18 @@ def load_plot_data(folder_name, plot_settings):
         format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
                plot_settings['min_food_for_plot'], plot_settings['plot_generations_str'])
     print('Load plot data from: {}{}'.format(save_dir, save_name))
-    file = open(save_dir+save_name, 'rb')
-    attrs_lists = pickle.load(file)
-    file.close()
+    try:
+        file = open(save_dir+save_name, 'rb')
+        attrs_lists = pickle.load(file)
+        file.close()
+    except Exception:
+        if not plot_settings['only_plot_certain_generations']:
+            save_name = 'plot_data_{}{}_min_ts{}_min_food{}.pickle'. \
+                format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
+                       plot_settings['min_food_for_plot'])
+            file = open(save_dir+save_name, 'rb')
+            attrs_lists = pickle.load(file)
+            file.close()
     return attrs_lists
 
 
@@ -146,7 +155,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_food_and_ts_avg_energy' #'norm_avg_energy'
@@ -170,7 +179,8 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
+    folder_names =['sim-20201022-184145_parallel_TEST']
+    #folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)
