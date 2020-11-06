@@ -151,10 +151,17 @@ def run_repeat(num_foods, settings, pipeline_settings):
     elif pipeline_settings['varying_parameter'] == 'food':
         settings['food_num'] = num_foods
 
+    if pipeline_settings['load_last_generation']:
+        generation = 'last'
+    else:
+        generation = pipeline_settings['load_generation']
+
     if pipeline_settings['varying_parameter'] == 'food':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}_gen_{}'\
+            .format(pipeline_settings['add_save_file_name'], num_foods, generation)
     elif pipeline_settings['varying_parameter'] == 'time_steps':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}_gen_{}'\
+            .format(pipeline_settings['add_save_file_name'], num_foods, generation)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
@@ -198,5 +205,5 @@ if __name__=='__main__':
     pipeline_settings['parallelize_run_repeats'] = False
 
 
-    folder_names = ['sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_']
+    folder_names = ['sim-20201020-181300_parallel_TEST']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
