@@ -15,6 +15,7 @@ from run_combi import RunCombi
 import numpy as np
 
 
+
 def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
     for folder_name in folder_names:
         sim_names = all_sim_names_in_parallel_folder(folder_name)
@@ -157,11 +158,11 @@ def run_repeat(num_foods, settings, pipeline_settings):
         generation = pipeline_settings['load_generation']
 
     if pipeline_settings['varying_parameter'] == 'food':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}_gen_{}'\
-            .format(pipeline_settings['add_save_file_name'], num_foods, generation)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_gen_{}_foods_{}'\
+            .format(pipeline_settings['add_save_file_name'], generation, num_foods,)
     elif pipeline_settings['varying_parameter'] == 'time_steps':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}_gen_{}'\
-            .format(pipeline_settings['add_save_file_name'], num_foods, generation)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_gen_{}_time_step_{}'\
+            .format(pipeline_settings['add_save_file_name'], generation, num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
@@ -178,7 +179,7 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 22
+    pipeline_settings['cores'] = 83
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
@@ -186,24 +187,25 @@ if __name__=='__main__':
     elif pipeline_settings['varying_parameter'] == 'time_steps':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
-    pipeline_settings['resolution'] = 50
-    pipeline_settings['add_save_file_name'] = 'first_try'
+    pipeline_settings['resolution'] = 20
+    pipeline_settings['add_save_file_name'] = 'load_gen_2000_res_20_3rd_try'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
     # This loads last / highest generation from trained simulation
-    pipeline_settings['load_last_generation'] = True
+    pipeline_settings['load_last_generation'] = False
     # Otherwise specify generation, that shall be loaded, make sure thsi generation exists in all loaded simulations:
-    pipeline_settings['load_generation'] = 250
+    pipeline_settings['load_generation'] = 2000
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
     # The following settings define the level of parallelization. Use 'parallelize_run_repeats' for low level
     # parallelization when plotting few simulations. use high level parallelization with 'parallelize_each_sim' when
-    # plotting many simulations. Both does not work at the same time
+    # plotting many simulations. Both does not work at the same time. 'parallelize_each_sim' particularly recommended
+    # when varying time steps
     pipeline_settings['parallelize_each_sim'] = True
     pipeline_settings['parallelize_run_repeats'] = False
 
 
-    folder_names = ['sim-20201020-181300_parallel_TEST']
+    folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)

@@ -253,7 +253,7 @@ def load_isings_from_list(loadfile, iter_list, wait_for_memory = False):
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
     :param iter_list : list of ints specifying generations to load isings from
-    '''
+    741'''
     if wait_for_memory:
         wait_for_enough_memory(loadfile)
 

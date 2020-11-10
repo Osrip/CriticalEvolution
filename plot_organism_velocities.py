@@ -1,6 +1,7 @@
 from automatic_plot_helper import load_isings_from_list
 from automatic_plot_helper import load_isings_attributes_from_list
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import detect_all_isings
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -179,9 +180,16 @@ if __name__ == '__main__':
     sim_name = 'sim-20201003-000428-g_4000_-t_2000_-rec_c_1000_-c_props_100_50_-2_2_100_40_-iso_-ref_1000_-c_4_-a_1000_2000_3999_-no_trace_-n_different_betas_2000_fixed_ts_3_COMPARE_and_DYNAMIC_RANGE_FOOD_TS'
     sim_name = 'sim-20201022-175746-g_1_-energies_0_-t_120000_-li_1999_-l_sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts/sim-20201019-153952-b_10_-g_2000_-t_4000_-noplt_-subfolder_sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts_-n_Run_3_-n_life_time_analysis'
     sim_name = 'sim-20201026-224709_parallel_b10_fixed_4000ts_/sim-20201026-224711-b_10_-g_8000_-t_4000_-rec_c_2000_-c_props_10_10_-2_2_100_40_-c_1_-subfolder_sim-20201026-224709_parallel_b10_fixed_4000ts_-n_Run_1'
+    sim_name = 'sim-20201026-224709_parallel_b10_fixed_4000ts_/sim-20201026-224711-b_10_-g_8000_-t_4000_-rec_c_2000_-c_props_10_10_-2_2_100_40_-c_1_-subfolder_sim-20201026-224709_parallel_b10_fixed_4000ts_-n_Run_1'
     win_size = 2000#500#2000#500
     settings = load_settings(sim_name)
     generations = settings['save_energies_velocities_gens'] #np.arange(1990, 2000)
+    last_gen = detect_all_isings(sim_name)[-1]
+    # For last generation velocties are always saved
+    if type(generations) is list:
+        generations.append(last_gen)
+    else:
+        generations = [last_gen]
     inds = np.arange(10)
     #inds = [0]
     main(sim_name, list_attr, generations, inds, win_size)
