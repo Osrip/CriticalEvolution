@@ -103,15 +103,15 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr):
 
 if __name__ == '__main__':
 
-    folder_name = 'sim-20201020-181300_parallel_TEST'
+    folder_name = 'sim-20201110-215648_parallel_parallel_test'#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
 
     plot_settings = {}
 
 
-    plot_settings['include_name'] = 'foods_first_try_dynamic_range_run_time_step'
+    plot_settings['include_name'] = 'ydynamic_range_run_gen_last_time_'#'100foods_load_gen_3999_dynamic_range_run_time_step'
     # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
     # Either the largest number is plotted or a specific number is plotted
-    plot_settings['plot_largest_varying_number'] = False
+    plot_settings['plot_largest_varying_number'] = True
     plot_settings['plot_varying_number'] = 5
     # TODO: only copied könnte Probleme, geben, da 1. Generation...
     plot_settings['only_copied_isings'] = True

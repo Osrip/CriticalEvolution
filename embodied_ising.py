@@ -1324,7 +1324,8 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 #  Delete unnecessary information before saving isings to cut down on memory
                 for I in isings_copy:
 
-                    I.energies = []
+                    if not save_energies_velocities:
+                        I.energies = []
                     I.cumulative_int_energy_vec = np.array([])
                     I.cumulative_int_energy_vec_quad = np.array([])
                     #I.beta_vec = np.array([])

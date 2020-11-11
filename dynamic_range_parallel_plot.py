@@ -208,7 +208,7 @@ if __name__ == '__main__':
     plot_settings['only_plot'] = False
     plot_settings['only_plot_folder_name'] = 'response_plot_20201104-122502'
     plot_settings['add_save_name'] = ''
-    plot_settings['only_copied'] = False
+    plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     # This setting defines the markers, which are used in the order that the folder names are listed
