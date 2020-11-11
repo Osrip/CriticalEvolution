@@ -41,6 +41,7 @@ import subprocess
 #from pympler import tracker
 import visualize_in_model_natural_heat_capacity
 import ray
+import gzip
 
 from speciation import speciation
 from speciation import calculate_shared_fitness
@@ -2016,9 +2017,12 @@ def save_sim_season_pipeline(settings, folder, isings, fitness_stat, mutationrat
 
     filenameI = "{}/gen[{}]-isings.pickle".format(dir_in_old_sim, gen) #  command_input
 
-    pickle_out = open(filenameI, 'wb')
-    pickle.dump(isings, pickle_out)
-    pickle_out.close()
+    if settings['compress_save_isings']:
+        compressed_pickle(filenameI, isings)
+    else:
+        pickle_out = open(filenameI, 'wb')
+        pickle.dump(isings, pickle_out)
+        pickle_out.close()
 
     # if settings['dynamic_range_pipeline'] and gen == 0:
     #     filename = '{}/food_num.pickle'.format(dir_in_old_sim)
@@ -2043,9 +2047,17 @@ def save_sim(settings, folder, isings, fitness_stat, mutationrate, fitC, fitm, g
         mutationh = None
         mutationJ = None
 
-    pickle_out = open(filenameI, 'wb')
-    pickle.dump(isings, pickle_out)
-    pickle_out.close()
+    if settings['compress_save_isings']:
+        compressed_pickle(filenameI, isings)
+    else:
+        pickle_out = open(filenameI, 'wb')
+        pickle.dump(isings, pickle_out)
+        pickle_out.close()
+
+
+def compressed_pickle(title, data):
+    with gzip.GzipFile(title + '.pgz', 'w') as f:
+        pickle.dump(data, f)
 
 
 def sigmoid(x):

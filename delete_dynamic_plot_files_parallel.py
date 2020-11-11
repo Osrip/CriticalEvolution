@@ -17,7 +17,7 @@ def delete_main(delete_settings):
             except FileNotFoundError:
                 pass
 
-            # !!! THIS DEFINES THE DELETION CRITERIUM!!!"
+
             # files_to_delete = [f for f in listdir(repeated_dir) if isfile(join(repeated_dir, f)) and f.endswith('2000')]
 
 
@@ -30,8 +30,9 @@ def delete(dir):
     delete_file_dirs = []
     for folder_name in os.listdir(dir):
         folder_dir = os.path.join(dir, folder_name)
-        if folder_name.endswith('gen_2000') or (folder_name.endswith('2000') and '3rd_trydynami' in folder_name):
-            # if 'oods_first_try_dynamic' in folder_name:
+        # !!! THIS DEFINES THE DELETION CRITERIUM!!!"
+        # if folder_name.endswith('gen_2000') or (folder_name.endswith('2000') and '3rd_trydynami' in folder_name):
+        if 'load_gen_3999_with_energies_saved_' in folder_name:
             print('Deleting {}'.format(folder_dir))
 
             shutil.rmtree(folder_dir)

@@ -163,6 +163,8 @@ def create_settings():
 
     settings['save_energies_velocities_gens'] = args.save_energies_velocities_gens
     settings['save_energies_velocities_last_gen'] = args.save_energies_velocities_last_gen
+
+    settings['compress_save_isings'] = args.compress_save_isings
     Iterations = args.iterations
 
 
@@ -325,6 +327,8 @@ def parse():
     parser.add_argument('-no_energies_last_gen', dest='save_energies_velocities_last_gen', action='store_false',
                         help='By default energies and verlocities during the lifetime of each organism are'
                              'saved for the last generation of the simulation. This argument can switch that off.')
+    parser.add_argument('-compress', dest='compress_save_isings', action='store_true',
+                        help='Compress pickle files when saving ising objects')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -340,7 +344,7 @@ def parse():
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
-                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12)
+                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False)
     args = parser.parse_args()
     return args
 

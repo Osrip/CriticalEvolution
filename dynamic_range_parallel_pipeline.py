@@ -85,6 +85,8 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     settings['plot'] = False
     settings['save_energies_velocities_last_gen'] = False
 
+    settings['compress_save_isings'] = pipeline_settings['compress_save_isings']
+
     return settings
 
 
@@ -151,24 +153,22 @@ def run_repeat_remote(num_foods, settings, pipeline_settings, food_num_arr, orig
     train.run(settings, Iterations)
 
 # Exact copy of run_repeat_remote but without ray.remote decorator
-def run_repeat(num_foods, settings, pipeline_settings):
+def run_repeat(num_foods, settings, pipeline_settings, food_num_arr, original_mean_food_num):
 
     if pipeline_settings['varying_parameter'] == 'time_steps':
         settings['TimeSteps'] = num_foods
+        # Activate saving of energies and velocities during life time for simulation with similar varying param as
+        # original simulation and for largest varying param
+        if num_foods == original_mean_food_num or num_foods == np.max(food_num_arr):
+            settings['save_energies_velocities_last_gen'] = True
+        print(num_foods)
     elif pipeline_settings['varying_parameter'] == 'food':
         settings['food_num'] = num_foods
 
-    if pipeline_settings['load_last_generation']:
-        generation = 'last'
-    else:
-        generation = pipeline_settings['load_generation']
-
     if pipeline_settings['varying_parameter'] == 'food':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_gen_{}_foods_{}'\
-            .format(pipeline_settings['add_save_file_name'], generation, num_foods,)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_foods_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
     elif pipeline_settings['varying_parameter'] == 'time_steps':
-        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_gen_{}_time_step_{}'\
-            .format(pipeline_settings['add_save_file_name'], generation, num_foods)
+        settings['dynamic_range_pipeline_save_name'] = '{}dynamic_range_run_time_step_{}'.format(pipeline_settings['add_save_file_name'], num_foods)
     Iterations = pipeline_settings['num_repeats']
     train.run(settings, Iterations)
 
@@ -185,7 +185,7 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 42
+    pipeline_settings['cores'] = 22
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
@@ -194,7 +194,7 @@ if __name__=='__main__':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
     pipeline_settings['resolution'] = 20
-    pipeline_settings['add_save_file_name'] = 'load_gen_300_with_energies_saved_'
+    pipeline_settings['add_save_file_name'] = 'energies_saved_orig_and_last_compressed'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
@@ -212,6 +212,8 @@ if __name__=='__main__':
     pipeline_settings['parallelize_each_sim'] = True
     pipeline_settings['parallelize_run_repeats'] = False
 
-    folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
+    pipeline_settings['compress_save_isings'] = True
+    # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
+    folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)

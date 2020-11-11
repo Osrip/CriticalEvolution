@@ -9,6 +9,7 @@ from pathlib import Path
 import time
 import warnings
 import operator
+import gzip
 
 '''
 This is a library with useful functions to load ising objects and extract information from them.
@@ -222,12 +223,45 @@ def load_isings_specific_path(isings_path):
             file = open(filename, 'rb')
             isings = pickle.load(file)
             file.close()
+            isings_list.append(isings)
         except Exception:
             print("Error while loading %s. Skipped file" % filename)
             # Leads to the previous datapoint being drawn twice!!
 
-        isings_list.append(isings)
+
     return isings_list
+
+
+def load_isings_specific_path_decompress(isings_path):
+    '''
+    Load all isings pickle files from a specific isings folder (when they are not normally stored and return them as list
+    :param isings_path : specific path to folder that ising objects are saved in
+    '''
+
+    iter_list = detect_all_isings_compressed_specific_path(isings_path)
+
+    isings_list = []
+    for ii, iter in enumerate(iter_list):
+        filename = isings_path + '/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+
+        # try:
+        isings = decompress_pickle(filename)
+        isings_list.append(isings)
+        # except Exception:
+        #     print("Error while loading %s. Skipped file" % filename)
+        #     # Leads to the previous datapoint being drawn twice!!
+
+
+    return isings_list
+
+
+
+def decompress_pickle(file):
+    data = gzip.GzipFile(file +  '.pgz', 'rb')
+    data = pickle.load(data)
+    return data
 
 
 def detect_all_isings_specific_path(isings_path):
@@ -239,6 +273,24 @@ def detect_all_isings_specific_path(isings_path):
     curdir = os.getcwd()
     mypath = curdir + '/{}/'.format(isings_path)
     all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle')]
+    gen_nums = []
+    for name in all_isings:
+        i_begin = name.find('[') + 1
+        i_end = name.find(']')
+        gen_nums.append(int(name[i_begin:i_end]))
+    gen_nums = np.sort(gen_nums)
+    return gen_nums
+
+
+def detect_all_isings_compressed_specific_path(isings_path):
+    '''
+    Creates iter_list
+    detects the ising generations in the isings folder
+    :param isings_path : specific path to folder that ising objects are saved in
+    '''
+    curdir = os.getcwd()
+    mypath = curdir + '/{}/'.format(isings_path)
+    all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle.pgz')]
     gen_nums = []
     for name in all_isings:
         i_begin = name.find('[') + 1
