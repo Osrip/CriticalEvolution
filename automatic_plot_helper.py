@@ -368,13 +368,38 @@ def wait_for_enough_memory(sim_name):
                  trying to plot now anyways hoping for enough swap space.'''.format(max_waited_seconds))
                 break
 
+# OLD FUNCTION:
+# def all_folders_in_dir_with(dir, including_name):
+#     directory_list = list()
+#     for root, dirs, files in os.walk(dir, topdown=False):
+#         for name in dirs:
+#             if including_name in name:
+#                 directory_list.append(os.path.join(root, name))
+#     return directory_list
 
 def all_folders_in_dir_with(dir, including_name):
-    directory_list = list()
-    for root, dirs, files in os.walk(dir, topdown=False):
-        for name in dirs:
-            if including_name in name:
-                directory_list.append(os.path.join(root, name))
+    '''
+    including name can either be list of str or list
+    Returns directory of all folders with including_name in the folder name
+    or if including name is a list with all strings specified in the list in the folder name
+    '''
+    if type(including_name) == str:
+        directory_list = list()
+        for root, dirs, files in os.walk(dir, topdown=False):
+            for name in dirs:
+                if including_name in name:
+                    directory_list.append(os.path.join(root, name))
+    elif type(including_name) == list:
+        including_names = including_name
+        directory_list = list()
+        for root, dirs, files in os.walk(dir, topdown=False):
+            for name in dirs:
+                boo_list = []
+                for including_name in including_names:
+                    boo_list.append(including_name in name)
+                if all(boo_list):
+                    directory_list.append(os.path.join(root, name))
+
     return directory_list
 
 
