@@ -67,6 +67,7 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
 
     if pipeline_settings['load_last_generation']:
         settings['iter'] = detect_all_isings(complete_sim_folder)[-1]
+        pipeline_settings['load_generation'] = detect_all_isings(complete_sim_folder)[-1]
     else:
         settings['iter'] = pipeline_settings['load_generation']
     settings['LoadIsings'] = True
@@ -82,6 +83,7 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     settings['plot_pipeline'] = False
     # switches off animation:
     settings['plot'] = False
+    settings['save_energies_velocities_last_gen'] = False
 
     return settings
 
@@ -121,18 +123,22 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
 
     if pipeline_settings['parallelize_run_repeats']:
         ray.init(num_cpus=pipeline_settings['cores']) #, ignore_reinit_error=True
-        ray_funcs = [run_repeat_remote.remote(food_num, settings, pipeline_settings) for food_num in food_num_arr]
+        ray_funcs = [run_repeat_remote.remote(food_num, settings, pipeline_settings, food_num_arr, original_mean_food_num) for food_num in food_num_arr]
         ray.get(ray_funcs)
         ray.shutdown()
     else:
-        [run_repeat(food_num, settings, pipeline_settings) for food_num in food_num_arr]
+        [run_repeat(food_num, settings, pipeline_settings, food_num_arr, original_mean_food_num) for food_num in food_num_arr]
     # run_repeat(20, settings, pipeline_settings)
 
 @ray.remote
-def run_repeat_remote(num_foods, settings, pipeline_settings):
+def run_repeat_remote(num_foods, settings, pipeline_settings, food_num_arr, original_mean_food_num):
 
     if pipeline_settings['varying_parameter'] == 'time_steps':
         settings['TimeSteps'] = num_foods
+        # Activate saving of energies and velocities during life time for simulation with similar varying param as
+        # original simulation and for largest varying param
+        if num_foods == original_mean_food_num or num_foods == np.max(food_num_arr):
+            settings['save_energies_velocities_last_gen'] = True
         print(num_foods)
     elif pipeline_settings['varying_parameter'] == 'food':
         settings['food_num'] = num_foods

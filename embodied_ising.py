@@ -1260,7 +1260,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
                 save_energies_velocities = True
                 for I in isings:
                     I.velocities = []
-        elif rep == Iterations-1:
+        elif (rep == Iterations-1) and settings['save_energies_velocities_last_gen']:
             save_energies_velocities = True
             for I in isings:
                 I.velocities = []

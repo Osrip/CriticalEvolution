@@ -162,6 +162,7 @@ def create_settings():
     settings['isolated_populations'] = args.isolated_populations
 
     settings['save_energies_velocities_gens'] = args.save_energies_velocities_gens
+    settings['save_energies_velocities_last_gen'] = args.save_energies_velocities_last_gen
     Iterations = args.iterations
 
 
@@ -321,6 +322,9 @@ def parse():
     parser.add_argument('-energies', dest='save_energies_velocities_gens', nargs='+', type=int, help='''Expects blank seperated list of 
                         generation numbers, that energies and velocities dhall be saved for. This means, that the velocity
                         and energy of each organism is saved for each time_step''')
+    parser.add_argument('-no_energies_last_gen', dest='save_energies_velocities_last_gen', action='store_false',
+                        help='By default energies and verlocities during the lifetime of each organism are'
+                             'saved for the last generation of the simulation. This argument can switch that off.')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -335,7 +339,7 @@ def parse():
                         delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
-                        save_energies_velocities_gens=None, random_time_steps_power_law=False,
+                        save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
                         random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12)
     args = parser.parse_args()
     return args

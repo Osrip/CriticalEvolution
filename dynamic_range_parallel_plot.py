@@ -201,8 +201,8 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201026-224639_parallel_b1_fixed_4000ts_'] #['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']
-    sub_critical_folder_name_list = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
+    critical_folder_name_list = ['sim-20201022-184145_parallel_TEST']#['sim-20201026-224639_parallel_b1_fixed_4000ts_'] #['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']
+    sub_critical_folder_name_list = ['sim-20201022-184145_parallel_TEST'] #['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps' # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
@@ -217,6 +217,6 @@ if __name__ == '__main__':
     if plot_settings['varying_parameter'] == 'food':
         plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_foods'
     elif plot_settings['varying_parameter'] == 'time_steps':
-        plot_settings['dynamic_range_folder_name_includes'] = 'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#'dynamic_range_run_time_step'
+        plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_time_step' #'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
     dynamic_range_main(folder_name_dict, plot_settings)

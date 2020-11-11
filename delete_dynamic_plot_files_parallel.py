@@ -3,6 +3,7 @@ from automatic_plot_helper import subfolders_in_folder
 import os
 from os import listdir
 from os.path import isfile, join
+import shutil
 
 
 def delete_main(delete_settings):
@@ -26,11 +27,15 @@ def delete_main(delete_settings):
 
 
 def delete(dir):
+    delete_file_dirs = []
     for folder_name in os.listdir(dir):
         folder_dir = os.path.join(dir, folder_name)
-        # if folder_name.endswith('gen_2000') or (folder_name.endswith('2000') and '3rd_trydynami' in folder_name ):
-        if 'oods_first_try_dynamic' in folder_name:
+        if folder_name.endswith('gen_2000') or (folder_name.endswith('2000') and '3rd_trydynami' in folder_name):
+            # if 'oods_first_try_dynamic' in folder_name:
             print('Deleting {}'.format(folder_dir))
+
+            shutil.rmtree(folder_dir)
+
 
 
 if __name__ == '__main__':
