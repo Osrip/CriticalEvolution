@@ -379,6 +379,7 @@ def wait_for_enough_memory(sim_name):
 
 def all_folders_in_dir_with(dir, including_name):
     '''
+    Lists all subfolders (also subsubfolders, subsubsubfolders, ...)
     including name can either be list of str or list
     Returns directory of all folders with including_name in the folder name
     or if including name is a list with all strings specified in the list in the folder name
@@ -401,6 +402,28 @@ def all_folders_in_dir_with(dir, including_name):
                     directory_list.append(os.path.join(root, name))
 
     return directory_list
+
+
+def subfolders_in_folder(dir, inluding_strs):
+    '''
+    Lists all immediate subfolders (not subsubfolders) in dir, that include all strings specified in list including strs
+    @return: directories of these subfolders
+    '''
+    # next(os.walk('.'))[1]
+    # subdirs = [os.path.join(d, o) for o in os.listdir(d) if os.path.isdir(os.path.join(d,o))]
+
+    sub_folder_dirs = []
+    sub_folder_names = []
+    for folder_name in os.listdir(dir):
+        folder_dir = os.path.join(dir, folder_name)
+        boo_list = []
+        for including_str in inluding_strs:
+            boo_list.append(including_str in folder_name)
+        if all(boo_list) and os.path.isdir(folder_dir):
+            sub_folder_dirs.append(folder_dir)
+            # sub_folder_names.append(folder_name)
+
+    return sub_folder_dirs
 
 
 def choose_copied_isings(isings):
