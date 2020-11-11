@@ -7,6 +7,7 @@ from automatic_plot_helper import load_settings
 import copy
 import pandas as pd
 import glob
+# import _pickle as pickle
 import pickle
 from run_combi import RunCombi
 import matplotlib.pylab as plt
@@ -219,4 +220,9 @@ if __name__ == '__main__':
     elif plot_settings['varying_parameter'] == 'time_steps':
         plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_time_step' #'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
+
+    t1 = time.time()
     dynamic_range_main(folder_name_dict, plot_settings)
+
+    t2 = time.time()
+    print('total time:', t2-t1)
