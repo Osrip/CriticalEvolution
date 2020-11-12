@@ -125,16 +125,18 @@ def plot(sim_data_list_each_folder, plot_settings):
 
         marker = plot_settings['marker'][sim_data.folder_num_in_key]
         color = plot_settings['color'][sim_data.key]
-
-
-
         # Plot each simulation
         plt.scatter(list_of_food_num_list, list_of_avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
+        # Connect each simulation datapoint with lines
         for food_num_list, avg_attr_list in zip(list_of_food_num_list, list_of_avg_attr_list):
             plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.2, linewidth=0.3)
+
         # Plot averages of each folder
         plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=10, alpha=1,
                     label=sim_data.folder_name)
+
+        # Label each simulation:
+        
 
     plt.legend()
     plt.ylabel(plot_settings['attr'])
@@ -160,6 +162,7 @@ def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
         ordered_order_list.append(list(order_list[order]))
         ordered_second_list.append(list(second_list[order]))
     return ordered_order_list, ordered_second_list
+
 
 def load_data(sim_name, folder_name, plot_settings):
     sim_dir = 'save/{}'.format(sim_name)
@@ -206,8 +209,8 @@ def make_2d_list_1d(in_list):
 
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-184145_parallel_TEST_repeated']#['sim-20201026-224639_parallel_b1_fixed_4000ts_'] #['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']
-    sub_critical_folder_name_list = ['sim-20201022-184145_parallel_TEST_repeated'] #['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
+    critical_folder_name_list = ['sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']#['sim-20201026-224639_parallel_b1_fixed_4000ts_'] #['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']
+    sub_critical_folder_name_list = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900'] #['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps' # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
@@ -218,12 +221,12 @@ if __name__ == '__main__':
     plot_settings['color'] = {'critical': 'darkorange', 'sub_critical': 'royalblue', 'super_critical': 'maroon'}
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', 'x', '+']
-    plot_settings['compress_save_isings'] = False
+    plot_settings['compress_save_isings'] = True
     # default: 'foods_dynamic_range_run', can be specified according to pipeline_settings['add_save_file_name'], if not all prevous runs should be plotted
     if plot_settings['varying_parameter'] == 'food':
         plot_settings['dynamic_range_folder_name_includes'] = 'dynamic_range_run_foods'
     elif plot_settings['varying_parameter'] == 'time_steps':
-        plot_settings['dynamic_range_folder_name_includes'] = 'no_compress_test_no2' #'dynamic_range_run_time_step' #'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#
+        plot_settings['dynamic_range_folder_name_includes'] = 'gen3999_100foods_energies_saved_compressed_try_2' #'dynamic_range_run_time_step' #'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#
     folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
 
     t1 = time.time()
