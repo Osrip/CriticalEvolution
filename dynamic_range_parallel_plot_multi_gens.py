@@ -57,15 +57,18 @@ def dynamic_range_main(folder_name_dict, plot_settings):
 
 def prepare_data(folder_name_dict, plot_settings):
 
-
     sim_data_list_each_folder = []
+    # All folder list dicts (sub critical or critical?)
     for key in folder_name_dict:
-        folder_name_list = folder_name_dict[key]
-        for dynamic_range_folder_includes_index, dynamic_range_folder_includes\
-                in enumerate(plot_settings['dynamic_range_folder_includes_list']):
-            for folder_num_in_key, folder_name in enumerate(folder_name_list):
+        folder_name_includes_dict = folder_name_dict[key]
+        # Iteration through all folder names
+        for folder_num_in_key, folder_name in enumerate(folder_name_includes_dict):
+            dynamic_range_folder_includes_list = folder_name_includes_dict[folder_name]
+            # Iterationg through all "dynamic_range_folder_includes", so basically through each specified run of the dynamic_range_pipeline
+            for dynamic_range_folder_includes_index, dynamic_range_folder_includes in enumerate(dynamic_range_folder_includes_list):
                 sim_names = all_sim_names_in_parallel_folder(folder_name)
                 attrs_food_num_lists_each_sim = []
+                # Iterating through each simulation
                 for sim_name in sim_names:
                     attrs_list_each_food_num_all, food_num_list = load_data(sim_name, folder_name,
                                                                             dynamic_range_folder_includes, plot_settings)
@@ -74,6 +77,7 @@ def prepare_data(folder_name_dict, plot_settings):
                                                     dynamic_range_folder_includes, dynamic_range_folder_includes_index)
                     attrs_food_num_lists_each_sim.append(sim_data)
                 sim_data_list_each_folder.append(attrs_food_num_lists_each_sim)
+
     return sim_data_list_each_folder
 
 
@@ -151,14 +155,14 @@ def plot(sim_data_list_each_folder, plot_settings):
         plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=10, alpha=1,
                     label='{}_{}_{}'.format(sim_data.key, sim_data.folder_name, sim_data.dynamic_range_folder_includes))
 
-    # Label each simulation:
-    for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
-        label = sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:] # TODO check whether this is run number!
-        x_offset = 0
-        y_offset = 0
-        coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
+        # Label each simulation:
+        for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
+            label = sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:] # TODO check whether this is run number!
+            x_offset = 0
+            y_offset = 0
+            coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
-        plt.text(coordinates[0], coordinates[1], 'Simulation {}'.format(label), fontsize=7)
+            plt.text(coordinates[0], coordinates[1], 'Simulation {}'.format(label), fontsize=3, c = color)
 
     plt.legend()
     plt.ylabel(plot_settings['attr'])
@@ -171,7 +175,7 @@ def plot(sim_data_list_each_folder, plot_settings):
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
-    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=150)
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
 
 
 def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
@@ -234,8 +238,16 @@ def find_number_after_char_in_str(str, char):
         return match.group(1)
 
 if __name__ == '__main__':
-    critical_folder_name_list = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']  #['sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']#['sim-20201026-224639_parallel_b1_fixed_4000ts_'] #['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900']
-    sub_critical_folder_name_list = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']  #['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900'] #['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
+    # In these dicts all folders, with parallel runs, that shall be loaded must be specified as keys.
+    # The entry of each key is a list of all "dynamic_range_folder_includes", which is a string for each run of the
+    # dynamic_range_parallel_pipline. This string is a characteristic substring of the folder name of the runs that
+    # shall be loaded in the dynamic range folder of each simulation
+    critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
+                                     ['gen100_100foods_energies_saved_compressed_try_2', 'gen3999_100foods_energies_saved_compressed_try_2']}
+    sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
+                                         ['gen3999_100foods_energies_saved_compressed_try_2']}
+    critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
+    sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
@@ -252,14 +264,8 @@ if __name__ == '__main__':
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', 'x', '+']
     plot_settings['compress_save_isings'] = True
-    # default: 'foods_dynamic_range_run', can be specified according to pipeline_settings['add_save_file_name'], if not all prevous runs should be plotted
-    if plot_settings['varying_parameter'] == 'food':
-        plot_settings['dynamic_range_folder_includes_list'] = ['dynamic_range_run_foods']
-    elif plot_settings['varying_parameter'] == 'time_steps':
-        plot_settings['dynamic_range_folder_includes_list'] = ['gen300_100foods_energies_saved_compressed_try_2',
-                                                               'gen3999_100foods_energies_saved_compressed_try_2',
-                                                               'gen1000_100foods_energies_saved_compressed_try_2'] #'dynamic_range_run_time_step' #'repeat_isings_gen3999_100foods_load_gen_3999_dynamic_range_run_time_step'#
-    folder_name_dict = {'critical': critical_folder_name_list, 'sub_critical': sub_critical_folder_name_list}
+
+    folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
     t1 = time.time()
 
