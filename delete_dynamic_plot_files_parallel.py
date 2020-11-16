@@ -34,7 +34,7 @@ def delete(dir):
         # if folder_name.endswith('gen_2000') or (folder_name.endswith('2000') and '3rd_trydynami' in folder_name):
         if 'load_gen_3999_with_energies_saved_' in folder_name:
             print('Deleting {}'.format(folder_dir))
-
+            # This is the deletion command:
             shutil.rmtree(folder_dir)
 
 
