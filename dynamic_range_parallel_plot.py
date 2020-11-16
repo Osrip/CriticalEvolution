@@ -113,6 +113,8 @@ def plot(sim_data_list_each_folder, plot_settings):
         #         raise Exception('There seem to be files for different food numbers within the simulations of folder {}'
         #                         .format(sim_data.folder_name))
 
+
+
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
 
@@ -135,8 +137,14 @@ def plot(sim_data_list_each_folder, plot_settings):
         plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=10, alpha=1,
                     label=sim_data.folder_name)
 
-        # Label each simulation:
-        
+    # Label each simulation:
+    for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
+        label = sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
+        x_offset = 0
+        y_offset = 0
+        coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
+
+        plt.text(coordinates[0], coordinates[1], 'Simulation {}'.format(label), fontsize=7)
 
     plt.legend()
     plt.ylabel(plot_settings['attr'])
@@ -198,8 +206,6 @@ def get_int_end_of_str(s):
     return int(m.group()) if m else None
 
 
-
-
 def make_2d_list_1d(in_list):
     out_list = []
     for sub_list in in_list:
@@ -213,8 +219,8 @@ if __name__ == '__main__':
     sub_critical_folder_name_list = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900'] #['sim-20201026-224709_parallel_b10_fixed_4000ts_']# ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps' # 'time_steps' or 'food'
-    plot_settings['only_plot'] = False
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201104-122502'
+    plot_settings['only_plot'] = True
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201112-174753_time_steps_2000ts_fixed_gen_3999'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
