@@ -190,6 +190,10 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         if plot_settings['plot_means']:
             plt.scatter(list_of_food_num_list[0], avg_of_avg_attr_list, marker=marker, c=color, s=10, alpha=1,
                         label='{}_{}_{}'.format(sim_data.key, sim_data.folder_name, sim_data.dynamic_range_folder_includes))
+        else:
+            # If switched off just plot empty list for the legend labels
+            plt.scatter([], [], marker=marker, c=color, s=10, alpha=1,
+                        label='{}_{}_{}'.format(sim_data.key, sim_data.folder_name, sim_data.dynamic_range_folder_includes))
 
         # Label each simulation:
         if label_each_sim:
@@ -267,16 +271,16 @@ if __name__ == '__main__':
     # dynamic_range_parallel_pipline. This string is a characteristic substring of the folder name of the runs that
     # shall be loaded in the dynamic range folder of each simulation
     critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
-                                     ['gen100_100foods_energies_saved_compressed_try_2', 'gen3999_100foods_energies_saved_compressed_try_2']}
+                                     ['gen300_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
     sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
-                                         ['gen3999_100foods_energies_saved_compressed_try_2']}
-    critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
-    sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
+                                         ['gen1000_100foods_energies_saved_compressed_try_2']}
+    # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
+    # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
-    plot_settings['only_plot'] = True
+    plot_settings['only_plot'] = False
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130704_time_steps_2000ts_fixed_CritGen100_1000_SubCritGen3999'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130940_time_steps_2000ts_fixed_CritGen300_3999_SubCritGen3999'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'

@@ -23,7 +23,7 @@ def main(folder_name, plot_settings):
     for run_num_key in isings_dict_each_sim:
         isings = isings_dict_each_sim[run_num_key]
         for i, I in enumerate(isings):
-            fig_name = '{}_{}_rand_org_num{}'.format(folder_name, run_num_key, i)
+            fig_name = '{}_Includes_{}_{}_rand_org_num{}'.format(folder_name, plot_settings['include_name'], run_num_key, i)
             fig = plt.figure(figsize=(24, 10))
             fig.suptitle(fig_name)
             plot_velocities_and_energies(I.energies, I.velocities)
@@ -108,12 +108,12 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr):
 if __name__ == '__main__':
 
     # folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
-    folder_names = []
+    folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
     for folder_name in folder_names:
         plot_settings = {}
 
 
-        plot_settings['include_name'] = 'gen3999_100foods_energies_saved_compressed_try_2'#'100foods_load_gen_3999_dynamic_range_run_time_step'
+        plot_settings['include_name'] = 'gen300_100foods_energies_saved_compressed_try_2'
         # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
         # Either the largest number is plotted or a specific number is plotted
         plot_settings['plot_largest_varying_number'] = False
