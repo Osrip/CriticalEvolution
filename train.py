@@ -11,6 +11,7 @@ import automatic_plotting
 import pickle
 import time
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import decompress_pickle
 
 
 
@@ -390,9 +391,12 @@ def run(settings, Iterations):
             #pop size of current simulation is taken from loaded simulation
             settings['pop_size'] = prev_settings['pop_size']
         print(startstr)
-        file = open(loadfile, 'rb')
-        isings = pickle.load(file)
-        file.close()
+        try:
+            file = open(loadfile, 'rb')
+            isings = pickle.load(file)
+            file.close()
+        except FileNotFoundError:
+            isings = decompress_pickle(loadfile)
 
         if settings['speciation']:
             for I in isings:
