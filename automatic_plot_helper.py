@@ -24,6 +24,11 @@ def detect_all_isings(sim_name):
     curdir = os.getcwd()
     mypath = curdir + '/save/{}/isings/'.format(sim_name)
     all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle')]
+
+    # This has been added to look for compressed files:
+    if len(all_isings) == 0:
+        all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle.pgz')]
+
     gen_nums = []
     for name in all_isings:
         i_begin = name.find('[') + 1

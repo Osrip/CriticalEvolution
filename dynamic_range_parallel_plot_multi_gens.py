@@ -274,13 +274,15 @@ if __name__ == '__main__':
                                      ['gen300_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
     sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
                                          ['gen1000_100foods_energies_saved_compressed_try_2']}
+    critical_folder_name_dict = {'sim-20201116-182731_parallel_b10_1000ts_fixed_compressed': 'period_overfitting_compressed'}
+    sub_critical_folder_name_dict = {}
     # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
     # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130940_time_steps_2000ts_fixed_CritGen300_3999_SubCritGen3999'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130704_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'

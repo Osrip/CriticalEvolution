@@ -329,7 +329,8 @@ def parse():
                         help='By default energies and verlocities during the lifetime of each organism are'
                              'saved for the last generation of the simulation. This argument can switch that off.')
     parser.add_argument('-compress', dest='compress_save_isings', action='store_true',
-                        help='Compress pickle files when saving ising objects')
+                        help='Compress pickle files when saving ising objects, reduces occupied diskspace by 2000% '
+                             'but increases loading times')
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -391,11 +392,13 @@ def run(settings, Iterations):
             #pop size of current simulation is taken from loaded simulation
             settings['pop_size'] = prev_settings['pop_size']
         print(startstr)
+
         try:
             file = open(loadfile, 'rb')
             isings = pickle.load(file)
             file.close()
         except FileNotFoundError:
+            # Looking for compressed ising file in case normal pickle file is not found
             isings = decompress_pickle(loadfile)
 
         if settings['speciation']:

@@ -10,8 +10,10 @@ import random
 import glob
 from numba import jit
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import decompress_pickle
 from ising_net_fitness_landscape import all_states
 from ising_net_fitness_landscape import calculate_energies
+
 
 # --- COMPUTE HEAT CAPACITY -------------------------------------------------------+
 def main():
@@ -39,9 +41,13 @@ def main():
     loadstr = 'save/' + loadfile +  '/isings/gen[' + str(iterNum) + ']-isings.pickle'
 
     # print(iterNum)
-    file = open(loadstr, 'rb')
-    isings = pickle.load(file)
-    file.close()
+    try:
+        file = open(loadstr, 'rb')
+        isings = pickle.load(file)
+        file.close()
+    except FileNotFoundError:
+        # Looking for compressed ising file in case normal pickle file is not found
+        isings = decompress_pickle(loadstr)
 
     size = isings[0].size # get size from first agent
     numAgents = len(isings)

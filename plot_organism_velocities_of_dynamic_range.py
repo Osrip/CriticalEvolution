@@ -108,12 +108,12 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr):
 if __name__ == '__main__':
 
     # folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
-    folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
+    folder_names = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']
     for folder_name in folder_names:
         plot_settings = {}
 
 
-        plot_settings['include_name'] = 'gen300_100foods_energies_saved_compressed_try_2'
+        plot_settings['include_name'] = 'gen1000_100foods_velocity_period_overfitting_compressedd'
         # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
         # Either the largest number is plotted or a specific number is plotted
         plot_settings['plot_largest_varying_number'] = False
