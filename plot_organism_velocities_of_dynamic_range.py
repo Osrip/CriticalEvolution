@@ -12,6 +12,9 @@ import matplotlib
 import os
 from numba import jit
 import re
+import scipy.signal
+from scipy import fft, arange
+from scipy import fftpack
 
 
 
@@ -24,7 +27,7 @@ def main(folder_name, plot_settings):
         isings = isings_dict_each_sim[run_num_key]
         for i, I in enumerate(isings):
             fig_name = '{}_Includes_{}_{}_rand_org_num{}'.format(folder_name, plot_settings['include_name'], run_num_key, i)
-            fig = plt.figure(figsize=(24, 10))
+            fig = plt.figure(figsize=(12, 10))
             fig.suptitle(fig_name)
             plot_velocities_and_energies(I.energies, I.velocities)
 
@@ -92,31 +95,67 @@ def get_int_end_of_str(s):
 
 
 def plot_velocities_and_energies(energies_list_attr, velocities_list_attr):
-    plt.subplot(222)
+    plt.subplot(211)
     x_axis_gens = np.arange(len(energies_list_attr))
     plt.scatter(x_axis_gens, energies_list_attr, s=2, alpha=0.5)
     plt.xlabel('Time Step')
     plt.ylabel('Energy')
-    plt.subplot(224)
+
+    plt.subplot(212)
     x_axis_gens = np.arange(len(velocities_list_attr))
     plt.scatter(x_axis_gens, velocities_list_attr, s=2, alpha=0.5)
     plt.xlabel('Time Step')
     plt.ylabel('Velocity')
 
+    # Autocorreltaion
+    # plt.subplot(313)
+    # y_axis = autocorr(velocities_list_attr)
+    # x_axis = np.arange(len(y_axis))
+    # plt.scatter(x_axis, y_axis, s=2, alpha=0.5)
 
+    # Fourier transform try1
+    # plt.subplot(313)
+    # f, Pxx = scipy.signal.welch(velocities_list_attr)
+    # x_axis = np.arange(len(Pxx))
+    # plt.semilogy(f, Pxx, linewidth=2, alpha=1)
+
+    # Fourier transfor try2
+    # The FFT of the signal
+    # plt.subplot(313)
+    # sig = velocities_list_attr
+    # time_step = 0.2
+    # sig_fft = fftpack.fft(sig)
+    # # And the power (sig_fft is of complex dtype)
+    # power = np.abs(sig_fft)
+    # # The corresponding frequencies
+    # sample_freq = fftpack.fftfreq(np.size(sig), d=time_step)
+    # # Plot the FFT power
+    # plt.plot(sample_freq, power)
+    # plt.xlabel('Frequency [Hz]')
+    # plt.ylabel('power')
+    # plt.yscale('log')
+    # plt.xscale('log')
+
+
+def autocorr(x):
+    result = np.correlate(x, x, mode='full')
+    return result
+    # return result[result.size/2:]
 
 if __name__ == '__main__':
 
     # folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
-    folder_names = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']
+    # folder_names = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']
+    # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
+    folder_names = ['sim-20201116-182731_parallel_b10_1000ts_fixed_compressed']
     for folder_name in folder_names:
         plot_settings = {}
 
 
-        plot_settings['include_name'] = 'gen1000_100foods_velocity_period_overfitting_compressedd'
+        plot_settings['include_name'] = 'gen1000_100foods_velocity_period_overfitting_compresseddynamic_rang' #'gen50_100foods_COMPRESSdynamic_range' '100foods_COMPRESSdynamic_range_run_' #
         # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
         # Either the largest number is plotted or a specific number is plotted
-        plot_settings['plot_largest_varying_number'] = False
+        plot_settings['plot_largest_varying_number'] = True
         plot_settings['plot_varying_number'] = 50000
         # TODO: only copied könnte Probleme, geben, da 1. Generation...
         plot_settings['only_copied_isings'] = True

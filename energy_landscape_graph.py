@@ -87,9 +87,9 @@ def plot_graph(h_graph, energies, sim_name, save_suffix=''):
     norm = colors.LogNorm(vmin=min(energies), vmax=max(energies))
     energy_colors = list(map(lambda x: cmap(norm(x)), energies))
 
-    nx.draw_kamada_kawai(h_graph, node_size=3, with_labels=False, width=0.1, style='dotted', node_color=energy_colors)
+    # nx.draw_kamada_kawai(h_graph, node_size=3, with_labels=False, width=0.1, style='dotted', node_color=energy_colors)
     # nx.draw_spring(h_graph, node_size=3, with_labels=False, width=0.2, style='dotted')
-    # nx.draw_networkx(h_graph, node_size=1, with_labels=False, width=0.2)
+    nx.draw_networkx(h_graph, node_size=1, with_labels=False, width=0.2)
 
     save_folder = 'save/{}/figs/energy_landscape/'.format(sim_name)
     if not path.exists(save_folder):
@@ -141,7 +141,7 @@ def plot_tsne(s_tsne, energies, sim_name):
     save_folder = 'save/{}/figs/ising_tsne/'.format(sim_name)
     if not path.exists(save_folder):
         makedirs(save_folder)
-    save_name = 'ising_tsne.png'
+    save_name = 'ising_tsne_graph.png'
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
     plt.show()
 
@@ -175,9 +175,10 @@ def all_states(I, settings, sensor_vals):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200930-202441-g_1_-p_10_-noplt_-t_20_-n_18_neurons_fractal_tsne_energy_space'
+
+    sim_name = 'sim-20201119-202501-g_2_-t_5_-num_neurons_10_-noplt_-n_6_non_sensory_neurons_energy_landscape_graph'
     generation = 0
     ising_num = 0
-    # normal_graph(sim_name, generation, ising_num)
+    normal_graph(sim_name, generation, ising_num)
     # graph_for_network_without_sensors(sim_name, generation, ising_num)
-    tsne_without_sensors(sim_name, generation, ising_num)
+    # tsne_without_sensors(sim_name, generation, ising_num)

@@ -88,6 +88,6 @@ def all_states(I, settings, sensor_vals):
 
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200930-182946-g_1_-p_10_-noplt_-t_20_-n_20_neurons_fractal_tsne_energy_space'
+    sim_name = 'sim-20201119-202501-g_2_-t_5_-num_neurons_10_-noplt_-n_6_non_sensory_neurons_energy_landscape_graph'
     generation = 0
     main(sim_name, generation)
