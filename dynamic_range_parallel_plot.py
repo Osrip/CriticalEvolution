@@ -31,6 +31,8 @@ class ResponseCurveSimData:
     def __init__(self, sim_name, folder_name, key, folder_num_in_key,  attrs_list_each_food_num, food_num_list,
                  dynamic_range_folder_includes, dynamic_range_folder_includes_index):
         self.sim_name = sim_name
+        self.sim_num = sim_name[sim_name.rfind('Run_')+4:]
+
         self.folder_name = folder_name
         self.folder_num_in_key = folder_num_in_key
         # Key defines dynamical regime (critical, sub-critical,...)
@@ -42,6 +44,42 @@ class ResponseCurveSimData:
         self.dynamic_range_folder_includes = dynamic_range_folder_includes
         self.dynamic_range_folder_includes_index = dynamic_range_folder_includes_index
 
+        self.highlight_this_sim = False
+        self.label = self.sim_num
+
+    def highlight_certain_sims(self, plot_settings):
+        '''
+        This function changes attributes, such that the simulation specified in plot_settings['label_highlighted_sims']
+        are highlighted and relabeled
+        '''
+        self.highlight_this_sim = False
+        self.label = None
+
+        folder_name_label_dict = plot_settings['label_highlighted_sims']
+        for folder_name in folder_name_label_dict:
+            if folder_name == self.folder_name:
+                include_name_label_dict = folder_name_label_dict[folder_name]
+                for include_name in include_name_label_dict:
+                    if include_name == self.dynamic_range_folder_includes:
+                        sim_num_label_dict = include_name_label_dict[include_name]
+                        for sim_num in sim_num_label_dict:
+                            if type(sim_num) is int:
+                                sim_num_compare = str(sim_num)
+                            else:
+                                sim_num_compare = sim_num
+
+                            if sim_num_compare == self.sim_num:
+                                self.label = sim_num_label_dict[sim_num]
+                                self.highlight_this_sim = True
+
+    def make_old_class_compatible_with_current_version(self):
+        '''
+        This function makes previously saved plotting data compatible with the current version of this script
+        Can be left away in future...
+        '''
+        self.sim_num = self.sim_name[self.sim_name.rfind('Run_')+4:]
+        self.highlight_this_sim = False
+        self.label = self.sim_num
 
 def dynamic_range_main(folder_name_dict, plot_settings):
 
@@ -80,6 +118,7 @@ def prepare_data(folder_name_dict, plot_settings):
                     sim_data = ResponseCurveSimData(sim_name, folder_name, key, folder_num_in_key,
                                                     attrs_list_each_food_num_all, food_num_list,
                                                     dynamic_range_folder_includes, dynamic_range_folder_includes_index)
+
                     attrs_food_num_lists_each_sim.append(sim_data)
                 sim_data_list_each_folder.append(attrs_food_num_lists_each_sim)
 
@@ -154,12 +193,17 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
 
 def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
+    # Iterating through each folder
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
         list_of_food_num_list = []
         for sim_data in sim_data_list:
             list_of_avg_attr_list.append(sim_data.avg_attr_list)
             list_of_food_num_list.append(sim_data.food_num_list)
+
+            sim_data.make_old_class_compatible_with_current_version()
+            if plot_settings['highlight_certain_sims']:
+                sim_data.highlight_certain_sims(plot_settings)
 
         # for food_num_list in list_of_food_num_list:
         #     if not food_num_list == list_of_food_num_list[0]:
@@ -188,8 +232,11 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         # Plot each simulation
         plt.scatter(list_of_food_num_list, list_of_avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
         # Connect each simulation datapoint with lines
-        for food_num_list, avg_attr_list in zip(list_of_food_num_list, list_of_avg_attr_list):
-            plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.2, linewidth=0.3)
+        for food_num_list, avg_attr_list, sim_data in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list):
+            if sim_data.highlight_this_sim:
+                plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.5, linewidth=0.5)
+            else:
+                plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.2, linewidth=0.3)
 
         # Plot averages of each folder
         if plot_settings['plot_means']:
@@ -203,12 +250,14 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         # Label each simulation:
         if label_each_sim:
             for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
-                label = sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:] # TODO check whether this is run number!
+
                 x_offset = 0
                 y_offset = 0
                 coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
-                plt.text(coordinates[0], coordinates[1], 'Simulation {}'.format(label), fontsize=3, c = color)
+                label = sim_data.label #sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
+                if label is not None:
+                    plt.text(coordinates[0], coordinates[1], label, fontsize=3, c = color)
 
 
 def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
@@ -308,6 +357,15 @@ if __name__ == '__main__':
     plot_settings['plot_means'] = False
     plot_settings['critical_folder_name_dict'] = critical_folder_name_dict
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
+
+    #  This feature highlights certain simulation runs and relabels them. Those simulations, that shall be highlighted
+    #  and relabeled have to be specified in plot_settings['label_highlighted_sims']. All other simulations are not
+    #  labeled
+    #  plot_settings['label_highlighted_sims'] is a dict of dicts of dicts with the following shape:
+    #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
+    #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
+    plot_settings['highlight_certain_sims'] = True
+    plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
