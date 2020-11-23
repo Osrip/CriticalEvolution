@@ -257,7 +257,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
 
                 label = sim_data.label #sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
                 if label is not None:
-                    plt.text(coordinates[0], coordinates[1], label, fontsize=3, c = color)
+                    plt.text(coordinates[0], coordinates[1], label, fontsize=3, c=color)
 
 
 def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
@@ -330,19 +330,19 @@ if __name__ == '__main__':
     #
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
-    # critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
-    #                                  ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
-    # sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
-    #                                      ['gen1000_100foods_energies_saved_compressed_try_2']}
-    critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['resolution_run_gen_100dyn', 'gen4000_100foods_10_resolution']}
-    sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_10_resolution']}
+    critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
+                                     ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
+    sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
+                                         ['gen1000_100foods_energies_saved_compressed_try_2']}
+    # critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['resolution_run_gen_100dyn', 'gen4000_100foods_10_resolution']}
+    # sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_10_resolution']}
     # critical_folder_name_dict = {'sim-20201116-182731_parallel_b10_1000ts_fixed_compressed': ['period_overfitting_compressed']}
     # sub_critical_folder_name_dict = {}
     # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
     # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
     plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130704_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_THESIS'
     plot_settings['add_save_name'] = ''
@@ -368,10 +368,10 @@ if __name__ == '__main__':
     #  plot_settings['label_highlighted_sims'] is a dict of dicts of dicts with the following shape:
     #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
-    plot_settings['highlight_certain_sims'] = False
+    plot_settings['highlight_certain_sims'] = True
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
-    plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2':{3: '3', 7: '7'}, 'gen1000_100foods_energies_saved_compressed_try_2':{2: '2', 8: '8'}},
-                                               'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen1000_100foods_energies_saved_compressed_try_2': {7: '7', 5: '5', 9: '9'}}}
+    plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2': {3: '3', 7: '7'}, 'gen3999_100foods_energies_saved_compressed_try_2': {7: '7', 8: '8'}},
+                                               'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen3999_100foods_energies_saved_compressed_try_2': {7: '7', 5: '5', 8: '8'}}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
