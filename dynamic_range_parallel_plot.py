@@ -174,13 +174,13 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # PLot zoomed-in inset
     ax_zoom1 = inset_axes(ax_main, 3, 3, loc='upper left')
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
-    # ax_zoom1.set_xlim(1800, 8100)
 
-    ax_zoom1.set_xlim(400, 600)
+    ax_zoom1.set_xlim(1800, 8100)
     ax_zoom1.set_ylim(0, 50)
 
-    ax_zoom1.set_ylim(1.94, 1.98)
-    ax_zoom1.set_xlim(0, 1)
+    # ax_zoom1.set_ylim(1.94, 1.98)
+    # ax_zoom1.set_xlim(0, 1)
+
     # plt.yticks(visible=False)
     # plt.xticks(visible=False)
     mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
@@ -331,18 +331,20 @@ if __name__ == '__main__':
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
     # critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
-    #                                  ['gen300_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
+    #                                  ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
     # sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
     #                                      ['gen1000_100foods_energies_saved_compressed_try_2']}
+    critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['resolution_run_gen_100dyn', 'gen4000_100foods_10_resolution']}
+    sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_10_resolution']}
     # critical_folder_name_dict = {'sim-20201116-182731_parallel_b10_1000ts_fixed_compressed': ['period_overfitting_compressed']}
     # sub_critical_folder_name_dict = {}
-    critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
-    sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
+    # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
+    # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201119-122045_time_step_500ts_fixed_CritGen100_3999_SubCritGen3999'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130704_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_THESIS'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
@@ -353,7 +355,9 @@ if __name__ == '__main__':
                               'super_critical': ['maroon', 'red', 'steelblue']}
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', 'x', '+']
+    # This feature looks for compressed ising-files and decompresses them
     plot_settings['compress_save_isings'] = True
+    # This plots the means of all simulations in one folder for one value of the y-axis
     plot_settings['plot_means'] = False
     plot_settings['critical_folder_name_dict'] = critical_folder_name_dict
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
@@ -364,8 +368,10 @@ if __name__ == '__main__':
     #  plot_settings['label_highlighted_sims'] is a dict of dicts of dicts with the following shape:
     #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
-    plot_settings['highlight_certain_sims'] = True
-    plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
+    plot_settings['highlight_certain_sims'] = False
+    # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
+    plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2':{3: '3', 7: '7'}, 'gen1000_100foods_energies_saved_compressed_try_2':{2: '2', 8: '8'}},
+                                               'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen1000_100foods_energies_saved_compressed_try_2': {7: '7', 5: '5', 9: '9'}}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 

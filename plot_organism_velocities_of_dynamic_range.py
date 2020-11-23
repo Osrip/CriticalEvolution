@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
     # folder_names = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']
     # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
-    folder_names = ['sim-20201116-182731_parallel_b10_1000ts_fixed_compressed']
+    folder_names = ['sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims', 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     for folder_name in folder_names:
         plot_settings = {}
 
