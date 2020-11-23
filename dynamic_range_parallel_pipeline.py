@@ -33,7 +33,10 @@ def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
             all_sim_names = np.append(all_sim_names, sim_names)
 
         ray.init(num_cpus=pipeline_settings['cores'])
-        ray_funcs=[dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+        if pipeline_settings['specify_memory_usage']:
+            ray_funcs = [dynamic_pipeline_one_sim_remote_memory.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+        else:
+            ray_funcs = [dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
         ray.get(ray_funcs)
         ray.shutdown()
 
@@ -44,6 +47,14 @@ def dynamic_pipeline_one_sim_remote(sim_name, pipeline_settings):
     settings = create_settings_for_repeat(original_settings, sim_name, pipeline_settings)
     run_all_repeats(settings, original_settings, pipeline_settings)
 
+
+# Exact copy of run_repeat_remote but with specific memory usage. Memory usage par task!!
+@ray.remote(memory=1500 * 1024 * 1024)
+def dynamic_pipeline_one_sim_remote_memory(sim_name, pipeline_settings):
+
+    original_settings = load_settings(sim_name)
+    settings = create_settings_for_repeat(original_settings, sim_name, pipeline_settings)
+    run_all_repeats(settings, original_settings, pipeline_settings)
 
 # Exact copy of run_repeat_remote but without ray.remote decorator
 def dynamic_pipeline_one_sim(sim_name, pipeline_settings):
@@ -126,6 +137,7 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
     if pipeline_settings['parallelize_run_repeats']:
         ray.init(num_cpus=pipeline_settings['cores']) #, ignore_reinit_error=True
         ray_funcs = [run_repeat_remote.remote(food_num, settings, pipeline_settings, food_num_arr, original_mean_food_num) for food_num in food_num_arr]
+
         ray.get(ray_funcs)
         ray.shutdown()
     else:
@@ -185,7 +197,7 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 19
+    pipeline_settings['cores'] = 65
     pipeline_settings['num_repeats'] = 1
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
@@ -194,12 +206,12 @@ if __name__=='__main__':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
     pipeline_settings['resolution'] = 10
-    pipeline_settings['add_save_file_name'] = '10_resolution_run_gen_100'
+    pipeline_settings['add_save_file_name'] = 'res_10_try_2'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
     # This loads last / highest generation from trained simulation
-    pipeline_settings['load_last_generation'] = False
+    pipeline_settings['load_last_generation'] = True
     # Otherwise specify generation, that shall be loaded, make sure thsi generation exists in all loaded simulations:
     pipeline_settings['load_generation'] = 100
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
@@ -212,9 +224,13 @@ if __name__=='__main__':
     pipeline_settings['parallelize_each_sim'] = True
     pipeline_settings['parallelize_run_repeats'] = False
 
+    # Specific memory usage per parallel task has to be specified in dynamic_pipeline_one_sim_remote_memory
+    # only works for pipeline_settings['parallelize_each_sim'] = True
+    pipeline_settings['specify_memory_usage'] = True
+
     pipeline_settings['compress_save_isings'] = True
     # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
     # folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']#, 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
-    folder_names = ['sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims']
+    folder_names = ['sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims', 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
