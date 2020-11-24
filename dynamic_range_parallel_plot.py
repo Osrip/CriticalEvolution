@@ -161,8 +161,11 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     ax_main = plt.subplot(111)
 
     # Make main plot
-    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
+    plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.8, linewidth=1)
+    plt.text(2200, 250, 'Trained on \n 2000 time steps', color='firebrick', alpha=0.8)
 
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
+    plt.ylim(-10, 1300)
     plt.legend()
     plt.ylabel(plot_settings['attr'])
     # plt.xlabel('Percentage of food that population was originally trained on')
@@ -171,13 +174,20 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     elif plot_settings['varying_parameter'] == 'food':
         plt.xlabel('Number of foods')
 
+
+
     # PLot zoomed-in inset
 
-    ax_zoom1 = inset_axes(ax_main, 3, 3, loc='upper left')
+
+    ax_zoom1 = inset_axes(ax_main, 3.4, 3.4, loc='upper left')
+    # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
+    plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+    plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
 
-    ax_zoom1.set_xlim(1800, 8100)
-    ax_zoom1.set_ylim(0, 50)
+    ax_zoom1.set_xlim(1500, 20000)
+    ax_zoom1.set_ylim(0, 70)
 
     # ax_zoom1.set_ylim(1.94, 1.98)
     # ax_zoom1.set_xlim(0, 1)
@@ -185,6 +195,8 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # plt.yticks(visible=False)
     # plt.xticks(visible=False)
     mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
+
+
 
     save_name = 'response_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
@@ -252,7 +264,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         if label_each_sim:
             for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
 
-                x_offset = 0
+                x_offset = 200
                 y_offset = 0
                 coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
@@ -352,7 +364,7 @@ if __name__ == '__main__':
     plot_settings['attr'] = 'avg_energy'
     # Colors for each dynamical regime. The color lists of each dynamical regime are chosen by the index of the
     # currently plotted entry of dynamic_range_folder_includes_list
-    plot_settings['color'] = {'critical': ['darkorange', 'green', 'turquoise'],
+    plot_settings['color'] = {'critical': ['darkorange', 'olive', 'turquoise'],
                               'sub_critical': ['royalblue', 'pink', 'magenta'],
                               'super_critical': ['maroon', 'red', 'steelblue']}
     # This setting defines the markers, which are used in the order that the folder names are listed
@@ -374,8 +386,8 @@ if __name__ == '__main__':
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2': {1: '1', 25: '25'}, 'gen3999_100foods_energies_saved_compressed_try_2': {8: '8', 10: '10'}},
     #                                            'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen3999_100foods_energies_saved_compressed_try_2': {28: '28', 19: '19', 53: '53', 2: '2'}}}
-    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1', 25: '25'}, 'gen4000_100foods_res_10_try_2dy': {8: '8', 10: '10'}},
-                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 2: '2'}}}
+    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
+                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
