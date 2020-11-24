@@ -83,7 +83,7 @@ class ResponseCurveSimData:
         self.highlight_this_sim = False
         self.label = self.sim_num
 
-    def create_custom_legend_labels(self):
+    def create_custom_legend_labels(self, plot_settings):
         custom_legend_labels = plot_settings['custom_legend_labels']
         for folder_name in custom_legend_labels:
             if folder_name == self.folder_name:
@@ -185,7 +185,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
     plt.ylim(-10, 1300)
-    # plt.legend()
+    plt.legend()
     plt.ylabel(r'$\langle \langle \langle E_\mathrm{org} \rangle \rangle \rangle$')
     # plt.xlabel('Percentage of food that population was originally trained on')
     if plot_settings['varying_parameter'] == 'time_steps':
@@ -236,6 +236,8 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
             sim_data.make_old_class_compatible_with_current_version()
             if plot_settings['highlight_certain_sims']:
                 sim_data.highlight_certain_sims(plot_settings)
+            if plot_settings['customize_legend_labels']:
+                sim_data.create_custom_legend_labels(plot_settings)
 
         # for food_num_list in list_of_food_num_list:
         #     if not food_num_list == list_of_food_num_list[0]:
@@ -408,8 +410,9 @@ if __name__ == '__main__':
     plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
                                                'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-    plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': 'Critical Generation 100', 'gen4000_100foods_res_10_try_2dy': 'Critical Genertaion 4000'},
-                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': 'Sub_critical Generation 4000'}}
+    plot_settings['customize_legend_labels'] = True
+    plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': 'Critical Generation 100', 'gen4000_100foods_res_10_try_2dy': 'Critical Generation 4000'},
+                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': 'Sub Critical Generation 4000'}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
