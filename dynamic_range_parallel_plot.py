@@ -172,6 +172,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
         plt.xlabel('Number of foods')
 
     # PLot zoomed-in inset
+
     ax_zoom1 = inset_axes(ax_main, 3, 3, loc='upper left')
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
 
@@ -234,7 +235,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         # Connect each simulation datapoint with lines
         for food_num_list, avg_attr_list, sim_data in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list):
             if sim_data.highlight_this_sim:
-                plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.5, linewidth=0.5)
+                plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.5, linewidth=1)
             else:
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.2, linewidth=0.3)
 
@@ -293,6 +294,7 @@ def load_data(sim_name, folder_name, dynamic_range_folder_includes, plot_setting
         if plot_settings['attr'] == 'norm_avg_energy' or plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
             settings = load_settings(sim_name)
             calc_normalized_fitness(isings_list, plot_settings, settings)
+        # MERGING INDIVIDUALS OF ALL REPEATS WITH SIMILAR SETTINGS INTO ONE LIST:
         isings = make_2d_list_1d(isings_list)
         # isings_populations_seperated = seperate_isolated_populations([isings])
         # isings_critical = isings_populations_seperated[0][0]
@@ -330,21 +332,21 @@ if __name__ == '__main__':
     #
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
-    critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
-                                     ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
-    sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
-                                         ['gen1000_100foods_energies_saved_compressed_try_2']}
-    # critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['resolution_run_gen_100dyn', 'gen4000_100foods_10_resolution']}
-    # sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_10_resolution']}
+    # critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
+    #                                  ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
+    # sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
+    #                                      ['gen1000_100foods_energies_saved_compressed_try_2']}
+    # critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['ds_res_10_try_2_gen_100d', 'gen4000_100foods_res_10_try_2dy']}
+    # sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_res_10_try_2dy']}
     # critical_folder_name_dict = {'sim-20201116-182731_parallel_b10_1000ts_fixed_compressed': ['period_overfitting_compressed']}
-    # sub_critical_folder_name_dict = {}
-    # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen2_100foods_energies_saved_compressed_try_2', 'gen50_100foods_COMPRESSdynamic']}
+    sub_critical_folder_name_dict = {}
+    critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['res_10_try_2']}
     # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = True
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201116-130704_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_THESIS'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201123-225136_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_HUGE_RUN'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
@@ -370,8 +372,10 @@ if __name__ == '__main__':
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
     plot_settings['highlight_certain_sims'] = True
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'gen2_100foods_energies_saved_compressed_try_2': {1: 'tach'}, 'gen50_100foods_COMPRESSdynamic': {2: 'moin'}}, 'sim-20201022-184145_parallel_TEST_repeated': {'gen50_100foods_COMPRESSdynamic': {2:'hello'}}}
-    plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2': {3: '3', 7: '7'}, 'gen3999_100foods_energies_saved_compressed_try_2': {7: '7', 8: '8'}},
-                                               'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen3999_100foods_energies_saved_compressed_try_2': {7: '7', 5: '5', 8: '8'}}}
+    # plot_settings['label_highlighted_sims'] = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000': {'gen100_100foods_energies_saved_compressed_try_2': {1: '1', 25: '25'}, 'gen3999_100foods_energies_saved_compressed_try_2': {8: '8', 10: '10'}},
+    #                                            'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000': {'gen3999_100foods_energies_saved_compressed_try_2': {28: '28', 19: '19', 53: '53', 2: '2'}}}
+    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1', 25: '25'}, 'gen4000_100foods_res_10_try_2dy': {8: '8', 10: '10'}},
+                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 2: '2'}}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
