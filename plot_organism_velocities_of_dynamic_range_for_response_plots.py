@@ -15,47 +15,68 @@ import re
 import scipy.signal
 from scipy import fft, arange
 from scipy import fftpack
+from automatic_plot_helper import all_folders_in_dir_with
+import math
+
+
+def main(plot_settings):
+    plot_settings['number_individuals'] = 1
+
+    label_highlighted_sims = plot_settings['label_highlighted_sims']
+    custom_legend_labels = plot_settings['custom_legend_labels']
+    for folder_name in label_highlighted_sims:
+        plt.figure()
+        include_name_dict = label_highlighted_sims[folder_name]
+        num_subplots = count_total_number_of_plots_in_folder(include_name_dict)
+        num_columns = plot_settings['number_columns_in_subplot']
+        num_rows  = num_subplots / num_columns
+        for include_name in include_name_dict:
+            sim_num_dict = include_name_dict[include_name]
+            for sim_num in sim_num_dict:
+                make_one_subplot(folder_name, include_name, sim_num, plot_settings)
+
+        save_path = 'save/{}/figs/energies_velocities_plot/'.format(folder_name)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
+        plt.savefig('{}{}'.format(save_path, fig_name), dpi=150, bbox_inches='tight')
+
+
+def count_total_number_of_plots_in_folder(include_name_dict):
+    count = 0
+    for include_name in include_name_dict:
+        sim_num_dict = include_name_dict[include_name]
+        for sim_num in sim_num_dict:
+            count += 1
+    return count
+
+
+
+def make_one_subplot(folder_name, include_name, sim_num, plot_settings):
+
+    I = load_all_sims_parallel_folder(folder_name, include_name, sim_num, plot_settings)
+    plot_velocities_and_energies(I.energies, I.velocities)
 
 
 
 
-def main(folder_name, plot_settings):
 
 
-    isings_dict_each_sim = load_all_sims_parallel_folder(folder_name, plot_settings)
-    for run_num_key in isings_dict_each_sim:
-        isings = isings_dict_each_sim[run_num_key]
-        for i, I in enumerate(isings):
-            fig_name = '{}_Includes_{}_{}_rand_org_num{}'.format(folder_name, plot_settings['include_name'], run_num_key, i)
-            fig = plt.figure(figsize=(12, 10))
-            fig.suptitle(fig_name)
-            plot_velocities_and_energies(I.energies, I.velocities)
-
-
-            save_path = 'save/{}/figs/energies_velocities_plot/'.format(folder_name)
-            if not os.path.exists(save_path):
-                os.makedirs(save_path)
-            plt.savefig('{}{}'.format(save_path, fig_name), dpi=150, bbox_inches='tight')
-
-
-
-def load_all_sims_parallel_folder(folder_name, plot_settings):
+def load_all_sims_parallel_folder(folder_name, include_name, sim_num, plot_settings):
     folder_dir = 'save/{}'.format(folder_name)
     dir_list = all_folders_in_dir_with(folder_dir, 'sim')
-    isings_dict_each_sim = {}
     for dir in dir_list:
         sim_name = dir[(dir.rfind('save/')+5):]
         sim_run_num_str = sim_name[(sim_name.rfind('Run_')):]
-        isings = load_from_dynamic_range_data_one_sim(sim_name, plot_settings)
-        if not isings is None:
-            isings_dict_each_sim[sim_run_num_str] = isings
-    return isings_dict_each_sim
+        if sim_run_num_str == str(sim_num):
+            ising = load_from_dynamic_range_data_one_sim(sim_name, include_name, plot_settings)
+            return ising
 
 
 
-def load_from_dynamic_range_data_one_sim(sim_name, plot_settings):
+def load_from_dynamic_range_data_one_sim(sim_name, include_name, plot_settings):
     dir = 'save/{}/repeated_generations'.format(sim_name)
-    dir_list = all_folders_in_dir_with(dir, plot_settings['include_name'])
+    dir_list = all_folders_in_dir_with(dir, include_name)
     plot_settings['plot_varying_number']
     if plot_settings['plot_largest_varying_number']:
         # find largest carying number
@@ -83,8 +104,8 @@ def load_from_dynamic_range_data_one_sim(sim_name, plot_settings):
         if plot_settings['only_copied_isings']:
             isings = choose_copied_isings(isings)
 
-        plot_ind_nums = np.random.randint(0, len(isings)-1, plot_settings['number_individuals'])
-    return [isings[i] for i in plot_ind_nums]
+        plot_ind_num = np.random.randint(0, len(isings)-1, 1)
+    return isings[plot_ind_num]
 
 
 
@@ -144,22 +165,25 @@ def autocorr(x):
 
 if __name__ == '__main__':
 
-    # folder_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']#'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000'
-    # folder_names = ['sim-20201026-224709_parallel_b10_fixed_4000ts_']
-    # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
-    folder_names = ['sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims', 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
-    for folder_name in folder_names:
-        plot_settings = {}
+    plot_settings = {}
 
+    # The label highlighted sims dict is used to choose which velocities to plot
+    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
+                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-        plot_settings['include_name'] = 'gen1000_100foods_velocity_period_overfitting_compresseddynamic_rang' #'gen50_100foods_COMPRESSdynamic_range' '100foods_COMPRESSdynamic_range_run_' #
-        # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
-        # Either the largest number is plotted or a specific number is plotted
-        plot_settings['plot_largest_varying_number'] = True
-        plot_settings['plot_varying_number'] = 50000
-        # TODO: only copied könnte Probleme, geben, da 1. Generation...
-        plot_settings['only_copied_isings'] = True
-        plot_settings['number_individuals'] = 3
-        plot_settings['compress_save_isings'] = True
-        #inds = [0]
-        main(folder_name, plot_settings)
+    # The legend labels are used to label the figures
+    plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'},
+                                             'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
+    # plot_settings['include_name'] = 'gen1000_100foods_velocity_period_overfitting_compresseddynamic_rang'
+
+    # The varying number is the number of the attribute which is changed in the response plots (foods and time steps)
+    # Either the largest number is plotted or a specific number is plotted
+    plot_settings['plot_largest_varying_number'] = True
+    plot_settings['plot_varying_number'] = 50000
+    # TODO: only copied könnte Probleme, geben, da 1. Generation...
+    plot_settings['only_copied_isings'] = True
+
+    plot_settings['compress_save_isings'] = True
+    plot_settings['number_columns_in_subplot'] = 2
+    #inds = [0]
+    main(plot_settings)

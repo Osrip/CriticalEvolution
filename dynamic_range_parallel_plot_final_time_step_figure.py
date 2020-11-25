@@ -316,7 +316,7 @@ def load_data(sim_name, folder_name, dynamic_range_folder_includes, plot_setting
     attrs_list_each_food_num_critical = []
     attrs_list_each_food_num_sub_critical = []
     food_num_list = []
-    dir_list = all_folders_in_dir_with('{}/repeated_generations'.format(sim_dir),dynamic_range_folder_includes)
+    dir_list = all_folders_in_dir_with('{}/repeated_generations'.format(sim_dir), dynamic_range_folder_includes)
     for dir in dir_list:
         if plot_settings['compress_save_isings']:
             isings_list = load_isings_specific_path_decompress(dir)
