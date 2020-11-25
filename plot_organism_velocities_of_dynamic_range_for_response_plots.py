@@ -3,6 +3,8 @@ from automatic_plot_helper import load_isings_attributes_from_list
 from automatic_plot_helper import load_settings
 from automatic_plot_helper import detect_all_isings
 from automatic_plot_helper import all_folders_in_dir_with
+import matplotlib as mpl
+mpl.use('Agg') #For server use
 from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import load_isings_specific_path_decompress
 from automatic_plot_helper import choose_copied_isings
@@ -109,7 +111,8 @@ def load_from_dynamic_range_data_one_sim(sim_name, include_name, plot_settings):
     else:
         # TODO: Change loading all isings in this path as soon as we have more than one ising for speed
         if plot_settings['compress_save_isings']:
-            isings = load_isings_specific_path_decompress(dirs_to_plot[0])[0]
+            # energies and velocitoes are saved in last isings, therefore [-1]
+            isings = load_isings_specific_path_decompress(dirs_to_plot[0])[-1]
         else:
             isings = load_isings_specific_path(dirs_to_plot[0])[0]
         if plot_settings['only_copied_isings']:
@@ -182,7 +185,9 @@ if __name__ == '__main__':
     plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
                                                'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-    # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_last_gen': {1: '1', 2: '2'}}}
+    # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_one_rep': {1: '1', 2: '2'}}}
+    # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocitiesy_three_rep': {1: '1', 2: '2'}}}
+
     # The legend labels are used to label the figures
     plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'},
                                              'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
