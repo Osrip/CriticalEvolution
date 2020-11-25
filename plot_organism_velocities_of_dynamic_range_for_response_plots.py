@@ -22,23 +22,33 @@ import math
 def main(plot_settings):
     plot_settings['number_individuals'] = 1
 
+
+
     label_highlighted_sims = plot_settings['label_highlighted_sims']
     custom_legend_labels = plot_settings['custom_legend_labels']
+    # Making a new plot for each folder and a subplot for each dict in each include_name dict
     for folder_name in label_highlighted_sims:
         plt.figure()
         include_name_dict = label_highlighted_sims[folder_name]
         num_subplots = count_total_number_of_plots_in_folder(include_name_dict)
         num_columns = plot_settings['number_columns_in_subplot']
-        num_rows  = num_subplots / num_columns
+        num_rows = math.floor(num_subplots / num_columns)
+        curr_subplot_num = 0
         for include_name in include_name_dict:
             sim_num_dict = include_name_dict[include_name]
             for sim_num in sim_num_dict:
+                # Creating subplot command
+                subplot_input = int('{}{}{}'.format(num_subplots,
+                                                    math.floor(curr_subplot_num/2)+1,
+                                                    (curr_subplot_num % 2)+1))
+                plt.subplot(subplot_input)
                 make_one_subplot(folder_name, include_name, sim_num, plot_settings)
+                curr_subplot_num += 1
 
-        save_path = 'save/{}/figs/energies_velocities_plot/'.format(folder_name)
+        save_path = 'save/{}/figs/energies_velocities_for_response_plot/'.format(folder_name)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-
+        fig_name = 'velocities.png'
         plt.savefig('{}{}'.format(save_path, fig_name), dpi=150, bbox_inches='tight')
 
 
@@ -67,8 +77,9 @@ def load_all_sims_parallel_folder(folder_name, include_name, sim_num, plot_setti
     dir_list = all_folders_in_dir_with(folder_dir, 'sim')
     for dir in dir_list:
         sim_name = dir[(dir.rfind('save/')+5):]
-        sim_run_num_str = sim_name[(sim_name.rfind('Run_')):]
-        if sim_run_num_str == str(sim_num):
+        sim_num_str = sim_name[(sim_name.rfind('Run_')):]
+        sim_num_str = sim_num_str[sim_num_str.rfind('Run_')+4:]
+        if sim_num_str == str(sim_num):
             ising = load_from_dynamic_range_data_one_sim(sim_name, include_name, plot_settings)
             return ising
 
@@ -104,7 +115,7 @@ def load_from_dynamic_range_data_one_sim(sim_name, include_name, plot_settings):
         if plot_settings['only_copied_isings']:
             isings = choose_copied_isings(isings)
 
-        plot_ind_num = np.random.randint(0, len(isings)-1, 1)
+        plot_ind_num = np.random.randint(0, len(isings)-1)
     return isings[plot_ind_num]
 
 
@@ -171,6 +182,7 @@ if __name__ == '__main__':
     plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
                                                'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
+    # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_last_gen': {1: '1', 2: '2'}}}
     # The legend labels are used to label the figures
     plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'},
                                              'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
