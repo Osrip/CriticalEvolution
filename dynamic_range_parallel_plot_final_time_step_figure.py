@@ -27,6 +27,7 @@ from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
+
 class ResponseCurveSimData:
     def __init__(self, sim_name, folder_name, key, folder_num_in_key,  attrs_list_each_food_num, food_num_list,
                  dynamic_range_folder_includes, dynamic_range_folder_includes_index):
