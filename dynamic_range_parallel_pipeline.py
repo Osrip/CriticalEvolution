@@ -206,7 +206,9 @@ if __name__=='__main__':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
     pipeline_settings['resolution'] = 40
-    pipeline_settings['add_save_file_name'] = 'intermediate_run_res_40'
+    # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
+    # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
+    pipeline_settings['add_save_file_name'] = 'bla'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []

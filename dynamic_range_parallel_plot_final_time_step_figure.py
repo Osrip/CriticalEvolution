@@ -213,6 +213,9 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     plt.yticks(visible=False)
     plt.xticks(visible=False)
+    # Still has to be tested:
+    # ax_zoom1.set_xticks([])
+    # ax_zoom1.set_yticks([])
     mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
 
 
