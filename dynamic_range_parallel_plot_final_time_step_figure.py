@@ -188,8 +188,13 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
     plt.ylim(-10, 1800)
-    plt.legend()
-    plt.ylabel(r'$\langle \langle \langle E_\mathrm{org} \rangle \rangle \rangle$')
+    plt.legend(loc="upper left", bbox_to_anchor=(0.45, 0.5))
+    # ax_main.set_yticks(ax_main.get_yticks()[:-5])
+    # Hide some tick labels:
+    for i in range(1,6):
+        ax_main.yaxis.get_major_ticks()[-i].draw = lambda *args:None
+    # plt.ylabel(r'$\langle \langle \langle E_\mathrm{org} \rangle_\mathrm{life time} \rangle_\mathrm{simulation} \rangle_\mathrm{repeats}$')
+    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
     # plt.xlabel('Percentage of food that population was originally trained on')
     if plot_settings['varying_parameter'] == 'time_steps':
         plt.xlabel('Number of time steps')
@@ -201,12 +206,12 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # PLot zoomed-in inset
 
 
-    ax_zoom1 = inset_axes(ax_main, 4.3, 5.3, loc='upper right')
+    ax_zoom1 = inset_axes(ax_main, 4.3, 4.9, loc='upper right')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
     plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
 
-    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=70)
 
     ax_zoom1.set_xlim(10000, 52000)
     ax_zoom1.set_ylim(0, 70)
@@ -214,15 +219,18 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # ax_zoom1.set_ylim(1.94, 1.98)
     # ax_zoom1.set_xlim(0, 1)
 
+
+    # ax_zoom1.xaxis.get_major_ticks()[-1].draw = lambda *args:None
+
     plt.yticks(visible=False)
-    plt.xticks(visible=False)
+    # plt.xticks(visible=False)
     # Still has to be tested:
     # ax_zoom1.set_xticks([])
     # ax_zoom1.set_yticks([])
     mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
 
 
-    ax_zoom2 = inset_axes(ax_main, 3.3, 5.3, loc='upper left')
+    ax_zoom2 = inset_axes(ax_main, 3.31, 4.9, loc='upper left')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
     plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
@@ -235,11 +243,13 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # ax_zoom1.set_ylim(1.94, 1.98)
     # ax_zoom1.set_xlim(0, 1)
 
-    plt.yticks(visible=False)
-    plt.xticks(visible=False)
+    # plt.yticks(visible=False)
+    # plt.xticks(visible=False)
+
     # Still has to be tested:
     # ax_zoom1.set_xticks([])
     # ax_zoom1.set_yticks([])
+    # ax_zoom2.set_yticks(ax_zoom2.get_yticks()[:-1])
     mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
 
 
@@ -251,7 +261,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
 
 
-def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
+def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=None):
     # Iterating through each folder
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
@@ -313,13 +323,22 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         if label_each_sim:
             for sim_data, food_num_list, avg_attr_list in zip(sim_data_list, list_of_food_num_list, list_of_avg_attr_list):
 
-                x_offset = 200
+                x_offset = 300
                 y_offset = 0
                 coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
+                plot_this_label = True
+                if y_upper_cut_off_label_sim is not None:
+                    if avg_attr_list[-1] > y_upper_cut_off_label_sim:
+                        plot_this_label = False
+
                 label = sim_data.label #sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
-                if label is not None:
-                    plt.text(coordinates[0], coordinates[1], label, fontsize=3, c=color)
+                if plot_settings['highlight_certain_sims']:
+                    fontsize = 10
+                else:
+                    fontsize = 3
+                if (label is not None) and plot_this_label:
+                    plt.text(coordinates[0], coordinates[1], label, fontsize=fontsize, c=color)
 
 
 def divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list):
