@@ -102,12 +102,14 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         os.makedirs('save/{}'.format(plot_settings['savefolder_name']))
         sim_data_list_each_folder = prepare_data(folder_name_dict, plot_settings)
         save_plot_data(sim_data_list_each_folder, plot_settings)
+        # Save settings:
+        settings_folder = 'save/{}/settings/'.format(plot_settings['savefolder_name'])
+        save_settings(settings_folder, plot_settings)
     else:
         sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
         plot_settings['savefolder_name'] = plot_settings['only_plot_folder_name']
 
-    settings_folder = 'save/{}/settings/'.format(plot_settings['savefolder_name'])
-    save_settings(settings_folder, plot_settings)
+
     plot_axis(sim_data_list_each_folder, plot_settings)
 
 
@@ -177,7 +179,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
 
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(10, 10))
     ax_main = plt.subplot(111)
 
     # Make main plot
@@ -199,14 +201,14 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # PLot zoomed-in inset
 
 
-    ax_zoom1 = inset_axes(ax_main, 3.4, 3.4, loc='upper left')
+    ax_zoom1 = inset_axes(ax_main, 4.3, 4.3, loc='upper left')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
     plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
 
-    ax_zoom1.set_xlim(1500, 20000)
+    ax_zoom1.set_xlim(1500, 50000)
     ax_zoom1.set_ylim(0, 70)
 
     # ax_zoom1.set_ylim(1.94, 1.98)
@@ -248,7 +250,8 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
         #         raise Exception('There seem to be files for different food numbers within the simulations of folder {}'
         #                         .format(sim_data.folder_name))
 
-
+        if plot_settings['divide_x_value_by_y_value']:
+            list_of_avg_attr_list = divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list)
 
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
@@ -296,6 +299,14 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True):
                 label = sim_data.label #sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
                 if label is not None:
                     plt.text(coordinates[0], coordinates[1], label, fontsize=3, c=color)
+
+
+def divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list):
+    list_of_avg_attr_list_new = []
+    for avg_attr_list, food_num_list in zip(list_of_avg_attr_list, list_of_food_num_list):
+        avg_attr_list_new = list(np.array(avg_attr_list) / np.array(food_num_list))
+        list_of_avg_attr_list_new.append(avg_attr_list_new)
+    return list_of_avg_attr_list_new
 
 
 def sort_lists_of_lists(listof_lists_that_defines_order, second_listof_lists):
@@ -369,6 +380,10 @@ if __name__ == '__main__':
     #
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
+    critical_folder_name_dict={'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['_intermediate_run_res_40_gen_100d', 'gen4000_100foods_intermediate_run_res_40d']}
+    sub_critical_folder_name_dict={'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_intermediate_run_res_40d']}
+
+
     # critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
     #                                  ['gen100_100foods_energies_saved_compressed_try_2', 'gen1000_100foods_energies_saved_compressed_try_2']}
     # sub_critical_folder_name_dict = {'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000':
@@ -376,16 +391,16 @@ if __name__ == '__main__':
     # critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['ds_res_10_try_2_gen_100d', 'gen4000_100foods_res_10_try_2dy']}
     # sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_res_10_try_2dy']}
     # critical_folder_name_dict = {'sim-20201116-182731_parallel_b10_1000ts_fixed_compressed': ['period_overfitting_compressed']}
-    critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['_intermediate_run_res_40_gen_100d', 'gen4000_100foods_intermediate_run_res_40d']}
-    sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_intermediate_run_res_40d']}
+    # critical_folder_name_dict = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['_intermediate_run_res_40_gen_100d', 'gen4000_100foods_intermediate_run_res_40d']}
+    # sub_critical_folder_name_dict = {'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': ['gen4000_100foods_intermediate_run_res_40d']}
 
     # critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['res_10_try_2']}
     # sub_critical_folder_name_dict = {'sim-20201022-184145_parallel_TEST_repeated': ['gen50_100foods_COMPRESSdynamic']}
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201123-225136_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_HUGE_RUN'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
@@ -400,6 +415,7 @@ if __name__ == '__main__':
     plot_settings['compress_save_isings'] = True
     # This plots the means of all simulations in one folder for one value of the y-axis
     plot_settings['plot_means'] = False
+    plot_settings['divide_x_value_by_y_value'] = False
     plot_settings['critical_folder_name_dict'] = critical_folder_name_dict
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
 
@@ -410,18 +426,23 @@ if __name__ == '__main__':
     #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
     plot_settings['highlight_certain_sims'] = True
-
+    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': {1: '1'}, 'gen4000_100foods_intermediate_run_res_40d': {21: '21'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': {1: '1'}, 'gen4000_100foods_intermediate_run_res_40d': {21: '21'}},
-                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
+    # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': {1: '1'}, 'gen4000_100foods_intermediate_run_res_40d': {21: '21'}},
+    #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
     plot_settings['customize_legend_labels'] = True
     # plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': 'Critical Generation 100', 'gen4000_100foods_res_10_try_2dy': 'Critical Generation 4000'},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': 'Sub Critical Generation 4000'}}
-    plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'},
-                                             'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
+    # plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'},
+    #                                          'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
+
+
+
+    plot_settings['custom_legend_labels']={'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
+
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 

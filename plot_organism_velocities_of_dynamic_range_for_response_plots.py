@@ -137,17 +137,19 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr, fig, 
     color = plot_settings['colors'][folder_name][include_name]
 
     ax1 = plt.Subplot(fig, inner_plot[0])
-    ax1.set_title(sim_label, c=color, fontsize=30)
+    ax1.set_title(r'Simulation ${}$'.format(sim_label), c=color, fontsize=30)
     x_axis_gens = np.arange(len(energies_list_attr))
     ax1.scatter(x_axis_gens, energies_list_attr, s=2, alpha=0.5, c=color)
     ax1.set_xlabel('Time Step')
-    ax1.set_ylabel('Energy')
+    ax1.set_ylabel(r'$E_\mathrm{org}$')
+    ax1.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color='firebrick', alpha=0.8, linewidth=2)
 
     ax2 = plt.Subplot(fig, inner_plot[1], sharex=ax1)
     x_axis_gens = np.arange(len(velocities_list_attr))
     ax2.scatter(x_axis_gens, velocities_list_attr, s=2, alpha=0.5, c=color)
     ax2.set_xlabel('Time Step')
-    ax2.set_ylabel('Velocity')
+    ax2.set_ylabel(r'$v_\mathrm{org}$')
+    ax2.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color='firebrick', alpha=0.8, linewidth=2)
 
     # shared axis does not work.. also not in Subplot(sharex=ax1)
     # ax1.get_shared_x_axes().join(ax1, ax2)
@@ -220,5 +222,7 @@ if __name__ == '__main__':
 
     plot_settings['compress_save_isings'] = True
     plot_settings['number_columns_in_subplot'] = 2
+
+    plot_settings['data_set_trained_on_time_step'] = 2000
     #inds = [0]
     main(plot_settings)
