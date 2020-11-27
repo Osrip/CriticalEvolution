@@ -179,7 +179,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
 
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 14))
     ax_main = plt.subplot(111)
 
     # Make main plot
@@ -187,7 +187,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     plt.text(2200, 250, 'Trained on \n 2000 time steps', color='firebrick', alpha=0.8)
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
-    plt.ylim(-10, 1300)
+    plt.ylim(-10, 1800)
     plt.legend()
     plt.ylabel(r'$\langle \langle \langle E_\mathrm{org} \rangle \rangle \rangle$')
     # plt.xlabel('Percentage of food that population was originally trained on')
@@ -201,14 +201,14 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # PLot zoomed-in inset
 
 
-    ax_zoom1 = inset_axes(ax_main, 4.3, 4.3, loc='upper left')
+    ax_zoom1 = inset_axes(ax_main, 4.3, 5.3, loc='upper right')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
     plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
 
-    ax_zoom1.set_xlim(1500, 50000)
+    ax_zoom1.set_xlim(10000, 52000)
     ax_zoom1.set_ylim(0, 70)
 
     # ax_zoom1.set_ylim(1.94, 1.98)
@@ -220,6 +220,27 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # ax_zoom1.set_xticks([])
     # ax_zoom1.set_yticks([])
     mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
+
+
+    ax_zoom2 = inset_axes(ax_main, 3.3, 5.3, loc='upper left')
+    # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
+    plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+    plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False)
+
+    ax_zoom2.set_xlim(1500, 10000)
+    ax_zoom2.set_ylim(0, 70)
+
+    # ax_zoom1.set_ylim(1.94, 1.98)
+    # ax_zoom1.set_xlim(0, 1)
+
+    plt.yticks(visible=False)
+    plt.xticks(visible=False)
+    # Still has to be tested:
+    # ax_zoom1.set_xticks([])
+    # ax_zoom1.set_yticks([])
+    mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
 
 
 
