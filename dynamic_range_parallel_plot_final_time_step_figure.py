@@ -443,7 +443,13 @@ if __name__ == '__main__':
     # shall be loaded in the dynamic range folder of each simulation
     #
 
-    critical_folder_name =
+    critical_folder_name = 'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims'
+    critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
+    critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d'
+
+    sub_critical_folder_name = 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims'
+    sub_critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d'
+
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
     critical_folder_name_dict={'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['_intermediate_run_res_40_gen_100d', 'gen4000_100foods_intermediate_run_res_40d']}
