@@ -26,6 +26,7 @@ from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.colors as colors
+from matplotlib.colors import LinearSegmentedColormap
 
 
 
@@ -349,6 +350,11 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
 
 
 def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings):
+    if plot_settings['custom_colormaps']:
+        plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'critical_low_gen',
+                                                             critical_last_gen_include_name: 'critical_last_gen'},
+                                      'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims':
+                                          {sub_critical_last_gen_include_name: 'sub_critical_last_gen'}}
     # Extract colormap, that shall currently be used
     colormaps = plot_settings['colormaps']
     sim_data_folder = sim_data_list[0]
@@ -358,6 +364,14 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_lis
             for include_name in include_name_cmap_dict:
                 if include_name == sim_data_folder.dynamic_range_folder_includes:
                     colormap = include_name_cmap_dict[include_name]
+
+    if plot_settings['custom_colormaps']:
+        if colormap == 'critical_low_gen':
+            colormap = CustomCmap([0.1, 0.0, 0.0], [0.9, 0.3, 0.3])
+        elif colormap == 'critical_last_gen':
+            colormap = CustomCmap([0.00, 0.1, 0.0], [0.3, 0.9, 0.3])
+        elif colormap == 'sub_critical_last_gen':
+            colormap = CustomCmap([0.00, 0.00, 0.1], [0.3, 0.3, 0.9])
 
     list_of_avg_attr_list_arr = np.array(list_of_avg_attr_list)
     for food_num_list in list_of_food_num_list:
@@ -371,6 +385,7 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_lis
     norm = colors.Normalize(vmin=min(vals_at_trained_vary), vmax=max(vals_at_trained_vary))
 
     colors_list_sims = list(map(lambda x: cmap(norm(x)), vals_at_trained_vary))
+
     return colors_list_sims
 
 
@@ -444,6 +459,24 @@ def find_number_after_char_in_str(str, char):
     match = re.search('uniprotkb:P(\d+)', str)
     if match:
         return match.group(1)
+
+def CustomCmap(from_rgb,to_rgb):
+
+    # from color r,g,b
+    r1,g1,b1 = from_rgb
+
+    # to color r,g,b
+    r2,g2,b2 = to_rgb
+
+    cdict = {'red': ((0, r1, r1),
+                     (1, r2, r2)),
+             'green': ((0, g1, g1),
+                       (1, g2, g2)),
+             'blue': ((0, b1, b1),
+                      (1, b2, b2))}
+
+    cmap = LinearSegmentedColormap('custom_cmap', cdict)
+    return cmap
 
 if __name__ == '__main__':
     # In these dicts all folders, with parallel runs, that shall be loaded must be specified as keys.
@@ -524,7 +557,11 @@ if __name__ == '__main__':
 
 
     plot_settings['custom_legend_labels'] = {critical_folder_name: {critical_low_gen_include_name: 'Critical Generation 100', critical_last_gen_include_name: 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'Sub Critical Generation 4000'}}
-    plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'autumn', critical_last_gen_include_name: 'summer'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'winter'}}
+
+    plot_settings['custom_colormaps'] = True
+
+    # non-custom colormaps for when plot_settings['custom_colormaps'] = False
+    # plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'autumn', critical_last_gen_include_name: 'summer'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'winter'}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
