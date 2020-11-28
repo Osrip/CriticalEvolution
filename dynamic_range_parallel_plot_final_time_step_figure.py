@@ -25,6 +25,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import matplotlib.colors as colors
 
 
 
@@ -287,6 +288,9 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
 
+        color_list_sims = create_color_list(list_of_food_num_list, list_of_avg_attr_list, plot_settings)
+
+
         avg_of_avg_attr_list = []
         # This goes through all lists and takes averages of the inner nesting, such that instead of a list of lists
         # we have one list with average value of each entriy of the previous lists,
@@ -301,10 +305,13 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
         except IndexError:
             raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
                              ' than color lists in color dict')
+
+
         # Plot each simulation
-        plt.scatter(list_of_food_num_list, list_of_avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
+        for food_num_list, avg_attr_list, color in zip(list_of_food_num_list, list_of_avg_attr_list, color_list_sims):
+            plt.scatter(food_num_list, avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
         # Connect each simulation datapoint with lines
-        for food_num_list, avg_attr_list, sim_data in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list):
+        for food_num_list, avg_attr_list, sim_data, color in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, color_list_sims):
             if sim_data.highlight_this_sim:
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=0.5, linewidth=1)
             else:
@@ -339,6 +346,23 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
                     fontsize = 3
                 if (label is not None) and plot_this_label:
                     plt.text(coordinates[0], coordinates[1], label, fontsize=fontsize, c=color)
+
+
+def create_color_list(list_of_food_num_list, list_of_avg_attr_list, plot_settings):
+    # list_of_food_num_list = np.array(list_of_food_num_list)
+    list_of_avg_attr_list_arr = np.array(list_of_avg_attr_list)
+    for food_num_list in list_of_food_num_list:
+        if not food_num_list == list_of_food_num_list[0]:
+            raise Exception('Different x_axis in loaded data sets. Cannot create colormap')
+    food_num_list = list_of_food_num_list[0]
+    i_where = food_num_list.index(plot_settings['trained_on_varying_parameter_value'])
+    vals_at_trained_vary = list_of_avg_attr_list_arr[:, i_where]
+    cmap = plt.get_cmap('jet')
+
+    norm = colors.Normalize(vmin=min(vals_at_trained_vary), vmax=max(vals_at_trained_vary))
+
+    colors_list_sims = list(map(lambda x: cmap(norm(x)), vals_at_trained_vary))
+    return colors_list_sims
 
 
 def divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list):
@@ -418,6 +442,8 @@ if __name__ == '__main__':
     # dynamic_range_parallel_pipline. This string is a characteristic substring of the folder name of the runs that
     # shall be loaded in the dynamic range folder of each simulation
     #
+
+    critical_folder_name =
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
     critical_folder_name_dict={'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': ['_intermediate_run_res_40_gen_100d', 'gen4000_100foods_intermediate_run_res_40d']}
@@ -456,6 +482,7 @@ if __name__ == '__main__':
     # This plots the means of all simulations in one folder for one value of the y-axis
     plot_settings['plot_means'] = False
     plot_settings['divide_x_value_by_y_value'] = False
+    plot_settings['trained_on_varying_parameter_value'] = 2000
     plot_settings['critical_folder_name_dict'] = critical_folder_name_dict
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
 
@@ -481,7 +508,7 @@ if __name__ == '__main__':
 
 
 
-    plot_settings['custom_legend_labels']={'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
+    plot_settings['custom_legend_labels'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': 'Critical Generation 100', 'gen4000_100foods_intermediate_run_res_40d': 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': 'Sub Critical Generation 4000'}}
 
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
