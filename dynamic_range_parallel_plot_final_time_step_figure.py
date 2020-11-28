@@ -288,7 +288,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
 
-        color_list_sims = create_color_list(list_of_food_num_list, list_of_avg_attr_list, plot_settings)
+        color_list_sims = create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings)
 
 
         avg_of_avg_attr_list = []
@@ -348,8 +348,17 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
                     plt.text(coordinates[0], coordinates[1], label, fontsize=fontsize, c=color)
 
 
-def create_color_list(list_of_food_num_list, list_of_avg_attr_list, plot_settings):
-    # list_of_food_num_list = np.array(list_of_food_num_list)
+def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings):
+    # Extract colormap, that shall currently be used
+    colormaps = plot_settings['colormaps']
+    sim_data_folder = sim_data_list[0]
+    for folder_name in colormaps:
+        if folder_name == sim_data_folder.folder_name:
+            include_name_cmap_dict = colormaps[folder_name]
+            for include_name in include_name_cmap_dict:
+                if include_name == sim_data_folder.dynamic_range_folder_includes:
+                    colormap = include_name_cmap_dict[include_name]
+
     list_of_avg_attr_list_arr = np.array(list_of_avg_attr_list)
     for food_num_list in list_of_food_num_list:
         if not food_num_list == list_of_food_num_list[0]:
@@ -357,7 +366,7 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, plot_setting
     food_num_list = list_of_food_num_list[0]
     i_where = food_num_list.index(plot_settings['trained_on_varying_parameter_value'])
     vals_at_trained_vary = list_of_avg_attr_list_arr[:, i_where]
-    cmap = plt.get_cmap('jet')
+    cmap = plt.get_cmap(colormap)
 
     norm = colors.Normalize(vmin=min(vals_at_trained_vary), vmax=max(vals_at_trained_vary))
 
@@ -515,7 +524,7 @@ if __name__ == '__main__':
 
 
     plot_settings['custom_legend_labels'] = {critical_folder_name: {critical_low_gen_include_name: 'Critical Generation 100', critical_last_gen_include_name: 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'Sub Critical Generation 4000'}}
-
+    plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'autumn', critical_last_gen_include_name: 'summer'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'winter'}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
 
