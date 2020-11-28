@@ -289,8 +289,16 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
         # food_num_list is not ordered yet, order both lists acc to food_num list for line plotting
         list_of_food_num_list, list_of_avg_attr_list = sort_lists_of_lists(list_of_food_num_list, list_of_avg_attr_list)
 
-        color_list_sims = create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings)
-
+        if plot_settings['use_colormaps']:
+            color_list_sims = create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings)
+        else:
+            colors = plot_settings['color'][sim_data.key]
+            try:
+                color = colors[sim_data.dynamic_range_folder_includes_index]
+            except IndexError:
+                raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
+                                 ' than color lists in color dict')
+            color_list_sims = [color for _ in sim_data_list]
 
         avg_of_avg_attr_list = []
         # This goes through all lists and takes averages of the inner nesting, such that instead of a list of lists
@@ -300,12 +308,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
             avg_of_avg_attr_list.append(np.mean([list_of_avg_attr_list[j][i] for j in range(len(list_of_avg_attr_list))]))
 
         marker = plot_settings['marker'][sim_data.folder_num_in_key]
-        colors = plot_settings['color'][sim_data.key]
-        try:
-            color = colors[sim_data.dynamic_range_folder_includes_index]
-        except IndexError:
-            raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
-                             ' than color lists in color dict')
+
 
 
         # Plot each simulation
@@ -367,11 +370,11 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_lis
 
     if plot_settings['custom_colormaps']:
         if colormap == 'critical_low_gen':
-            colormap = CustomCmap([0.1, 0.0, 0.0], [0.9, 0.3, 0.3])
+            colormap = CustomCmap([0.1, 0.0, 0.0], [0.7, 0.0, 0.0])
         elif colormap == 'critical_last_gen':
-            colormap = CustomCmap([0.00, 0.1, 0.0], [0.3, 0.9, 0.3])
+            colormap = CustomCmap([0.00, 0.1, 0.0], [0.0, 0.7, 0.0])
         elif colormap == 'sub_critical_last_gen':
-            colormap = CustomCmap([0.00, 0.00, 0.1], [0.3, 0.3, 0.9])
+            colormap = CustomCmap([0.00, 0.00, 0.1], [0.0, 0.0, 0.7])
 
     list_of_avg_attr_list_arr = np.array(list_of_avg_attr_list)
     for food_num_list in list_of_food_num_list:
@@ -558,8 +561,9 @@ if __name__ == '__main__':
 
     plot_settings['custom_legend_labels'] = {critical_folder_name: {critical_low_gen_include_name: 'Critical Generation 100', critical_last_gen_include_name: 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'Sub Critical Generation 4000'}}
 
+    plot_settings['use_colormaps'] = True
+    # 'custom_colormaps' can only be activated when 'use_colormaps' is active
     plot_settings['custom_colormaps'] = True
-
     # non-custom colormaps for when plot_settings['custom_colormaps'] = False
     # plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'autumn', critical_last_gen_include_name: 'summer'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'winter'}}
 
