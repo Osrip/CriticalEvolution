@@ -195,16 +195,22 @@ if __name__ == '__main__':
 
     plot_settings = {}
 
+    critical_folder_name = 'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims'
+    critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d' # 'ds_res_10_try_2_gen_100d'
+    critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d' # 'gen4000_100foods_res_10_try_2dy'
+
+    sub_critical_folder_name = 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims'
+    sub_critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d' # 'gen4000_100foods_res_10_try_2dy'
+
     # The label highlighted sims dict is used to choose which velocities to plot
-    plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
-                                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 25: '25'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
     #
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_one_rep': {1: '1', 2: '2'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocitiesy_three_rep': {1: '1', 2: '2'}}}
     #
-    plot_settings['colors'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims':
-                                   {'ds_res_10_try_2_gen_100d': 'darkorange', 'gen4000_100foods_res_10_try_2dy': 'olive'},
-                               'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': 'royalblue'}}
+    plot_settings['colors'] = {critical_folder_name:
+                                   {critical_low_gen_include_name: 'darkorange', critical_last_gen_include_name: 'olive'},
+                               sub_critical_folder_name: {sub_critical_last_gen_include_name: 'royalblue'}}
     #
     # plot_settings['colors'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocitiesy_three_rep': 'olive'}}
 
