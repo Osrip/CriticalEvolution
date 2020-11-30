@@ -80,7 +80,10 @@ def main(plot_settings):
         fig = plt.figure(figsize=(20, 10*num_rows))
         outer_plot = gridspec.GridSpec(num_rows, num_columns, wspace=0.3, hspace=0.3)
         curr_subplot_num = 0
-        for sim_label in sorted(list(plot_info_dict.keys())[page*num_subplots_page : page*num_subplots_page + num_subplots_in_curr_plot], reverse=True):
+
+        sim_label_iter = sorted(list(plot_info_dict.keys())[page*num_subplots_page : page*num_subplots_page + num_subplots_in_curr_plot])
+        sim_label_iter.reverse()
+        for sim_label in sim_label_iter:
             folder_name, include_name, sim_num = plot_info_dict[sim_label]
             inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.0)
             make_one_subplot(folder_name, include_name, sim_num, fig, inner_plot, plot_settings)
