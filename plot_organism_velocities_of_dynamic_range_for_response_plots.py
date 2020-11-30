@@ -20,6 +20,8 @@ from scipy import fftpack
 from automatic_plot_helper import all_folders_in_dir_with
 import math
 import matplotlib.gridspec as gridspec
+import time
+
 
 
 def main(plot_settings):
@@ -29,39 +31,89 @@ def main(plot_settings):
     plt.rc('font', **font)
     plt.rc('legend', **{'fontsize': 25})
 
+    plot_settings['savefolder_name'] = 'velocites_energies_plot_{}' \
+        .format(time.strftime("%Y%m%d-%H%M%S"))
+    save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
 
     label_highlighted_sims = plot_settings['label_highlighted_sims']
-    # custom_legend_labels = plot_settings['custom_legend_labels']
-    # Making a new plot for each folder and a subplot for each dict in each include_name dict
+
+    num_subplots_page = plot_settings['max_number_of_plots_on_one_page']
+    num_subplots_total = 0
+    # Count number of plots:
     for folder_name in label_highlighted_sims:
         include_name_dict = label_highlighted_sims[folder_name]
-        num_subplots = count_total_number_of_plots_in_folder(include_name_dict)
-        num_columns = plot_settings['number_columns_in_subplot']
-        num_rows = math.floor(num_subplots / num_columns)
+        num_subplots_total += count_total_number_of_plots_in_folder(include_name_dict)
 
+    num_pages = math.ceil(num_subplots_total / num_subplots_page)
+
+    # custom_legend_labels = plot_settings['custom_legend_labels']
+    # Making a new plot for each folder and a subplot for each dict in each include_name dict
+
+    plot_info_dict = {}
+    for page in range(num_pages):
+        for folder_name in label_highlighted_sims:
+            include_name_dict = label_highlighted_sims[folder_name]
+            for include_name in include_name_dict:
+                sim_num_dict = include_name_dict[include_name]
+                for sim_num in sim_num_dict:
+                    sim_label = sim_num_dict[sim_num]
+                    try:
+                        sim_label = int(sim_label)
+                    except ValueError:
+                        pass
+                    # plot_info_dict[sim_label] = {'folder_name': folder_name, 'include_name': include_name, 'sim_num': sim_num}
+                    plot_info_dict[sim_label] = (folder_name, include_name, sim_num)
+
+    for page in range(num_pages):
+        if page == num_pages -1:
+            num_subplots_in_curr_plot = num_subplots_total % num_subplots_page
+        else:
+            num_subplots_in_curr_plot = num_subplots_page
+
+        num_columns = plot_settings['number_columns_in_subplot']
+        num_rows = math.floor(num_subplots_in_curr_plot / num_columns)
         fig = plt.figure(figsize=(20, 10*num_rows))
         outer_plot = gridspec.GridSpec(num_rows, num_columns, wspace=0.3, hspace=0.3)
-
         curr_subplot_num = 0
-        for include_name in include_name_dict:
-            sim_num_dict = include_name_dict[include_name]
-            for sim_num in sim_num_dict:
-                inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.0)
-                # Creating subplot command
-                # subplot_input = int('{}{}{}'.format(num_subplots,
-                #                                     math.floor(curr_subplot_num/2)+1,
-                #                                     (curr_subplot_num % 2)+1))
-                # plt.subplot(subplot_input)
-                make_one_subplot(folder_name, include_name, sim_num, fig, inner_plot, plot_settings)
-                curr_subplot_num += 1
+        for sim_label in sorted(list(plot_info_dict.keys())[page*num_subplots_page : page*num_subplots_page + num_subplots_in_curr_plot], reverse=True):
+            folder_name, include_name, sim_num = plot_info_dict[sim_label]
+            inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.0)
+            make_one_subplot(folder_name, include_name, sim_num, fig, inner_plot, plot_settings)
+            curr_subplot_num += 1
 
-        save_path = 'save/{}/figs/energies_velocities_for_response_plot/'.format(folder_name)
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
-        fig_name = 'velocities.png'
-        plt.savefig('{}{}'.format(save_path, fig_name), dpi=150, bbox_inches='tight')
+        fig_name = 'velocities_p{}.png'.format(page+1)
+        plt.savefig('{}{}'.format(save_folder, fig_name), dpi=300, bbox_inches='tight')
+
+        # for folder_name in label_highlighted_sims:
+        #     include_name_dict = label_highlighted_sims[folder_name]
+        #     num_subplots = count_total_number_of_plots_in_folder(include_name_dict)
+        #     num_columns = plot_settings['number_columns_in_subplot']
+        #     num_rows = math.floor(num_subplots / num_columns)
+        #
+        #     fig = plt.figure(figsize=(20, 10*num_rows))
+        #     outer_plot = gridspec.GridSpec(num_rows, num_columns, wspace=0.3, hspace=0.3)
+        #
+        #
+        #     for include_name in include_name_dict:
+        #         sim_num_dict = include_name_dict[include_name]
+        #         for sim_num in sim_num_dict:
+        #             sim_label = sim_num_dict[sim_num]
+        #             sim_position_on_plot = int(sim_label)  - num_subplots_page*page
+        #             inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[sim_position_on_plot], wspace=0.2, hspace=0.0)
+        #             # Creating subplot command
+        #             # subplot_input = int('{}{}{}'.format(num_subplots,
+        #             #                                     math.floor(curr_subplot_num/2)+1,
+        #             #                                     (curr_subplot_num % 2)+1))
+        #             # plt.subplot(subplot_input)
+        #             make_one_subplot(folder_name, include_name, sim_num, fig, inner_plot, plot_settings)
+        #             curr_subplot_num += 1
+
+
 
 
 def count_total_number_of_plots_in_folder(include_name_dict):
@@ -231,5 +283,7 @@ if __name__ == '__main__':
     plot_settings['number_columns_in_subplot'] = 2
 
     plot_settings['data_set_trained_on_time_step'] = 2000
+
+    plot_settings['max_number_of_plots_on_one_page'] = 6
     #inds = [0]
     main(plot_settings)
