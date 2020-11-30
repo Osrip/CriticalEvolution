@@ -25,9 +25,9 @@ import matplotlib.gridspec as gridspec
 def main(plot_settings):
     plot_settings['number_individuals'] = 1
 
-    font = {'family': 'serif', 'size': 14, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 25, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
-    plt.rc('legend', **{'fontsize': 10})
+    plt.rc('legend', **{'fontsize': 25})
 
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
@@ -48,7 +48,7 @@ def main(plot_settings):
         for include_name in include_name_dict:
             sim_num_dict = include_name_dict[include_name]
             for sim_num in sim_num_dict:
-                inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.2)
+                inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.0)
                 # Creating subplot command
                 # subplot_input = int('{}{}{}'.format(num_subplots,
                 #                                     math.floor(curr_subplot_num/2)+1,
@@ -140,11 +140,12 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr, fig, 
     ax1.set_title(r'Simulation ${}$'.format(sim_label), c=color, fontsize=30)
     x_axis_gens = np.arange(len(energies_list_attr))
     ax1.scatter(x_axis_gens, energies_list_attr, s=2, alpha=0.5, c=color)
-    ax1.set_xlabel('Time Step')
+    # ax1.set_xlabel('Time Step')
+    ax1.set_xticks([])
     ax1.set_ylabel(r'$E_\mathrm{org}$')
     ax1.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color='firebrick', alpha=0.8, linewidth=2)
 
-    ax2 = plt.Subplot(fig, inner_plot[1], sharex=ax1)
+    ax2 = plt.Subplot(fig, inner_plot[1]) # , sharex=ax1
     x_axis_gens = np.arange(len(velocities_list_attr))
     ax2.scatter(x_axis_gens, velocities_list_attr, s=2, alpha=0.5, c=color)
     ax2.set_xlabel('Time Step')
@@ -203,8 +204,8 @@ if __name__ == '__main__':
     sub_critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d' # 'gen4000_100foods_res_10_try_2dy'
 
     # The label highlighted sims dict is used to choose which velocities to plot
-    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 25: '25'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
-    #
+    # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 15: '15'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28',3: '3', 53: '53', 7: '7', 39: '39', 48: '48'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_one_rep': {1: '1', 2: '2'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocitiesy_three_rep': {1: '1', 2: '2'}}}
     #

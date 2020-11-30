@@ -369,6 +369,8 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_lis
                     colormap = include_name_cmap_dict[include_name]
 
     if plot_settings['custom_colormaps']:
+        # The two colors of the custom color map can be adjusted
+        # by changing the numbers of CustomCmap in the order of r,g,b
         if colormap == 'critical_low_gen':
             colormap = CustomCmap([0.1, 0.0, 0.0], [0.7, 0.0, 0.0])
         elif colormap == 'critical_last_gen':
@@ -544,7 +546,9 @@ if __name__ == '__main__':
     #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
     plot_settings['highlight_certain_sims'] = True
-    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 25: '25'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
+    # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 15: '15'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28',3: '3', 53: '53', 7: '7', 39: '39', 48: '48'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
+
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
