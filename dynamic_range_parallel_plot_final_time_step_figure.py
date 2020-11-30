@@ -543,7 +543,7 @@ if __name__ == '__main__':
     #  plot_settings['label_highlighted_sims'] is a dict of dicts of dicts with the following shape:
     #  {folder_name_1: {include_name_1: {simulation_number: new_label_1}, ...}, ...}
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
-    plot_settings['highlight_certain_sims'] = True
+    plot_settings['highlight_certain_sims'] = False
     plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1'}, critical_last_gen_include_name: {21: '21'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
@@ -561,7 +561,7 @@ if __name__ == '__main__':
 
     plot_settings['custom_legend_labels'] = {critical_folder_name: {critical_low_gen_include_name: 'Critical Generation 100', critical_last_gen_include_name: 'Critical Generation 4000'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'Sub Critical Generation 4000'}}
 
-    plot_settings['use_colormaps'] = True
+    plot_settings['use_colormaps'] = False
     # 'custom_colormaps' can only be activated when 'use_colormaps' is active
     plot_settings['custom_colormaps'] = True
     # non-custom colormaps for when plot_settings['custom_colormaps'] = False
