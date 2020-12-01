@@ -547,8 +547,8 @@ if __name__ == '__main__':
     #  The include name ("dynamic_range_folder_includes") has to be equal to the one used in the folder_name_dict s.
     plot_settings['highlight_certain_sims'] = True
     # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 15: '15'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28',3: '3', 53: '53', 7: '7', 39: '39', 48: '48'}}}
-    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
-
+    # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '4', 15: '6'}, critical_last_gen_include_name: {21: '7', 10: '9'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '1',3: '3', 53: '5', 7: '2', 39: '8', 48: '10'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 

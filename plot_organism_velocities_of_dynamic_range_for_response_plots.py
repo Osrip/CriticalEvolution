@@ -81,8 +81,8 @@ def main(plot_settings):
         outer_plot = gridspec.GridSpec(num_rows, num_columns, wspace=0.3, hspace=0.3)
         curr_subplot_num = 0
 
-        sim_label_iter = sorted(list(plot_info_dict.keys())[page*num_subplots_page : page*num_subplots_page + num_subplots_in_curr_plot])
-        sim_label_iter.reverse()
+        sim_label_iter = sorted(list(plot_info_dict.keys()))[page*num_subplots_page : page*num_subplots_page + num_subplots_in_curr_plot]
+        # sim_label_iter.reverse()
         for sim_label in sim_label_iter:
             folder_name, include_name, sim_num = plot_info_dict[sim_label]
             inner_plot = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=outer_plot[curr_subplot_num], wspace=0.2, hspace=0.0)
@@ -260,7 +260,9 @@ if __name__ == '__main__':
 
     # The label highlighted sims dict is used to choose which velocities to plot
     # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 15: '15'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28',3: '3', 53: '53', 7: '7', 39: '39', 48: '48'}}}
-    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
+    # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '4', 15: '6'}, critical_last_gen_include_name: {21: '7', 10: '9'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '1',3: '3', 53: '5', 7: '2', 39: '8', 48: '10'}}}
+
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocities_one_rep': {1: '1', 2: '2'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201022-184145_parallel_TEST_repeated': {'energies_velocitiesy_three_rep': {1: '1', 2: '2'}}}
     #
