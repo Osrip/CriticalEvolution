@@ -213,7 +213,8 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
 
-    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=70, y_offset_boo=False)
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=70
+              , x_offset_boo=False, y_offset_boo=False)
 
     ax_zoom1.set_xlim(10000, 52000)
     ax_zoom1.set_ylim(0, 70)
@@ -263,7 +264,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
 
 
-def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=None, y_offset_boo=True):
+def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=None, x_offset_boo=True, y_offset_boo=True):
     # Iterating through each folder
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
@@ -336,13 +337,23 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
 
                 x_offset = 300
                 y_offset = 0
-                if y_offset_boo:
+                if x_offset_boo:
                     try:
-                        x_add_offset = plot_settings['y_offsets_for_labels'][sim_data.folder_name][sim_data.dynamic_range_folder_includes][sim_data.label]
+                        x_add_offset = plot_settings['x_offsets_for_labels'][sim_data.folder_name][sim_data.dynamic_range_folder_includes][sim_data.label]
                     except KeyError:
                         x_add_offset = 0
                 else:
                     x_add_offset = 0
+
+                if y_offset_boo:
+                    try:
+                        y_add_offset = plot_settings['y_offsets_for_labels'][sim_data.folder_name][sim_data.dynamic_range_folder_includes][sim_data.label]
+                    except KeyError:
+                        y_add_offset = 0
+                else:
+                    y_add_offset = 0
+
+                y_offset += y_add_offset
                 x_offset += x_add_offset
                 coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
@@ -560,7 +571,8 @@ if __name__ == '__main__':
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-    plot_settings['y_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {}, critical_last_gen_include_name: {}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {'3': 800, '5': 800, '8': 800}}}
+    plot_settings['x_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {}, critical_last_gen_include_name: {}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {'3': 800, '5': 800, '8': 800}}}
+    plot_settings['y_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {'4': -10}, critical_last_gen_include_name: {}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {'2': -8, '3': -6.5}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': {1: '1'}, 'gen4000_100foods_intermediate_run_res_40d': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
