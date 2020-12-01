@@ -27,9 +27,9 @@ import time
 def main(plot_settings):
     plot_settings['number_individuals'] = 1
 
-    font = {'family': 'serif', 'size': 25, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 30, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
-    plt.rc('legend', **{'fontsize': 25})
+    plt.rc('legend', **{'fontsize': 30})
 
     plot_settings['savefolder_name'] = 'velocites_energies_plot_{}' \
         .format(time.strftime("%Y%m%d-%H%M%S"))
@@ -192,7 +192,7 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr, fig, 
     color = plot_settings['colors'][folder_name][include_name]
 
     ax1 = plt.Subplot(fig, inner_plot[0])
-    ax1.set_title(r'Simulation ${}$'.format(sim_label), c=color, fontsize=30)
+    ax1.set_title(r'Simulation ${}$'.format(sim_label), c=color, fontsize=35)
     x_axis_gens = np.arange(len(energies_list_attr))
     ax1.scatter(x_axis_gens, energies_list_attr, s=2, alpha=0.5, c=color)
     # ax1.set_xlabel('Time Step')

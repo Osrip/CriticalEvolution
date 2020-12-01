@@ -174,7 +174,7 @@ def load_plot_data(folder_name):
 
 
 def plot_axis(sim_data_list_each_folder, plot_settings):
-    font = {'family': 'serif', 'size': 14, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 16, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     plt.rc('legend', **{'fontsize': 10})
 
@@ -190,7 +190,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True)
     plt.ylim(-10, 1800)
-    plt.legend(loc="upper left", bbox_to_anchor=(0.45, 0.5))
+
     # ax_main.set_yticks(ax_main.get_yticks()[:-5])
     # Hide some tick labels:
     for i in range(1,6):
@@ -255,7 +255,16 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # ax_zoom2.set_yticks(ax_zoom2.get_yticks()[:-1])
     mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
 
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label='Critical Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Critical Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Sub-Critical Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
+               markersize=20, alpha=0.75),
+    ]
 
+    ax_zoom2.legend(loc="upper left", bbox_to_anchor=(0.20, -0.23), handles=legend_elements, fontsize=16)
 
     save_name = 'response_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
@@ -364,7 +373,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_u
 
                 label = sim_data.label #sim_data.sim_name[sim_data.sim_name.rfind('Run_')+4:]  # TODO check whether this is run number!
                 if plot_settings['highlight_certain_sims']:
-                    fontsize = 10
+                    fontsize = 14
                 else:
                     fontsize = 3
                 if (label is not None) and plot_this_label:
@@ -519,7 +528,7 @@ if __name__ == '__main__':
     # folder_name_dict has the form
     # {-simulation_name1-:[-included_substr1-, -included_substr2-, ...], -simulation_name1-:[-included_substr1-, -included_substr2-, ...]}
     critical_folder_name_dict={critical_folder_name: [critical_low_gen_include_name, critical_last_gen_include_name]}
-    sub_critical_folder_name_dict={'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': [sub_critical_last_gen_include_name]}
+    sub_critical_folder_name_dict={sub_critical_folder_name: [sub_critical_last_gen_include_name]}
 
 
     # critical_folder_name_dict = {'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000':
@@ -538,7 +547,7 @@ if __name__ == '__main__':
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = True
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats_THESIS_PLOT'
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
@@ -567,12 +576,13 @@ if __name__ == '__main__':
     plot_settings['highlight_certain_sims'] = True
     # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '1', 15: '15'}, critical_last_gen_include_name: {21: '21', 10: '10'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '28',3: '3', 53: '53', 7: '7', 39: '39', 48: '48'}}}
     # plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '7', 15: '5'}, critical_last_gen_include_name: {21: '4', 10: '2'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '10',3: '8', 53: '6', 7: '9', 39: '3', 48: '1'}}}
-    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '4', 15: '6'}, critical_last_gen_include_name: {21: '7', 10: '9'}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {28: '1',3: '3', 53: '5', 7: '2', 39: '8', 48: '10'}}}
+    plot_settings['label_highlighted_sims'] = {critical_folder_name: {critical_low_gen_include_name: {1: '4', 15: '6'}, critical_last_gen_include_name: {21: '7', 10: '9'}}, sub_critical_folder_name: {sub_critical_last_gen_include_name: {28: '1',3: '3', 53: '5', 7: '2', 39: '8', 48: '10'}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'ds_res_10_try_2_gen_100d': {1: '1'}, 'gen4000_100foods_res_10_try_2dy': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_res_10_try_2dy': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
-    plot_settings['x_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {}, critical_last_gen_include_name: {}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {'3': 800, '5': 800, '8': 800}}}
-    plot_settings['y_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {'4': -10}, critical_last_gen_include_name: {}}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: {'2': -8, '3': -6.5}}}
+    #  The offset label dicts give the offsets for a label of the simulation. !! Use the label of the simulation as key; not the number of the simulation !!
+    plot_settings['x_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {}, critical_last_gen_include_name: {}}, sub_critical_folder_name: {sub_critical_last_gen_include_name: {'3': 800, '5': 800, '8': 800}}}
+    plot_settings['y_offsets_for_labels'] = {critical_folder_name: {critical_low_gen_include_name: {'4': -10}, critical_last_gen_include_name: {}}, sub_critical_folder_name: {sub_critical_last_gen_include_name: {'2': -8, '3': -6.5}}}
     # plot_settings['label_highlighted_sims'] = {'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims': {'_intermediate_run_res_40_gen_100d': {1: '1'}, 'gen4000_100foods_intermediate_run_res_40d': {21: '21'}},
     #                                            'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {'gen4000_100foods_intermediate_run_res_40d': {28: '28', 19: '19', 53: '53', 7: '7', 30: '30', 39: '39'}}}
 
