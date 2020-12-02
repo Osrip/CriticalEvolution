@@ -113,6 +113,7 @@ def dynamic_range_main(folder_name_dict, plot_settings):
 
 
     plot_axis(sim_data_list_each_folder, plot_settings)
+    scatter_plot(sim_data_list_each_folder, plot_settings)
 
 
 def prepare_data(folder_name_dict, plot_settings):
@@ -421,6 +422,56 @@ def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_lis
 
     return colors_list_sims
 
+
+def scatter_plot(sim_data_list_each_folder, plot_settings):
+    fig = plt.figure(figsize=(10,10))
+    max_var_param_list = []
+    for sim_data_list in sim_data_list_each_folder:
+        avg_attr_trained_var_param_list = []
+        avg_attr_max_var_param_list = []
+        for sim_data in sim_data_list:
+            i_trained_var_param = sim_data.food_num_list.index(plot_settings['trained_on_varying_parameter_value'])
+            max_var_param = np.max(sim_data.food_num_list)
+            max_var_param_list.append(max_var_param)
+            i_max_var_param = sim_data.food_num_list.index(max_var_param)
+            avg_attr_trained_var_param = sim_data.avg_attr_list[i_trained_var_param]
+            avg_attr_max_var_param = sim_data.avg_attr_list[i_max_var_param]
+
+            avg_attr_trained_var_param_list.append(avg_attr_trained_var_param)
+            avg_attr_max_var_param_list.append(avg_attr_max_var_param)
+
+
+        colors = plot_settings['color'][sim_data.key]
+        try:
+            color = colors[sim_data.dynamic_range_folder_includes_index]
+        except IndexError:
+            raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
+                             ' than color lists in color dict')
+        plt.scatter(avg_attr_trained_var_param_list, avg_attr_max_var_param_list, c=color, alpha=0.5)
+
+    if not all_equal(max_var_param_list):
+        raise BaseException('The maximal varying parameter (time steps) differs between some of the loaded simulation')
+    xlim = plt.xlim()[1]
+    slope = max_var_param / plot_settings['trained_on_varying_parameter_value']
+
+    x_arr = np.linspace(0, xlim, 1000)
+    y_arr = [x*slope for x in x_arr]
+    plt.plot(x_arr, y_arr, c='mediumturquoise', linestyle='dashed')
+    # plt.plot([0, xlim], [0, xlim * slope])
+    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (max_var_param))
+    plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
+    plt.yscale('log')
+    save_name = 'scatter_plot.png'
+    save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+
+
+def all_equal(lst):
+    # Are all entries in list identical?
+    return not lst or lst.count(lst[0]) == len(lst)
 
 def divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list):
     list_of_avg_attr_list_new = []
