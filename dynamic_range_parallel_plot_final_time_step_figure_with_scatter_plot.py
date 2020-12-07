@@ -27,7 +27,7 @@ from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.colors as colors
 from matplotlib.colors import LinearSegmentedColormap
-
+import matplotlib as mplou
 
 
 class ResponseCurveSimData:
@@ -460,7 +460,9 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
     # plt.plot([0, xlim], [0, xlim * slope])
     plt.ylabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (max_var_param))
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
+
     plt.yscale('log')
+    # mpl.patches.Ellipse((25, 50), 100, 100, angle=160)
     save_name = 'scatter_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
 

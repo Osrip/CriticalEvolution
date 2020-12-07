@@ -34,7 +34,7 @@ if __name__ == '__main__':
     #              'sim-20200606-014837-g_2000_-t_4000_-b_10_-dream_c_0_-nat_c_0_-ref_0_-rec_c_0_-noplt_-n_energies_velocities_saved_more_time_steps'
     #              ]
     sim_names = ['sim-20200721-184149-g_4000_-t_2000_-iso_-ref_500_-rec_c_250_-a_50_100_500_1000_-no_trace_-n_different_nbetas_from_scratch_isolated_no_beta_jump_GOOD']
-    for sim_name in sim_names :
+    for sim_name in sim_names:
         cores = 20
         generation_list = [3750]
         settings = load_settings(sim_name)
