@@ -74,15 +74,13 @@ def calculate_beta_distance_parameter(betas_max_gen_dict):
 
             # Core operations of this function
             beta_distance = beta_max - 1.0
-            log_beta_distance = np.log10(beta_max) # we can just take log, as log(beta_crit = 1.0) = 0
+            log_beta_distance = np.log10(beta_max)  # we can just take log, as log(beta_crit = 1.0) = 0
 
             beta_distances.append(beta_distance)
             log_beta_distances.append(log_beta_distance)
         beta_distance_dict[gen] = beta_distances
         log_beta_distance_dict[gen] = log_beta_distances
     return log_beta_distance_dict, beta_distance_dict
-
-
 
 
 def load_heat_cap_files(sim_name, settings, gen_list):

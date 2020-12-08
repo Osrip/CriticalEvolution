@@ -369,7 +369,8 @@ def run(settings, Iterations):
     # LOAD ISING CORRELATIONS
     # filename = 'correlations-ising2D-size400.npy'
     filename2 = 'correlations-ising-generalized-size83.npy'
-    settings['Cdist'] = np.load(filename2)
+    # This adds 13 MB to settings.pickle and we don't need it
+    # settings['Cdist'] = np.load(filename2)
 
     # --- POPULATE THE ENVIRONMENT WITH FOOD ---------------+
     foods = []
