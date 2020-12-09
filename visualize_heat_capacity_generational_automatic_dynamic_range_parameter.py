@@ -228,7 +228,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical):
     # if mean_log_beta_distance > 1.1 and mean_log_beta_distance < 0.9:
     if draw_critical:
         text_y_pos = mean_beta_distance + (mean_beta_distance * 0.5)
-        plt.text(text_y_pos, 0.36, r'$\delta_\mathrm{sub} \approx 0$')
+        plt.text(text_y_pos, 0.36, r'$\delta_\mathrm{crit} \approx 0$')
 
     else:
         if mean_beta_distance < 1:
@@ -244,7 +244,6 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical):
         plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
 
 
-    return
 
 
 def plot_dynamic_range_parameter_background(sim_name, betas, generation):
@@ -281,11 +280,11 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
     draw_dynamic_range_param = True
-    draw_legend = True
+    draw_legend = False
     draw_critical = True
     main(sim_name, settings, None, recorded, draw_dynamic_range_param, draw_legend, draw_critical)
