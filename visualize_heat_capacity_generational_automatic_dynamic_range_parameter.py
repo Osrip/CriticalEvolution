@@ -64,7 +64,7 @@ def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param
     print('Done.')
 
     plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 28, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 30, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     plt.rc('legend', **{'fontsize': 20})
 
@@ -74,9 +74,9 @@ def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param
     print('Generating figures...')
     for ii, iter in enumerate(iter_gen):
 
-        fig, ax = plt.subplots(1, 1, figsize=(11, 10), sharex=True)
-        fig.text(0.51, 0.035, r'$\beta_{fac}$', ha='center', fontsize=28)
-        fig.text(0.005, 0.5, r'$C_\mathrm{H}/N$', va='center', rotation='vertical', fontsize=28)
+        fig, ax = plt.subplots(1, 1, figsize=(14, 10), sharex=True)
+        fig.text(0.51, 0.030, r'$\beta_{fac}$', ha='center', fontsize=30)
+        fig.text(0.005, 0.5, r'$C_\mathrm{H}/N$', va='center', rotation='vertical', fontsize=30)
         title = 'Specific Heat of Foraging Community\n Generation: ' + str(iter)
         # fig.suptitle(title)
         if draw_dynamic_range_param:
@@ -141,23 +141,23 @@ def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param
 def plot_legend(cmap):
     norm = colors.Normalize(vmin=1, vmax=4)
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(1.3)),
-               markersize=15, alpha=0.75),
+        # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(1.3)),
+        #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(2)),
-               markersize=15, alpha=0.75, label=r'Organisms Generation $0$'),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(3)),
-               markersize=15, alpha=0.75),
+               markersize=15, alpha=0.75, label=r'Organisms (Generation $0$)'),
+        # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(3)),
+        #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='maroon',
-               markersize=15, alpha=0.75, label=r'$\mathrm{max}(C_\mathrm{H}/N)_\mathrm{org}$'),
-        Patch(facecolor='maroon', edgecolor='w', label=r'$\mathrm{std} (\mathrm{max}(C_\mathrm{H}/N)_\mathrm{org}) _ {\beta_\mathrm{fac}}$', alpha=0.4),
-        Line2D([0], [0], color='b', lw=3, c='maroon', linestyle='dashed', alpha=0.7, label=r'$\langle \mathrm{max}(C_\mathrm{H}/N)_\mathrm{org} \rangle _ {\beta_\mathrm{fac}}$'),
-        Line2D([0], [0], color='b', lw=3, c='darkorange', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac} = 1$'),
-        Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dotted', alpha=0.7, label=r'$\delta$'),
+               markersize=15, alpha=0.75, label=r'Maximum'),
+        Patch(facecolor='maroon', edgecolor='w', label=r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', alpha=0.4),
+        Line2D([0], [0], color='b', lw=3, c='maroon', linestyle='dashed', alpha=0.7, label=r'$\langle \beta_\mathrm{fac}^\mathrm{crit} \rangle$'),
+        Line2D([0], [0], color='b', lw=3, c='darkorange', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$'),
+        Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dotted', alpha=0.7, label=r'$\langle \delta \rangle$'),
         # collections.CircleCollection((15,16,17), cmap=cmap, offsets=((150,0),(50,0),(100,0)), label='bla',transOffset=5)
     ]
 
     # handler_map = {('bla1','bla2'): HandlerTuple(ndivide=None)}
-    plt.legend(loc="upper left", handles=legend_elements, fontsize=20)
+    plt.legend(loc="upper left", handles=legend_elements, fontsize=26.5)
 
 
 # class HandlerColormap(HandlerBase):
@@ -227,20 +227,23 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical):
     plt.axvline(1, c='darkorange', linestyle='dashed', alpha=0.7, linewidth=2)
     # if mean_log_beta_distance > 1.1 and mean_log_beta_distance < 0.9:
     if draw_critical:
-        text_y_pos = mean_beta_distance + (mean_beta_distance * 0.5)
-        plt.text(text_y_pos, 0.36, r'$\delta_\mathrm{crit} \approx 0$')
+        text_y_pos = mean_beta_distance + (mean_beta_distance * 0.3)
+        plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', fontsize=35)
+        plt.title(r'Critical $\beta=1$')
 
     else:
         if mean_beta_distance < 1:
             x_min = mean_beta_distance
             x_max = 1
-            text_y_pos = mean_beta_distance + (mean_beta_distance * 0.5)
-            plt.text(text_y_pos, 0.36, r'$\delta_\mathrm{sub} \approx -1$')
+            text_y_pos = mean_beta_distance + (mean_beta_distance * 0.3)
+            plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', fontsize=35)
+            plt.title(r'Sub-Critical $\beta=10$')
         else:
             x_min = 1
             x_max = mean_beta_distance
-            text_y_pos = 1 + (1 * 0.5)
-            plt.text(text_y_pos, 0.36, r'$\delta_\mathrm{super} \approx 1$')
+            text_y_pos = 1 + (1 * 0.3)
+            plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{super} \rangle \approx 1$', fontsize=35)
+            plt.title(r'Super-Critical $\beta=0.1$')
         plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
 
 
@@ -280,7 +283,7 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
