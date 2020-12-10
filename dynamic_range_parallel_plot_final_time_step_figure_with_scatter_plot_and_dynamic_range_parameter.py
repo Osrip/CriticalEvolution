@@ -456,11 +456,22 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
     if not all_equal(max_var_param_list):
         raise BaseException('The maximal varying parameter (time steps) differs between some of the loaded simulation')
     xlim = plt.xlim()[1]
+
+    # Unity line (check exactly what this does!)
     slope = max_var_param / plot_settings['trained_on_varying_parameter_value']
 
     x_arr = np.linspace(0, xlim, 1000)
     y_arr = [x*slope for x in x_arr]
     plt.plot(x_arr, y_arr, c='mediumturquoise', linestyle='dashed')
+
+    # Arbitrary threshold line of 5
+    slope = 5
+
+    x_arr = np.linspace(0, xlim, 1000)
+    y_arr = [x*slope for x in x_arr]
+    plt.plot(x_arr, y_arr, c='grey', linestyle='dashed')
+
+
     # plt.plot([0, xlim], [0, xlim * slope])
     plt.ylabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (max_var_param))
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
