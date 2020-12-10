@@ -462,14 +462,14 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
 
     x_arr = np.linspace(0, xlim, 1000)
     y_arr = [x*slope for x in x_arr]
-    plt.plot(x_arr, y_arr, c='mediumturquoise', linestyle='dashed')
+    plt.plot(x_arr, y_arr, c='mediumturquoise', linestyle='dashed', alpha=0.5, linewidth=2)
 
     # Arbitrary threshold line of 5
     slope = 5
 
     x_arr = np.linspace(0, xlim, 1000)
     y_arr = [x*slope for x in x_arr]
-    plt.plot(x_arr, y_arr, c='grey', linestyle='dashed')
+    plt.plot(x_arr, y_arr, c='grey', linestyle='dashed', alpha=0.5, linewidth=2)
 
 
     # plt.plot([0, xlim], [0, xlim * slope])
