@@ -506,6 +506,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     ratio_largest_trained_varying_param_list = []
 
     largest_varying_param_list = []
+    trained_varying_param_list = []
     for sim_data_list in sim_data_list_each_folder:
         for sim_data in sim_data_list:
             # Pick out fitness for highest varying parameter (food_num)
@@ -531,18 +532,26 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
             ratio_largest_trained_varying_param_list.append(ratio_largest_trained_varying_param)
 
             largest_varying_param_list.append(largest_varying_param)
+            trained_varying_param_list.append(trained_varying_param)
 
     # Check whether all entries in largest_varying_param_list are equal
     if not len(set(largest_varying_param_list)) == 1:
         raise BaseException('Different largest_varying_params')
 
-    plt.figure(figsize=(10,15))
+    plt.figure(figsize=(10,10))
 
     ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
 
     # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
     plt.scatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
     # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
+    # plt.xscale('log')
+
+    # plt.xlabel('{}/{}'.format(largest_varying_param_list[0], trained_varying_param_list[0]))
+    plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
+    plt.ylabel(r'$\langle \delta \rangle$')
+
+    plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=2)
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
