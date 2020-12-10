@@ -495,6 +495,66 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
     return sim_data_list_each_folder
 
 
+def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
+    '''
+    Make sure, that dynamic range parameter has been loaded into sim_data_list_each_folder before calling this!
+    '''
+
+    color_list = []
+    fitness_at_largest_varying_param_list = []
+    dynamic_range_param_list = []
+    ratio_largest_trained_varying_param_list = []
+
+    largest_varying_param_list = []
+    for sim_data_list in sim_data_list_each_folder:
+        for sim_data in sim_data_list:
+            # Pick out fitness for highest varying parameter (food_num)
+            index_largest_varying_param = np.argmax(sim_data.food_num_list)
+            largest_varying_param = sim_data.food_num_list[index_largest_varying_param]
+            fitness_at_largest_varying_param = sim_data.avg_attr_list[index_largest_varying_param]
+
+            index_trained_varying_param = sim_data.food_num_list.index(plot_settings['trained_on_varying_parameter_value'])
+            trained_varying_param = sim_data.food_num_list[index_trained_varying_param]
+            fitness_at_trained_varying_param = sim_data.avg_attr_list[index_trained_varying_param]
+
+            ratio_largest_trained_varying_param = fitness_at_largest_varying_param / fitness_at_trained_varying_param
+
+            colors = plot_settings['color'][sim_data.key]
+            try:
+                color = colors[sim_data.dynamic_range_folder_includes_index]
+            except IndexError:
+                raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
+                                 ' than color lists in color dict')
+            color_list.append(color)
+            fitness_at_largest_varying_param_list.append(fitness_at_largest_varying_param)
+            dynamic_range_param_list.append(sim_data.dynamic_range_param)
+            ratio_largest_trained_varying_param_list.append(ratio_largest_trained_varying_param)
+
+            largest_varying_param_list.append(largest_varying_param)
+
+    # Check whether all entries in largest_varying_param_list are equal
+    if not len(set(largest_varying_param_list)) == 1:
+        raise BaseException('Different largest_varying_params')
+
+    plt.figure(figsize=(10,15))
+
+    ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
+
+    # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
+    plt.scatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
+    # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
+
+    save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
+    save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+
+
+
+
+
 def all_equal(lst):
     # Are all entries in list identical?
     return not lst or lst.count(lst[0]) == len(lst)
