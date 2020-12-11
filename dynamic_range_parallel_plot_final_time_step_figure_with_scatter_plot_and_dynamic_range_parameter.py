@@ -462,14 +462,14 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
 
     x_arr = np.linspace(0, xlim, 1000)
     y_arr = [x*slope for x in x_arr]
-    plt.plot(x_arr, y_arr, c='mediumturquoise', linestyle='dashed', alpha=0.5, linewidth=2)
+    plt.plot(x_arr, y_arr, c='darkcyan', linestyle='dashed', alpha=0.5, linewidth=3)
 
     # Arbitrary threshold line of 5
     slope = 5
 
     x_arr = np.linspace(0, xlim, 1000)
     y_arr = [x*slope for x in x_arr]
-    plt.plot(x_arr, y_arr, c='grey', linestyle='dashed', alpha=0.5, linewidth=2)
+    plt.plot(x_arr, y_arr, c='grey', linestyle='dashed', alpha=0.5, linewidth=3)
 
 
     # plt.plot([0, xlim], [0, xlim * slope])
@@ -562,7 +562,10 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
     plt.ylabel(r'$\langle \delta \rangle$')
 
-    plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=2)
+    plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
+
+    plt.axvline(50000/2000, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
+
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
