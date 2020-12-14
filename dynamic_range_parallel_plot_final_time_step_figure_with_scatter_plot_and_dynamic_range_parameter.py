@@ -477,6 +477,7 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
 
     plt.yscale('log')
+    
     # mpl.patches.Ellipse((25, 50), 100, 100, angle=160)
     save_name = 'scatter_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
@@ -565,6 +566,14 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
 
     plt.axvline(50000/2000, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
+
+    '''
+    Legende:
+    wieder critical gen 100, 4000 und sub-critical gen 4000
+    
+    graue linje: arbitratry threshold E time step 50000 / E time step 2000 = 5
+    türquise Linje: Unity (?) E time step 50000 / E time step 2000 =  50000/2000 = 25
+    '''
 
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
