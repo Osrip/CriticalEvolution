@@ -29,6 +29,9 @@ import matplotlib.colors as colors
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib as mplou
 from heat_capacity_parameter import calc_heat_cap_param_main
+import matplotlib
+
+
 
 
 class ResponseCurveSimData:
@@ -116,6 +119,8 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
+    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
     scatter_plot(sim_data_list_each_folder, plot_settings)
     dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
 
@@ -185,6 +190,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
+
 
     plt.figure(figsize=(10, 14))
     ax_main = plt.subplot(111)
@@ -477,7 +483,24 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
 
     plt.yscale('log')
-    
+
+
+    # Legend
+    legend_elements = [
+        Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dashed', alpha=0.7,
+               label=r'$\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = \frac{50000}{2000}$'),
+        Line2D([0], [0], color='b', lw=4, c='grey', linestyle='dashed', alpha=0.7,
+               label=r'arbitrary seperation $\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = 5$'),
+        Line2D([0], [0], marker='o', color='w', label='Critical Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Critical Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label='Sub-Critical Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
+               markersize=20, alpha=0.75),
+    ]
+
+    plt.legend(loc="lower right", handles=legend_elements, fontsize=18)
+
     # mpl.patches.Ellipse((25, 50), 100, 100, angle=160)
     save_name = 'scatter_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
