@@ -305,7 +305,7 @@ def detect_all_isings_compressed_specific_path(isings_path):
     return gen_nums
 
 
-def load_isings_from_list(loadfile, iter_list, wait_for_memory = False):
+def load_isings_from_list(loadfile, iter_list, wait_for_memory = False, decrompress=False):
     '''
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
@@ -332,6 +332,8 @@ def load_isings_from_list(loadfile, iter_list, wait_for_memory = False):
 
         isings_list.append(isings)
     return isings_list
+
+
 
 
 def list_to_blank_seperated_str(list):
