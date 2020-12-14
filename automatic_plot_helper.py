@@ -210,16 +210,18 @@ def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = False
         isings_attr_list.append(isings_attr_top)
     return isings_attr_list
 
+
 def load_isings_specific_path(isings_path, decompress=False):
     '''
     Load all isings pickle files from a specific isings folder (when they are not normally stored and return them as list
     :param isings_path : specific path to folder that ising objects are saved in
     '''
 
-    iter_list = detect_all_isings_specific_path(isings_path)
+    iter_list = detect_all_isings_specific_path(isings_path, decompress)
 
     isings_list = []
     for ii, iter in enumerate(iter_list):
+
         filename = isings_path + '/gen[' + str(iter) + ']-isings.pickle'
         startstr = 'Loading simulation:' + filename
         print(startstr)
@@ -270,7 +272,7 @@ def decompress_pickle(file):
     return data
 
 
-def detect_all_isings_specific_path(isings_path):
+def detect_all_isings_specific_path(isings_path, decompress=False):
     '''
     Creates iter_list
     detects the ising generations in the isings folder
@@ -278,7 +280,10 @@ def detect_all_isings_specific_path(isings_path):
     '''
     curdir = os.getcwd()
     mypath = curdir + '/{}/'.format(isings_path)
-    all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle')]
+    if decompress:
+        all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle.pgz')]
+    else:
+        all_isings = [f for f in listdir(mypath) if isfile(join(mypath, f)) and f.endswith('isings.pickle')]
     gen_nums = []
     for name in all_isings:
         i_begin = name.find('[') + 1
@@ -319,6 +324,7 @@ def load_isings_from_list(loadfile, iter_list, wait_for_memory = False, decompre
     numAgents = settings['pop_size']
     isings_list = []
     for ii, iter in enumerate(iter_list):
+
         filename = 'save/' + loadfile + '/isings/gen[' + str(iter) + ']-isings.pickle'
         startstr = 'Loading simulation:' + filename
         print(startstr)

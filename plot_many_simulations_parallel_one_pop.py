@@ -111,10 +111,9 @@ def load_attrs(folder_name, plot_settings):
         if plot_settings['only_plot_certain_generations']:
             load_generations = np.arange(plot_settings['lowest_and_highest_generations_to_be_plotted'][0],
                                          plot_settings['lowest_and_highest_generations_to_be_plotted'][1]+1)
-            isings_list = load_isings_from_list(sim_name, load_generations)
+            isings_list = load_isings_from_list(sim_name, load_generations, decompress=plot_settings['decompress'])
         else:
-            isings_list = load_isings_specific_path('{}/isings'.format(dir))
-
+            isings_list = load_isings_specific_path('{}/isings'.format(dir), decompress=plot_settings['decompress'])
 
         if plot_settings['only_copied']:
             isings_list = [choose_copied_isings(isings) for isings in isings_list]
@@ -157,6 +156,7 @@ if __name__ == '__main__':
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
     plot_settings['only_plot'] = False
+    plot_settings['decompress'] = True
 
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'norm_food_and_ts_avg_energy' #'norm_avg_energy'
@@ -165,8 +165,10 @@ if __name__ == '__main__':
         plot_settings['ylim'] = (-0.0001, 0.00025)
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
+    # plot_settings['ylim'] = None
+
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
-    plot_settings['only_copied'] = False
+    plot_settings['only_copied'] = True
     plot_settings['sliding_window'] = True
     plot_settings['sliding_window_size'] = 100
 
@@ -181,7 +183,8 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201102-220107_parallel_b1_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201102-220135_parallel_b10_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
-    folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
+    # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
+    folder_names = ['sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)
