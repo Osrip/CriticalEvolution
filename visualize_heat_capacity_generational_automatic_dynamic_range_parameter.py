@@ -21,7 +21,7 @@ import matplotlib.collections as collections
 
 
 
-def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param=False, draw_legend=False, draw_critical=False):
+def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_data=True, draw_dynamic_range_param=False, draw_legend=False, draw_critical=False, draw_smoothed_heat_caps=False, gaussian_kernel=False):
     '''
     generation list can be set to None
     recorded is a boolean defining whether we want to visualize recorded heat capacity or dream heat capacity
@@ -80,7 +80,7 @@ def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param
         title = 'Specific Heat of Foraging Community\n Generation: ' + str(iter)
         # fig.suptitle(title)
         if draw_dynamic_range_param:
-            plot_dynamic_range_parameter_background(sim_name, betas, iter)
+            plot_dynamic_range_parameter_background(sim_name, betas, iter, gaussian_kernel)
 
         # CHANGE THIS TO CUSTOMIZE HEIGHT OF PLOT
         #upperbound = 1.5 * np.max(np.mean(np.mean(C[:, :, :-40, :], axis=0), axis=0))
@@ -92,12 +92,25 @@ def main(sim_name, settings, generation_list, recorded, draw_dynamic_range_param
 
         cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
         ax.set_prop_cycle(color=[cm(1.*i/numAgents) for i in range(numAgents)])
-        for numOrg in range(numAgents):
-            # c = np.dot(np.random.random(), [1, 1, 1])
-            ax.scatter(betas, np.mean(C[:, numOrg, :, ii], axis=0),
-                       s=30, alpha=0.3, marker='.', label=label)  # color=[0, 0, 0],
+        if draw_original_heat_cap_data:
+            for numOrg in range(numAgents):
+
+                ax.scatter(betas, np.mean(C[:, numOrg, :, ii], axis=0),
+                           s=30, alpha=0.3, marker='.', label=label)  # color=[0, 0, 0],
+
+        if draw_smoothed_heat_caps:
+            module_settings={}
+            mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict, smoothed_heat_caps_dict \
+                = calc_heat_cap_param_main(sim_name, module_settings, [iter], gaussian_kernel=gaussian_kernel)
+            ax.set_prop_cycle(color=[cm(1.*i/numAgents) for i in range(numAgents)])
+            for numOrg in range(numAgents):
+                # c = np.dot(np.random.random(), [1, 1, 1])
+
+                ax.scatter(betas, smoothed_heat_caps_dict[iter][numOrg], s=10, alpha=0.3, marker='x', label=label)
+
         if draw_dynamic_range_param:
-            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical)
+            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel)
+
         xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
         ax.set_xscale("log") # , nonposx='clip'
         # This makes custom x ticks
@@ -208,12 +221,12 @@ def plot_legend(cmap):
 #                fontsize=12)
 
 
-def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical):
+def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gaussian_kernel):
     module_settings = {}
 
     gen_list = [generation]
-    mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict \
-        = calc_heat_cap_param_main(sim_name, module_settings, gen_list)
+    mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict, smoothed_heat_caps \
+        = calc_heat_cap_param_main(sim_name, module_settings, gen_list, gaussian_kernel=gaussian_kernel)
     mean_log_beta_distance = mean_log_beta_distance_dict[generation]
     mean_beta_distance = np.mean(betas_max_gen_dict[generation])
     mean_max_betas = np.mean(betas_max_gen_dict[generation])
@@ -245,16 +258,17 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical):
             plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{super} \rangle \approx 1$', fontsize=35)
             plt.title(r'Super-Critical $\beta=0.1$')
         plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
+    return smoothed_heat_caps
 
 
 
 
-def plot_dynamic_range_parameter_background(sim_name, betas, generation):
+def plot_dynamic_range_parameter_background(sim_name, betas, generation, gaussian_kernel):
     module_settings = {}
 
     gen_list = [generation]
-    mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict \
-        = calc_heat_cap_param_main(sim_name, module_settings, gen_list)
+    mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict, smoothed_heat_caps \
+        = calc_heat_cap_param_main(sim_name, module_settings, gen_list, gaussian_kernel=gaussian_kernel)
     mean_log_beta_distance = mean_log_beta_distance_dict[generation]
     mean_max_betas = np.mean(betas_max_gen_dict[generation])
     std_max_betas = np.std(betas_max_gen_dict[generation])
@@ -283,11 +297,17 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    sim_name = 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
+    draw_original_heat_cap_data = False
     draw_dynamic_range_param = True
     draw_legend = False
     draw_critical = True
-    main(sim_name, settings, None, recorded, draw_dynamic_range_param, draw_legend, draw_critical)
+
+    # Use gaussian kernel in order to smooth heat capacity curves before calculating maximum
+    gaussian_kernel = True
+    # Draw the smoothed kurves as well
+    draw_smoothed_heat_caps = True
+    main(sim_name, settings, None, recorded, draw_original_heat_cap_data, draw_dynamic_range_param, draw_legend, draw_critical, draw_smoothed_heat_caps, gaussian_kernel)
