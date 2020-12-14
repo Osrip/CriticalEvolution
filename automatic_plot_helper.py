@@ -265,6 +265,12 @@ def load_isings_specific_path_decompress(isings_path):
     return isings_list
 
 
+def compress_pickle(title, data):
+    '''
+    Compresses data and saves it
+    '''
+    with gzip.GzipFile(title + '.pgz', 'w') as f:
+        pickle.dump(data, f)
 
 def decompress_pickle(file):
     data = gzip.GzipFile(file + '.pgz', 'rb')
@@ -545,3 +551,31 @@ def all_sim_names_in_parallel_folder(folder_name):
         sim_name = dir[(dir.rfind('save/')+5):]
         sim_name_list.append(sim_name)
     return sim_name_list
+
+
+def compress_isings_in_simulation(sim_name):
+    '''
+    Compresses all uncompressed ising files in isings folder of simulation and deletes uncompressed files
+    '''
+    iter_list = detect_all_isings(sim_name)
+    for ii, iter in enumerate(iter_list):
+        filename = 'save/' + sim_name + '/isings/gen[' + str(iter) + ']-isings.pickle'
+        startstr = 'Loading simulation:' + filename
+        print(startstr)
+        # Open .pickle file
+        file = open(filename, 'rb')
+        isings = pickle.load(file)
+        file.close()
+        # Compress .pickle file
+        compress_pickle(filename, isings)
+        os.remove(filename)
+
+
+def compress_isings_in_parallel_simulations(folder_name):
+    '''
+    Compresses ising files in isings folder of a set of parallel simulations in a folder
+    '''
+    sim_names = all_sim_names_in_parallel_folder(folder_name)
+    for sim_name in sim_names:
+        compress_isings_in_simulation(sim_name)
+
