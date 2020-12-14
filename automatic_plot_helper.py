@@ -210,7 +210,7 @@ def load_top_isings_attr(loadfile, first_n_isings, attr, wait_for_memory = False
         isings_attr_list.append(isings_attr_top)
     return isings_attr_list
 
-def load_isings_specific_path(isings_path):
+def load_isings_specific_path(isings_path, decompress=False):
     '''
     Load all isings pickle files from a specific isings folder (when they are not normally stored and return them as list
     :param isings_path : specific path to folder that ising objects are saved in
@@ -225,14 +225,15 @@ def load_isings_specific_path(isings_path):
         print(startstr)
 
         try:
-            file = open(filename, 'rb')
-            isings = pickle.load(file)
-            file.close()
+            if decompress:
+                isings = decompress_pickle(filename)
+            else:
+                file = open(filename, 'rb')
+                isings = pickle.load(file)
+                file.close()
             isings_list.append(isings)
-        except Exception:
+        except FileNotFoundError:
             print("Error while loading %s. Skipped file" % filename)
-            # Leads to the previous datapoint being drawn twice!!
-
 
     return isings_list
 
@@ -264,7 +265,7 @@ def load_isings_specific_path_decompress(isings_path):
 
 
 def decompress_pickle(file):
-    data = gzip.GzipFile(file +  '.pgz', 'rb')
+    data = gzip.GzipFile(file + '.pgz', 'rb')
     data = pickle.load(data)
     return data
 
@@ -305,7 +306,7 @@ def detect_all_isings_compressed_specific_path(isings_path):
     return gen_nums
 
 
-def load_isings_from_list(loadfile, iter_list, wait_for_memory = False, decrompress=False):
+def load_isings_from_list(loadfile, iter_list, wait_for_memory = False, decompress=False):
     '''
     Load isings pickle files specified in iter_list and return them as list
     :param loadfile : simulation name
@@ -323,13 +324,17 @@ def load_isings_from_list(loadfile, iter_list, wait_for_memory = False, decrompr
         print(startstr)
 
         try:
-            file = open(filename, 'rb')
-            isings = pickle.load(file)
-            file.close()
-        except Exception:
+            if decompress:
+                isings = decompress_pickle(filename)
+            else:
+                file = open(filename, 'rb')
+                isings = pickle.load(file)
+                file.close()
+        except FileNotFoundError:
             print("Error while loading %s. Skipped file" % filename)
             # Leads to the previous datapoint being drawn twice!!
 
+        isings_list.append(isings)
         isings_list.append(isings)
     return isings_list
 
