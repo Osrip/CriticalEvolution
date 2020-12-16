@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 from automatic_plot_helper import all_sim_names_in_parallel_folder
 from heat_capacity_parameter import calc_heat_cap_param_main
+from scipy.interpolate import interp1d
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -41,21 +42,36 @@ def load_plot_data(folder_name, plot_settings):
     return attrs_lists
 
 
-
-
-
 def plot(delta_dicts_all_sims, plot_settings):
     plt.figure(figsize=(10, 7))
 
     for delta_dict in delta_dicts_all_sims:
         generations = list(delta_dict.keys())
-        generations = [int(gen) for gen in generations]
-        mean_attrs_list = list(delta_dict.values())
-        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.2)
+        generations = np.array([int(gen) for gen in generations])
+        sorted_gen_indecies = np.argsort(generations)
+        generations = np.sort(generations)
+        mean_attrs_list = np.array(list(delta_dict.values()))
+        mean_attrs_list = mean_attrs_list[sorted_gen_indecies]
+
+        if plot_settings['smooth_and_interpolate']:
+            '''
+            Trying to make some sort of regression, that smoothes and interpolates 
+            Trying to find an alternative to moving average, where boundary values are cut off
+            '''
+            smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
+
+            f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
+            x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
+            y_interp = f_interpolate(x_interp)
+            plt.plot(x_interp, y_interp)
+
+        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.2)
+
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
             plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2)
-        # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
+
+
     plt.xlabel('Generation')
     plt.ylabel('Delta')
     plt.ylim(plot_settings['ylim'])
@@ -74,6 +90,7 @@ def load_dynamic_range_param(folder_name, plot_settings):
     folder_dir = 'save/{}'.format(folder_name)
     sim_names = all_sim_names_in_parallel_folder(folder_name)
     delta_dicts_all_sims = []
+    
     for sim_name in sim_names:
         module_settings = {}
         mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, \
@@ -95,6 +112,7 @@ def below_threshold_nan(isings_list, sim_settings):
                 isings_list[i] = None
     return isings_list
 
+
 def slide_window(iterable, win_size):
     slided = []
     x_axis_gens = []
@@ -107,6 +125,23 @@ def slide_window(iterable, win_size):
     return slided, x_axis_gens
 
 
+def gaussian(x, mu, sigma):
+
+    C = 1 / (sigma * np.sqrt(2*np.pi))
+
+    return C * np.exp(-1/2 * (x - mu)**2 / sigma**2)
+
+def gaussian_kernel_smoothing(x):
+    '''
+    Convolving with gaussian kernel in order to smoothen noisy heat cap data (before eventually looking for maximum)
+    '''
+
+    # gaussian kernel with sigma=2.25. mu=0 means, that kernel is centered on the data
+    # kernel = gaussian(np.linspace(-3, 3, 15), 0, 2.25)
+    kernel = gaussian(np.linspace(-3, 3, 15), 0, 6)
+    smoothed_x = np.convolve(x, kernel, mode='same')
+    return smoothed_x
+
 if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
@@ -118,8 +153,10 @@ if __name__ == '__main__':
 
     plot_settings['ylim'] = None
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
-    plot_settings['sliding_window'] = True
+    plot_settings['sliding_window'] = False
     plot_settings['sliding_window_size'] = 100
+
+    plot_settings['smooth_and_interpolate'] = True
 
     plot_settings['gaussian_kernel'] = True
 
