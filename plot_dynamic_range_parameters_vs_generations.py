@@ -49,7 +49,8 @@ def plot(delta_dicts_all_sims, plot_settings):
 
     for delta_dict in delta_dicts_all_sims:
         generations = list(delta_dict.keys())
-        mean_attrs_list = delta_dict.values()
+        generations = [int(gen) for gen in generations]
+        mean_attrs_list = list(delta_dict.values())
         plt.scatter(generations, mean_attrs_list, s=2, alpha=0.2)
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 
     plot_settings['gaussian_kernel'] = True
 
-    folder_names = ['sim-20201216-150759_parallel_Test_dynamic_range_param_many_heat_caps_compressed']
+    folder_names = ['sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)
