@@ -56,16 +56,13 @@ def plot(delta_dicts_all_sims, plot_settings):
             plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2)
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     plt.xlabel('Generation')
-    plt.ylabel(plot_settings['attr'])
+    plt.ylabel('Delta')
     plt.ylim(plot_settings['ylim'])
 
 
 
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
-        format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
-               plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
-               plot_settings['plot_generations_str'])
+    save_name = 'delta_vs_generations.png'
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -125,7 +122,7 @@ if __name__ == '__main__':
 
     plot_settings['gaussian_kernel'] = True
 
-    folder_names = ['sim-20201216-150319_parallel_Test_dynamic_range_param_many_heat_caps_compressed']
+    folder_names = ['sim-20201216-150759_parallel_Test_dynamic_range_param_many_heat_caps_compressed']
     for folder_name in folder_names:
         plot_settings['folder_name'] = folder_name
         main_plot_parallel_sims(folder_name, plot_settings)
