@@ -106,7 +106,8 @@ def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_d
             for numOrg in range(numAgents):
                 # c = np.dot(np.random.random(), [1, 1, 1])
 
-                ax.scatter(betas, smoothed_heat_caps_dict[iter][numOrg], s=10, alpha=0.3, marker='x', label=label)
+                ax.scatter(betas, smoothed_heat_caps_dict[iter][numOrg], s=2, alpha=0.3, marker='o', label=label, color='grey')
+                ax.plot(betas, smoothed_heat_caps_dict[iter][numOrg], linewidth=1, alpha=0.35, label=label, color='grey')
 
         if draw_dynamic_range_param:
             plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel)
@@ -125,7 +126,7 @@ def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_d
         plt.axis([low_xlim, high_xlim, 0, upperbound])
 
         if draw_legend:
-            plot_legend(cm)
+            plot_legend(cm, draw_smoothed_heat_caps)
             # plot_legend2(cm)
 
         # leg = plt.legend(loc=2, title='Generation')
@@ -151,7 +152,7 @@ def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_d
         # plt.pause(0.1)
 
 
-def plot_legend(cmap):
+def plot_legend(cmap, draw_smoothed_heat_caps):
     norm = colors.Normalize(vmin=1, vmax=4)
     legend_elements = [
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(1.3)),
@@ -168,6 +169,9 @@ def plot_legend(cmap):
         Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dotted', alpha=0.7, label=r'$\langle \delta \rangle$'),
         # collections.CircleCollection((15,16,17), cmap=cmap, offsets=((150,0),(50,0),(100,0)), label='bla',transOffset=5)
     ]
+    if draw_smoothed_heat_caps:
+        add_element = Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Organism Smoothed')
+        legend_elements.append(add_element)
 
     # handler_map = {('bla1','bla2'): HandlerTuple(ndivide=None)}
     plt.legend(loc="upper left", handles=legend_elements, fontsize=26.5)
@@ -297,11 +301,11 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    sim_name = 'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
-    draw_original_heat_cap_data = False
+    draw_original_heat_cap_data = True
     draw_dynamic_range_param = True
     draw_legend = False
     draw_critical = True

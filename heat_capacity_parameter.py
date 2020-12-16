@@ -139,7 +139,7 @@ def gaussian(x, mu, sigma):
 
     C = 1 / (sigma * np.sqrt(2*np.pi))
 
-    return  C * np.exp(-1/2 * (x - mu)**2 / sigma**2)
+    return C * np.exp(-1/2 * (x - mu)**2 / sigma**2)
 
 
 def automatic_generation_generation_list(C_folder):

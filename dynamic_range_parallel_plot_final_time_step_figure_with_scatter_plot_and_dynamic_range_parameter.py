@@ -119,7 +119,7 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
-    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     scatter_plot(sim_data_list_each_folder, plot_settings)
     dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
@@ -499,7 +499,7 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
                markersize=20, alpha=0.75),
     ]
 
-    plt.legend(loc="lower right", handles=legend_elements, fontsize=18)
+    plt.legend(loc="lower right", handles=legend_elements, fontsize=20)
 
     # mpl.patches.Ellipse((25, 50), 100, 100, angle=160)
     save_name = 'scatter_plot.png'
@@ -518,7 +518,7 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
         for sim_data in sim_data_list:
             complete_sim_name = sim_data.sim_name
             calc_heat_cap_param_settings = {}
-            mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict\
+            mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict, smoothed_heat_caps\
                 = calc_heat_cap_param_main(complete_sim_name, calc_heat_cap_param_settings)
             dynamic_range_param_dict = mean_log_beta_distance_dict
             gens_dynamic_range_param_dict = list(dynamic_range_param_dict.keys())
