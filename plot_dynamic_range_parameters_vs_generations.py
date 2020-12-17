@@ -11,9 +11,13 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 import seaborn as sns
-
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 def main_plot_parallel_sims(folder_name, plot_settings):
+    plt.rc('text', usetex=True)
+    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
 
     if not plot_settings['only_plot']:
         attrs_lists = load_dynamic_range_param(folder_name, plot_settings)
@@ -45,6 +49,15 @@ def load_plot_data(folder_name, plot_settings):
 
     return attrs_lists
 
+
+def create_legend(colors):
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='w', markersize=15, alpha=0.0001, label=r'$10$ Simulations'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
+        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Smoothed'),
+               ]
+
+    plt.legend(handles=legend_elements, fontsize=22)
 
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.figure(figsize=(10, 7))
@@ -87,13 +100,13 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
             # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
             # Savitzky-Golay filter:
             smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 21, 3) # window size, polynomial order
-            plt.plot(generations, smoothed_mean_attrs_list, c=color)
+            # plt.plot(generations, smoothed_mean_attrs_list, c=color)
 
             # Uncommand the following, if interpolation shall be applied to smoothed data
-            # f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
-            # x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
-            # y_interp = f_interpolate(x_interp)
-            # plt.plot(x_interp, y_interp)
+            f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
+            x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
+            y_interp = f_interpolate(x_interp)
+            plt.plot(x_interp, y_interp, c=color, alpha = 0.8)
 
 
             
@@ -109,8 +122,12 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
 
 
     plt.xlabel('Generation')
-    plt.ylabel('Delta')
+    plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
+    plt.title(r'$\beta_\mathrm{init}=%s$' % plot_settings['beta_init_for_title'])
+
+    if plot_settings['plot_legend']:
+        create_legend(colors)
 
 
 
@@ -181,6 +198,7 @@ def gaussian_kernel_smoothing(x):
     smoothed_x = np.convolve(x, kernel, mode='same')
     return smoothed_x
 
+
 def moving_average(interval, window_size):
     window = np.ones(int(window_size))/float(window_size)
     return np.convolve(interval, window, 'same')
@@ -206,9 +224,15 @@ if __name__ == '__main__':
 
     plot_settings['kernel_regression'] = False
 
+
     beta_inits = [1, 10, 0.1]
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
     for folder_name, beta_init in zip(folder_names, beta_inits):
         plot_settings['folder_name'] = folder_name
         plot_settings['beta_init_for_title'] = beta_init
+        if beta_init == 0.1:
+            plot_settings['plot_legend'] = True
+        else:
+            plot_settings['plot_legend'] = False
+
         main_plot_parallel_sims(folder_name, plot_settings)

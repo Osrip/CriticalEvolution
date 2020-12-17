@@ -21,7 +21,7 @@ import matplotlib.collections as collections
 
 
 
-def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_data=True, draw_dynamic_range_param=False, draw_legend=False, draw_critical=False, draw_smoothed_heat_caps=False, gaussian_kernel=False):
+def main(sim_name, settings, generation_list, recorded, plot_settings, draw_original_heat_cap_data=True, draw_dynamic_range_param=False, draw_legend=False, draw_critical=False, draw_smoothed_heat_caps=False, gaussian_kernel=False):
     '''
     generation list can be set to None
     recorded is a boolean defining whether we want to visualize recorded heat capacity or dream heat capacity
@@ -86,8 +86,11 @@ def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_d
         #upperbound = 1.5 * np.max(np.mean(np.mean(C[:, :, :-40, :], axis=0), axis=0))
         # upperbound = np.max(np.mean(np.mean(C, axis=0)), axis=0)
         #upperbound = 0.4
-        upperbound = y_lim_high / 100
 
+        # upperbound = y_lim_high / 100
+
+        upperbound = 0.25
+        upperbound = 0.25
         label = iter
 
         cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
@@ -110,7 +113,7 @@ def main(sim_name, settings, generation_list, recorded, draw_original_heat_cap_d
                 ax.plot(betas, smoothed_heat_caps_dict[iter][numOrg], linewidth=1, alpha=0.35, label=label, color='grey')
 
         if draw_dynamic_range_param:
-            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel)
+            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel, plot_settings)
 
         xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
         ax.set_xscale("log") # , nonposx='clip'
@@ -158,7 +161,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(1.3)),
         #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(2)),
-               markersize=15, alpha=0.75, label=r'Organisms (Generation $0$)'),
+               markersize=15, alpha=0.75, label=r'Organisms'),
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(3)),
         #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='maroon',
@@ -174,7 +177,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
         legend_elements.append(add_element)
 
     # handler_map = {('bla1','bla2'): HandlerTuple(ndivide=None)}
-    plt.legend(loc="upper left", handles=legend_elements, fontsize=26.5)
+    plt.legend(loc="upper right", handles=legend_elements, fontsize=26.5)
 
 
 # class HandlerColormap(HandlerBase):
@@ -225,7 +228,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
 #                fontsize=12)
 
 
-def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gaussian_kernel):
+def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gaussian_kernel, plot_settings):
     module_settings = {}
 
     gen_list = [generation]
@@ -244,24 +247,24 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
     plt.axvline(1, c='darkorange', linestyle='dashed', alpha=0.7, linewidth=2)
     # if mean_log_beta_distance > 1.1 and mean_log_beta_distance < 0.9:
     if draw_critical:
-        text_y_pos = mean_beta_distance + (mean_beta_distance * 0.3)
-        plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', fontsize=35)
-        plt.title(r'Critical $\beta=1$')
+        text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
+        plt.text(text_y_pos, 0.21, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
+        plt.title(plot_settings['title'])
 
     else:
         if mean_beta_distance < 1:
             x_min = mean_beta_distance
             x_max = 1
-            text_y_pos = mean_beta_distance + (mean_beta_distance * 0.3)
-            plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', fontsize=35)
-            plt.title(r'Sub-Critical $\beta=10$')
+            text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
+            plt.text(text_y_pos, 0.21, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
+            plt.title(plot_settings['title'])
         else:
             x_min = 1
             x_max = mean_beta_distance
-            text_y_pos = 1 + (1 * 0.3)
-            plt.text(text_y_pos, 0.36, r'$\langle \delta_\mathrm{super} \rangle \approx 1$', fontsize=35)
-            plt.title(r'Super-Critical $\beta=0.1$')
-        plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
+            text_y_pos = 1 + (1 * 0.4)
+            plt.text(text_y_pos, 0.21, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
+            plt.title(plot_settings['title'])
+        plt.hlines(0.2, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
     return smoothed_heat_caps
 
 
@@ -301,17 +304,21 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201210-200606-b_1_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_4_-subfolder_sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    # sim_name = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201210-200606-b_1_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_4_-subfolder_sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
+    # sim_name = 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201210-200614-b_10_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_4_-subfolder_sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1'
+    sim_name = 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201211-211024-b_0.1_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_7_-subfolder_sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1'
+    plot_settings = {}
+    plot_settings['title'] = r'$\beta_\mathrm{init} = 0.1$ Generation $4000$'
     generation_list = [0]
     settings = load_settings(sim_name)
     recorded = True
     draw_original_heat_cap_data = True
     draw_dynamic_range_param = True
     draw_legend = False
-    draw_critical = True
+    draw_critical = False
 
     # Use gaussian kernel in order to smooth heat capacity curves before calculating maximum
     gaussian_kernel = True
     # Draw the smoothed kurves as well
     draw_smoothed_heat_caps = True
-    main(sim_name, settings, None, recorded, draw_original_heat_cap_data, draw_dynamic_range_param, draw_legend, draw_critical, draw_smoothed_heat_caps, gaussian_kernel)
+    main(sim_name, settings, None, recorded, plot_settings, draw_original_heat_cap_data, draw_dynamic_range_param, draw_legend, draw_critical, draw_smoothed_heat_caps, gaussian_kernel)
