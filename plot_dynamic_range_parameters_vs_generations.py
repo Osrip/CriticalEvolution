@@ -4,10 +4,13 @@ from automatic_plot_helper import all_sim_names_in_parallel_folder
 from heat_capacity_parameter import calc_heat_cap_param_main
 from scipy.interpolate import interp1d
 import numpy as np
+# from statsmodels.nonparametric.kernel_regression import KernelReg
+from scipy.signal import savgol_filter
 
 import matplotlib.pyplot as plt
 import os
 import pickle
+import seaborn as sns
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
@@ -45,8 +48,10 @@ def load_plot_data(folder_name, plot_settings):
 
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.figure(figsize=(10, 7))
+    colors = sns.color_palette("dark", len(delta_dicts_all_sims))
 
-    for delta_dict, deltas_dict in zip(delta_dicts_all_sims, deltas_dicts_all_sims):
+    for delta_dict, deltas_dict, color in zip(delta_dicts_all_sims, deltas_dicts_all_sims, colors):
+        color = color
         # Handle delta dict, which includes mean delta of each generation
         generations = list(delta_dict.keys())
         generations = np.array([int(gen) for gen in generations])
@@ -74,24 +79,33 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
 
 
 
-        if plot_settings['smooth_and_interpolate']:
+        if plot_settings['smooth']:
             '''
             Trying to make some sort of regression, that smoothes and interpolates 
             Trying to find an alternative to moving average, where boundary values are cut off
             '''
-            smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
+            # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
+            # Savitzky-Golay filter:
+            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 21, 3) # window size, polynomial order
+            plt.plot(generations, smoothed_mean_attrs_list, c=color)
 
-            f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
-            x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
-            y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp)
+            # Uncommand the following, if interpolation shall be applied to smoothed data
+            # f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
+            # x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
+            # y_interp = f_interpolate(x_interp)
+            # plt.plot(x_interp, y_interp)
+
+
+            
+
         if plot_settings['plot_deltas_of_individuals']:
-            plt.scatter(generations_unnested_ind,  mean_attr_list_ind_unnested, s=2, alpha=0.2)
-        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4)
+            plt.scatter(generations_unnested_ind,  mean_attr_list_ind_unnested, s=2, alpha=0.2, c=color)
+
+        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4, c=color)
 
         if plot_settings['sliding_window']:
-            slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
-            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2)
+            slided_mean_attrs_list = moving_average(mean_attrs_list, plot_settings['sliding_window_size'])
+            plt.plot(generations, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
 
 
     plt.xlabel('Generation')
@@ -167,6 +181,10 @@ def gaussian_kernel_smoothing(x):
     smoothed_x = np.convolve(x, kernel, mode='same')
     return smoothed_x
 
+def moving_average(interval, window_size):
+    window = np.ones(int(window_size))/float(window_size)
+    return np.convolve(interval, window, 'same')
+
 if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
@@ -179,14 +197,18 @@ if __name__ == '__main__':
     plot_settings['ylim'] = None
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['sliding_window'] = False
-    plot_settings['sliding_window_size'] = 100
+    plot_settings['sliding_window_size'] = 10
 
-    plot_settings['smooth_and_interpolate'] = False
+    plot_settings['smooth'] = True
     plot_settings['plot_deltas_of_individuals'] = False
 
     plot_settings['gaussian_kernel'] = True
 
+    plot_settings['kernel_regression'] = False
+
+    beta_inits = [1, 10, 0.1]
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
-    for folder_name in folder_names:
+    for folder_name, beta_init in zip(folder_names, beta_inits):
         plot_settings['folder_name'] = folder_name
+        plot_settings['beta_init_for_title'] = beta_init
         main_plot_parallel_sims(folder_name, plot_settings)
