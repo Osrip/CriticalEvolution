@@ -64,8 +64,9 @@ def create_legend():
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     if plot_settings['new_fig']:
         plt.figure(figsize=(10, 7))
+        ax = plt.subplot()
 
-    # colors = sns.color_palette("dark", len(delta_dicts_all_sims))
+        # colors = sns.color_palette("dark", len(delta_dicts_all_sims))
     color = plot_settings['colors'][plot_settings['regime']]
 
     for delta_dict, deltas_dict in zip(delta_dicts_all_sims, deltas_dicts_all_sims):
@@ -130,13 +131,32 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
 
+    # plt.text(-200, 1, 'hallo', fontsize=14)
+    # plt.subplots_adjust(left=0.9)
+
+
+
     # plt.title(r'$\beta_\mathrm{init}=%s$' % plot_settings['beta_init_for_title'])
 
     if plot_settings['plot_legend']:
         create_legend()
 
+    if plot_settings['new_fig']:
+        pad = -20
+        color = 'dimgray'
+        ax.annotate('Super-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 155),
+                    xycoords=ax.yaxis.label, textcoords='offset points',
+                    size=15, ha='right', va='center', rotation=0, color=color)
+        ax.annotate('Critical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 5),
+                    xycoords=ax.yaxis.label, textcoords='offset points',
+                    size=15, ha='right', va='center', rotation=0, color=color)
+        ax.annotate('Sub-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, -145),
+                    xycoords=ax.yaxis.label, textcoords='offset points',
+                    size=15, ha='right', va='center', rotation=0, color=color)
 
     if plot_settings['save_fig']:
+
+
         save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
         save_name = 'delta_vs_generations_all_in_one.png'
         if not os.path.exists(save_dir):
