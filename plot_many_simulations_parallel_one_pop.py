@@ -13,9 +13,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import pickle
+from scipy.signal import savgol_filter
+from scipy.interpolate import interp1d
+import seaborn as sns
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
+    plt.rc('text', usetex=True)
+    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
     if plot_settings['only_copied']:
         plot_settings['only_copied_str'] = '_only_copied_orgs'
     else:
@@ -73,18 +81,39 @@ def load_plot_data(folder_name, plot_settings):
 
 def plot(attrs_lists, plot_settings):
     plt.figure(figsize=(10, 7))
+    colors = sns.color_palette("dark", len(attrs_lists))
 
-    for attrs_list in attrs_lists:
+    for attrs_list, color in zip(attrs_lists, colors):
         generations = np.arange(len(attrs_list))
         mean_attrs_list = [np.nanmean(gen_attrs) for gen_attrs in attrs_list]
-        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.2)
+        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.15, c=color)
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
-            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2)
+            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
+        if plot_settings['smooth']:
+            '''
+            Trying to make some sort of regression, that smoothes and interpolates 
+            Trying to find an alternative to moving average, where boundary values are cut off
+            '''
+            # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
+            # Savitzky-Golay filter:
+            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 201, 3) # window size, polynomial order
+            # plt.plot(generations, smoothed_mean_attrs_list, c=color)
+
+            # Uncommand the following, if interpolation shall be applied to smoothed data
+            f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
+            x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
+            y_interp = f_interpolate(x_interp)
+            plt.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
+
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     plt.xlabel('Generation')
-    plt.ylabel(plot_settings['attr'])
+    # plt.ylabel(plot_settings['attr'])
+    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
     plt.ylim(plot_settings['ylim'])
+    plt.title(plot_settings['title'])
+    if plot_settings['legend']:
+        create_legend()
 
 
 
@@ -97,6 +126,16 @@ def plot(attrs_lists, plot_settings):
         os.makedirs(save_dir)
 
     plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+
+
+def create_legend():
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='w', markersize=15, alpha=0.0001, label=r'$10$ Simulations'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
+        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Smoothed'),
+    ]
+
+    plt.legend(handles=legend_elements, fontsize=22)
 
 
 def load_attrs(folder_name, plot_settings):
@@ -165,12 +204,13 @@ if __name__ == '__main__':
         plot_settings['ylim'] = (-0.0001, 0.00025)
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
-    plot_settings['ylim'] = None
+    plot_settings['ylim'] = (-1, 40)
     # plot_settings['ylim'] = (-0.000001, 0.00007)
 
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['only_copied'] = True
-    plot_settings['sliding_window'] = True
+    plot_settings['sliding_window'] = False
+    plot_settings['smooth'] = True
     plot_settings['sliding_window_size'] = 100
 
     # ONLY PLOT HAS TO BE FALSE FOR FOLLOWING SETTINGS to work:
@@ -179,6 +219,8 @@ if __name__ == '__main__':
 
     plot_settings['only_plot_certain_generations'] = False
     plot_settings['lowest_and_highest_generations_to_be_plotted'] = [0, 1000]
+    plot_settings['title'] = ''
+    plot_settings['legend'] = True
 
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
@@ -186,6 +228,12 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201102-220107_parallel_b1_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201102-220135_parallel_b10_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
     # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
-    for folder_name in folder_names:
+    titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
+    for i, (folder_name, title) in enumerate(zip(folder_names, titles)):
         plot_settings['folder_name'] = folder_name
+        plot_settings['title'] = title
+        if i == 2:
+            plot_settings['legend'] = True
+        else:
+            plot_settings['legend'] = False
         main_plot_parallel_sims(folder_name, plot_settings)

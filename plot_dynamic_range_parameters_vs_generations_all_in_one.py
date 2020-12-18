@@ -16,7 +16,7 @@ from matplotlib.patches import Patch
 
 def main_plot_parallel_sims(folder_name, plot_settings):
     plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
 
     if not plot_settings['only_plot']:
@@ -50,20 +50,25 @@ def load_plot_data(folder_name, plot_settings):
     return attrs_lists
 
 
-def create_legend(colors):
+def create_legend():
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='w', markersize=15, alpha=0.0001, label=r'$10$ Simulations'),
+        Patch(facecolor=plot_settings['colors']['b01'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.1$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['b1'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['b10'], edgecolor='w', label=r'$\beta_\mathrm{init} = 10$', alpha=1),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
-        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Smoothed'),
-               ]
+        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'One Simulation Smoothed'),
+    ]
 
-    plt.legend(handles=legend_elements, fontsize=22)
+    plt.legend(handles=legend_elements, fontsize=17)
 
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
-    plt.figure(figsize=(10, 7))
-    colors = sns.color_palette("dark", len(delta_dicts_all_sims))
+    if plot_settings['new_fig']:
+        plt.figure(figsize=(10, 7))
 
-    for delta_dict, deltas_dict, color in zip(delta_dicts_all_sims, deltas_dicts_all_sims, colors):
+    # colors = sns.color_palette("dark", len(delta_dicts_all_sims))
+    color = plot_settings['colors'][plot_settings['regime']]
+
+    for delta_dict, deltas_dict in zip(delta_dicts_all_sims, deltas_dicts_all_sims):
         color = color
         # Handle delta dict, which includes mean delta of each generation
         generations = list(delta_dict.keys())
@@ -106,15 +111,15 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
             f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
             x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
             y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp, c=color, alpha=0.8)
+            plt.plot(x_interp, y_interp, c=color, alpha=0.6)
 
 
-            
+
 
         if plot_settings['plot_deltas_of_individuals']:
             plt.scatter(generations_unnested_ind,  mean_attr_list_ind_unnested, s=2, alpha=0.2, c=color)
 
-        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4, c=color)
+        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4, c=color, marker='.')
 
         if plot_settings['sliding_window']:
             slided_mean_attrs_list = moving_average(mean_attrs_list, plot_settings['sliding_window_size'])
@@ -124,19 +129,20 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.xlabel('Generation')
     plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
-    plt.title(r'$\beta_\mathrm{init}=%s$' % plot_settings['beta_init_for_title'])
+
+    # plt.title(r'$\beta_\mathrm{init}=%s$' % plot_settings['beta_init_for_title'])
 
     if plot_settings['plot_legend']:
-        create_legend(colors)
+        create_legend()
 
 
+    if plot_settings['save_fig']:
+        save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
+        save_name = 'delta_vs_generations_all_in_one.png'
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
 
-    save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'delta_vs_generations.png'
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+        plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
 
 
 def load_dynamic_range_param(folder_name, plot_settings):
@@ -212,7 +218,7 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
 
-    plot_settings['ylim'] = None
+    plot_settings['ylim'] = (-1.5, 1.1)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['sliding_window'] = False
     plot_settings['sliding_window_size'] = 10
@@ -224,15 +230,25 @@ if __name__ == '__main__':
 
     plot_settings['kernel_regression'] = False
 
+    plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
 
     beta_inits = [1, 10, 0.1]
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
-    for folder_name, beta_init in zip(folder_names, beta_inits):
+    regimes = ['b1', 'b10', 'b01']
+    plot_settings['last_sim'] = False
+    for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
+        plot_settings['regime'] = regime
         plot_settings['folder_name'] = folder_name
         plot_settings['beta_init_for_title'] = beta_init
-        if beta_init == 0.1:
-            plot_settings['plot_legend'] = True
+        if i == 0:
+            plot_settings['new_fig'] = True
         else:
+            plot_settings['new_fig'] = False
+        if i+1 == len(regimes):
+            plot_settings['plot_legend'] = True
+            plot_settings['save_fig'] = True
+        else:
+            plot_settings['save_fig'] = False
             plot_settings['plot_legend'] = False
 
         main_plot_parallel_sims(folder_name, plot_settings)
