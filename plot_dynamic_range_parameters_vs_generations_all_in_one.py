@@ -56,8 +56,14 @@ def create_legend():
         Patch(facecolor=plot_settings['colors']['b1'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
         Patch(facecolor=plot_settings['colors']['b10'], edgecolor='w', label=r'$\beta_\mathrm{init} = 10$', alpha=1),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
-        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'One Simulation Smoothed'),
+
     ]
+    if plot_settings['smooth']:
+        legend_elements.append(Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label='One Simulation\nSmoothed'))
+    elif plot_settings['interpolate']:
+        legend_elements.append(Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label='One Simulation\nInterpolated'))
+    elif plot_settings['plot_line']:
+        legend_elements.append(Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label='One Simulation'))
 
     plt.legend(handles=legend_elements, fontsize=17)
 
@@ -65,6 +71,11 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     if plot_settings['new_fig']:
         plt.figure(figsize=(10, 7))
         ax = plt.subplot()
+        plt.grid()
+    # plt.rcParams.update({
+    #     'ytick.right': True,
+    #     "ytick.labelright": True
+    # })
 
         # colors = sns.color_palette("dark", len(delta_dicts_all_sims))
     color = plot_settings['colors'][plot_settings['regime']]
@@ -98,21 +109,29 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
 
 
 
-        if plot_settings['smooth']:
+        if plot_settings['plot_line']:
             '''
             Trying to make some sort of regression, that smoothes and interpolates 
             Trying to find an alternative to moving average, where boundary values are cut off
             '''
             # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
             # Savitzky-Golay filter:
-            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 21, 3) # window size, polynomial order
+            if plot_settings['smooth']:
+                smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, plot_settings['smooth_window'], 3) # window size, polynomial order
+            else:
+                smoothed_mean_attrs_list = mean_attrs_list
             # plt.plot(generations, smoothed_mean_attrs_list, c=color)
 
-            # Uncommand the following, if interpolation shall be applied to smoothed data
-            f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
-            x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
-            y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp, c=color, alpha=0.6)
+
+            if plot_settings['interpolate']:
+                f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
+                x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
+                y_interp = f_interpolate(x_interp)
+                plt.plot(x_interp, y_interp, c=color, alpha=plot_settings['line_alpha'])
+            else:
+                plt.plot(generations, smoothed_mean_attrs_list, c=color, alpha=plot_settings['line_alpha'])
+
+
 
 
 
@@ -130,6 +149,7 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.xlabel('Generation')
     plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
+
 
     # plt.text(-200, 1, 'hallo', fontsize=14)
     # plt.subplots_adjust(left=0.9)
@@ -233,7 +253,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
@@ -243,7 +263,13 @@ if __name__ == '__main__':
     plot_settings['sliding_window'] = False
     plot_settings['sliding_window_size'] = 10
 
+    # smooth works only if plot_settings['interpolate'] = True
+    plot_settings['plot_line'] = True
     plot_settings['smooth'] = True
+    plot_settings['interpolate'] = True
+    plot_settings['smooth_window'] = 21 # 21
+    plot_settings['line_alpha'] = 0.6 # beta jump 0.4 # normal 0.6
+
     plot_settings['plot_deltas_of_individuals'] = False
 
     plot_settings['gaussian_kernel'] = True
@@ -253,8 +279,9 @@ if __name__ == '__main__':
     plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
 
     beta_inits = [1, 10, 0.1]
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
+    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
+    # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
     regimes = ['b1', 'b10', 'b01']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):

@@ -30,7 +30,7 @@ def main_plot_parallel_sims(folder_name, plot_settings):
         plot_settings['only_copied_str'] = '_all_orgs'
 
     if plot_settings['only_plot_certain_generations']:
-        plot_settings['plot_generations_str'] = 'gen_{}_to_{}'\
+        plot_settings['plot_generations_str'] = 'gen_{}_to_{}' \
             .format(plot_settings['lowest_and_highest_generations_to_be_plotted'][0],
                     plot_settings['lowest_and_highest_generations_to_be_plotted'][1])
     else:
@@ -46,7 +46,7 @@ def main_plot_parallel_sims(folder_name, plot_settings):
 
 def save_plot_data(folder_name, attrs_lists, plot_settings):
     save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
-    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle'\
+    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle' \
         .format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
                 plot_settings['min_food_for_plot'], plot_settings['plot_generations_str'])
     if not os.path.exists(save_dir):
@@ -58,7 +58,7 @@ def save_plot_data(folder_name, attrs_lists, plot_settings):
 
 def load_plot_data(folder_name, plot_settings):
     save_dir = 'save/{}/one_pop_plot_data/'.format(folder_name)
-    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle'.\
+    save_name = 'plot_data_{}{}_min_ts{}_min_food{}_{}.pickle'. \
         format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['min_ts_for_plot'],
                plot_settings['min_food_for_plot'], plot_settings['plot_generations_str'])
     print('Load plot data from: {}{}'.format(save_dir, save_name))
@@ -111,14 +111,13 @@ def plot(attrs_lists, plot_settings):
     # plt.ylabel(plot_settings['attr'])
     plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
     plt.ylim(plot_settings['ylim'])
-    plt.title(plot_settings['title'], color=plot_settings['title_color'])
     if plot_settings['legend']:
         create_legend()
 
 
 
     save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'.\
+    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
         format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
                plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
                plot_settings['plot_generations_str'])
@@ -195,7 +194,7 @@ if __name__ == '__main__':
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
     plot_settings['only_plot'] = True
-    plot_settings['decompress'] = True
+    plot_settings['decompress'] = False
 
     plot_settings['add_save_name'] = ''
     plot_settings['attr'] = 'avg_energy' #'norm_food_and_ts_avg_energy' #'norm_avg_energy'
@@ -228,16 +227,16 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201102-220107_parallel_b1_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201102-220135_parallel_b10_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
     # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
+    # folder_names = ['sim-20201023-202855_parallel_b1_num_neurons20_g4000_t2000', 'sim-20201023-202920_parallel_b1_num_neurons28_g4000_t2000', 'sim-20201023-202932_parallel_b10_num_neurons20_g4000_t2000', 'sim-20201023-202949_parallel_b10_num_neurons28_g4000_t2000']
+    # folder_names = ['different_neurons_runs/sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'different_neurons_runs/sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT']
+    folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
 
-    title_colors = ['olive', 'royalblue', 'maroon']
-    titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
-    for i, (folder_name, title, title_color) in enumerate(zip(folder_names, titles, title_colors)):
+    for i, folder_name in enumerate(folder_names):
         plot_settings['folder_name'] = folder_name
-        plot_settings['title'] = title
         if i == 2:
-            plot_settings['legend'] = True
+            plot_settings['legend'] = False
         else:
             plot_settings['legend'] = False
-        plot_settings['title_color'] = title_color
+        plot_settings['title_color'] = ''
         main_plot_parallel_sims(folder_name, plot_settings)

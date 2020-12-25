@@ -98,6 +98,7 @@ def create_settings():
     settings['sigB'] = args.sig_beta #0.02  # std for Beta mutation
     settings['diff_init_betas'] = args.diff_init_betas
     settings['beta_jump_mutations'] = args.beta_jump_mutations
+    settings['beta_linspace'] = args.beta_linspace
 
     #settings['loadfile'] = sim-20191114-000009_server
     settings['loadfile'] = args.loadfile
@@ -218,6 +219,15 @@ def parse():
                         , help='''In case you want different initial beta values in the first generations define those 
                         in a blank separated list after this argument. Probability of each entry occurring
                          is uniformly distributed''')
+    parser.add_argument('-b_linspace', dest='beta_linspace', nargs='+', required=False, type=float,
+                        help='blank seperated list: index loglow loghigh number ... In case you want to parallely run multiple simulations with different beta values this'
+                             'command will be helpful. It expects a blank seperated list: index_of_current_simulation beta_loglow beta_loghigh number_of_simualtions)'
+                             'Those commands will be read by np.linspace, where index gives gives the desired position of the beta value'
+                             'of the array created by linspace. loglow and loghigh give the log thresholds of the beta value.'
+                             '(probably you want -1 and 1). Number has to be equal to the amount of simulations you are parallely running'
+                             ', it gives the number of entries of the linspace array.'
+                             'So just leave all values except for index constant and then iterate through index with'
+                             'your parallelization tool. Only works when used in train.py')
     parser.add_argument('-std_b', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
     parser.add_argument('-b_jump', dest='beta_jump_mutations', action='store_true',
@@ -299,7 +309,7 @@ def parse():
                         help='Amount of cores available for heat capacity calculations. If 0 no heat cap calculations are done')
     parser.add_argument('-rand_ts', dest='random_time_steps', action='store_true', help='Activate random time steps every generation')
     parser.add_argument('-rand_ts_lim', dest='random_time_step_limits', nargs='+', type=int,
-                        help='Expacts blank seperated list X Y, where X is the lower and Y the upper limit of the '
+                        help='Expects blank seperated list X Y, where X is the lower and Y the upper limit of the '
                              'uniform random distribution, which is used for random time steps')
     parser.add_argument('-rand_ts_power', dest='random_time_steps_power_law', action='store_true',
                         help='Activate random time steps sampled from power law distribution')
@@ -335,6 +345,7 @@ def parse():
                              'but increases loading times')
     parser.add_argument('-v_eat_max', dest='max_speed_eat', type=float, help='Max speed that organisms can go when they eat.'
                                                                          'If not used, this feature is not active')
+
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -350,7 +361,8 @@ def parse():
                         isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
-                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None)
+                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
+                        beta_linspace=None)
     args = parser.parse_args()
     return args
 
@@ -380,6 +392,8 @@ def run(settings, Iterations):
     # Food is only created uniformly distributed at the very beginning.
     # For a new iteration the placement of the food is kept.
 
+    if settings['beta_linspace'] is not None:
+        settings['init_beta'] = beta_linspace(settings)
 
     # --- POPULATE THE ENVIRONMENT WITH ORGANISMS ----------+
     if settings['LoadIsings']:
@@ -432,6 +446,21 @@ def run(settings, Iterations):
     sim_name, not_used_isings = EvolutionLearning(isings, foods, settings, Iterations)
 
     return sim_name
+
+
+def beta_linspace(settings):
+    '''
+    settings['beta_linspace'] : index, loglow, loghigh, number
+    Those commands will be read by np.linspace, where index gives gives the desired position of the beta value
+    of the array created by linspace. loglow and loghigh give the log thresholds of the beta value.
+    (probably you want -1 and 1). Number gives the number of entries of the linspace array.
+    '''
+    index, loglow, loghigh, number = settings['beta_linspace']
+    index = int(index) - 1
+    number = int(number)
+    beta_exp = np.linspace(loglow, loghigh, number)[index]
+    beta = 10 ** beta_exp
+    return beta
 
 
 # --- RUN ----------------------------------------------------------------------+
