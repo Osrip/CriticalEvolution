@@ -8,6 +8,7 @@ from automatic_plot_helper import load_settings
 from automatic_plot_helper import choose_copied_isings
 from automatic_plot_helper import calc_normalized_fitness
 from automatic_plot_helper import load_isings_from_list
+from automatic_plot_helper import all_sim_names_in_parallel_folder
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -17,12 +18,15 @@ from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
 import seaborn as sns
 from matplotlib.lines import Line2D
+import matplotlib.colors as colors_package
+from heat_capacity_parameter import calc_heat_cap_param_main
 from matplotlib.patches import Patch
+import matplotlib.cm as cm
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
     plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     if plot_settings['only_copied']:
         plot_settings['only_copied_str'] = '_only_copied_orgs'
@@ -78,19 +82,48 @@ def load_plot_data(folder_name, plot_settings):
     return attrs_lists
 
 
+def dynamic_regime_param_all_sims(plot_settings, generation):
+    all_deltas = []
+    for folder_name in plot_settings['all_folder_names']:
+        sim_names = all_sim_names_in_parallel_folder(folder_name)
+        for sim_name in sim_names:
+            mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, \
+            heat_caps_max_dict, smoothed_heat_caps = calc_heat_cap_param_main(sim_name, {}, gen_list=[generation])
+            all_deltas.append(mean_log_beta_distance_dict[generation])
+    return all_deltas
+
 
 def plot(attrs_lists, plot_settings):
     if plot_settings['first_plot']:
         plt.figure(figsize=(10, 7))
-    colors = sns.color_palette("dark", len(attrs_lists))
+    # colors = sns.color_palette("dark", len(attrs_lists))
 
-    for attrs_list, color in zip(attrs_lists, colors):
+
+    all_deltas = dynamic_regime_param_all_sims(plot_settings, plot_settings['color_according_to_delta_in_generation'])
+    cmap = plt.get_cmap('brg')
+    norm = colors_package.Normalize(vmin=min(all_deltas), vmax=max(all_deltas))
+    if plot_settings['last_plot']:
+        cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+        cbar.set_label(r'$\langle \delta \rangle$ at Generation 4000', rotation=270, labelpad=23)
+
+    sim_names = all_sim_names_in_parallel_folder(plot_settings['folder_name'])
+    deltas = []
+    for sim_name in sim_names:
+        mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, \
+        heat_caps_max_dict, smoothed_heat_caps = calc_heat_cap_param_main(sim_name, {}, gen_list=[plot_settings['color_according_to_delta_in_generation']])
+        deltas.append(mean_log_beta_distance_dict[plot_settings['color_according_to_delta_in_generation']])
+    print('Deltas:')
+    print(deltas)
+    print('all Deltas:')
+    print(all_deltas)
+    for attrs_list, delta in zip(attrs_lists, deltas):
+        color = cmap(norm(delta))
         generations = np.arange(len(attrs_list))
         mean_attrs_list = [np.nanmean(gen_attrs) for gen_attrs in attrs_list]
-        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.15, c=color)
+        plt.scatter(generations, mean_attrs_list, s=1, alpha=0.085, c=color)
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
-            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
+            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.5, linewidth=2, c=color)
         if plot_settings['smooth']:
             '''
             Trying to make some sort of regression, that smoothes and interpolates 
@@ -105,19 +138,20 @@ def plot(attrs_lists, plot_settings):
             f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
             x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
             y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
+            plt.plot(x_interp, y_interp, c=color, alpha=0.5, linewidth=2)
 
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     plt.xlabel('Generation')
     # plt.ylabel(plot_settings['attr'])
     plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
     plt.ylim(plot_settings['ylim'])
-    plt.title(plot_settings['title'], color=plot_settings['title_color'])
-    if plot_settings['legend']:
+    # plt.title(plot_settings['title'], color=plot_settings['title_color'])
+    if plot_settings['legend'] and plot_settings['last_plot']:
         create_legend()
 
 
     if plot_settings['last_plot']:
+
         save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
         save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}_all_in_one.png'. \
             format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
@@ -131,12 +165,12 @@ def plot(attrs_lists, plot_settings):
 
 def create_legend():
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='w', markersize=15, alpha=0.0001, label=r'$10$ Simulations'),
+        # Line2D([0], [0], marker='o', color='w', markerfacecolor='w', markersize=15, alpha=0.0001, label=r'$10$ Simulations'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
-        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Smoothed'),
+        Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'One Simulation Smoothed'),
     ]
 
-    plt.legend(handles=legend_elements, fontsize=22)
+    plt.legend(handles=legend_elements, fontsize=18)
 
 
 def load_attrs(folder_name, plot_settings):
@@ -230,7 +264,10 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
-    folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
+    # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
+    folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump']
+
+    plot_settings['color_according_to_delta_in_generation'] = 4000
     init_betas = [1, 10, 0.1]
     title_colors = ['olive', 'royalblue', 'maroon']
     titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']

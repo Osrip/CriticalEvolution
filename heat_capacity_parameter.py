@@ -8,10 +8,14 @@ from scipy.signal import find_peaks
 
 def calc_heat_cap_param_main(sim_name, module_settings, gen_list=None, gaussian_kernel=True):
     '''
-    @param gen_list: List of generations, to calculate heat capacity parameter for. Heat capacity has to be calculated
+    ---This function calculates the DELTA values aka DYNAMIC REGIME PARAMETER aka heat capacity parameter---
+
+    @param gen_list: List of generations, to calculate heat capacity parameter for. Heat capacity has to be calculated already
     for those generations. If None, automatically detects all generations, that heat capacity data has been calculated
     for.
-    @return:  Returns mean dynamic range parameter over generation, dynamic range parameter dynamic range parameter, non-log dynamic range parameter, index of max beta value,
+    @param module settings: Settings for this heat capacity parameter module. Just pass empty list in case you don't want
+    to specify anything
+    @return:  Returns mean DYNAMIC REGIME parameter DELTA over generation, dynamic range parameter dynamic range parameter, non-log dynamic range parameter, index of max beta value,
      beta value where heat cap max, heat cap max
      All as dictionaries with the generation being the key
     '''
