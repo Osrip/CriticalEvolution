@@ -1,5 +1,3 @@
-Master Thesis
---- due to time constrains still quite messy ----
 
 # CriticalForagingOrgs
 A community of Ising-embodied organisms adapt via evolution (GA) and/or a 'critical learning' algorithm. The community is contained within an arena with a finite (default 100) number of food parcels which infinitely replenish. The genetic algorithm adapts the community to the task of foraging for food whereas the critical learning algorithm seeks to organize the the ising-embodied organisms towards their critical point (a process independent of the foraging task). These algorithms can be applied seperately or together which can be controlled in the settings defined in the file `train`.
