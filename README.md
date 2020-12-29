@@ -16,7 +16,11 @@ For the numerous options of the model can be displayed using:
 ```
 python3 train.py -h
 ```
+For a quick demonstration, which creates a playable movie of the last generation run:
 
+```
+python3 train.py -g 51 -t 100 -a 50
+```
 
 However, bear in mind that the settings in the `train` python script will need to be edited to your own preferences and directories.
 
