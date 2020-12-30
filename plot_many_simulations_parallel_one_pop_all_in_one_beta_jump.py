@@ -173,8 +173,6 @@ def create_legend():
     plt.legend(handles=legend_elements, fontsize=18)
 
 
-
-
 def load_attrs(folder_name, plot_settings):
     folder_dir = 'save/{}'.format(folder_name)
     dir_list = all_folders_in_dir_with(folder_dir, 'sim')
