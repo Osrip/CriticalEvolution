@@ -1,10 +1,25 @@
+
 # CriticalForagingOrgs
 A community of Ising-embodied organisms adapt via evolution (GA) and/or a 'critical learning' algorithm. The community is contained within an arena with a finite (default 100) number of food parcels which infinitely replenish. The genetic algorithm adapts the community to the task of foraging for food whereas the critical learning algorithm seeks to organize the the ising-embodied organisms towards their critical point (a process independent of the foraging task). These algorithms can be applied seperately or together which can be controlled in the settings defined in the file `train`.
+
+
+The original project can be accessed under:
+https://github.com/heysoos/CriticalForagingOrgs
+
 
 ## Running a Simulation
 To run your own simulation, simply run:
 ```
-python3 train
+python3 train.py
+```
+For the numerous options of the model can be displayed using:
+```
+python3 train.py -h
+```
+For a quick demonstration, which creates a playable movie of the last generation run:
+
+```
+python3 train.py -g 51 -t 100 -a 50
 ```
 
 However, bear in mind that the settings in the `train` python script will need to be edited to your own preferences and directories.
