@@ -18,6 +18,7 @@ from scipy.interpolate import interp1d
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+from matplotlib import gridspec
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
@@ -81,7 +82,7 @@ def load_plot_data(folder_name, plot_settings):
 
 
 def plot(attrs_lists, plot_settings):
-    plt.figure(figsize=(10, 7))
+    ax = plot_settings['axis']
     plt.grid()
     colors = sns.color_palette("dark", len(attrs_lists))
 
@@ -89,10 +90,10 @@ def plot(attrs_lists, plot_settings):
     for attrs_list, color in zip(attrs_lists, colors):
         generations = np.arange(len(attrs_list))
         mean_attrs_list = [np.nanmean(gen_attrs) for gen_attrs in attrs_list]
-        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.15, c=color)
+        ax.scatter(generations, mean_attrs_list, s=2, alpha=0.15, c=color)
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
-            plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
+            ax.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
         if plot_settings['smooth']:
             '''
             Trying to make some sort of regression, that smoothes and interpolates 
@@ -107,27 +108,29 @@ def plot(attrs_lists, plot_settings):
             f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
             x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
             y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
+            ax.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
 
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
-    plt.xlabel('Generation')
+
     # plt.ylabel(plot_settings['attr'])
-    plt.ylabel(plot_settings['ylabel'])
-    plt.ylim(plot_settings['ylim'])
+    ax.set_ylabel(plot_settings['ylabel'])
+    ax.set_ylim(plot_settings['ylim'])
     if plot_settings['legend']:
         create_legend()
 
 
+    if plot_settings['savefig']:
+        ax.set_xlabel('Generation')
+        
+        save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
+        save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
+            format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
+                   plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
+                   plot_settings['plot_generations_str'])
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
 
-    save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
-        format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
-               plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
-               plot_settings['plot_generations_str'])
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+        plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
 
 
 def create_legend():
@@ -229,17 +232,27 @@ if __name__ == '__main__':
                     'break_eat_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'break_eat_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT']
     attrs = ['avg_energy', 'v']
     # attrs = ['v']
-    for attr in attrs:
-        if attr == 'avg_energy':
-            plot_settings['ylim'] = (-1, 40)
-            plot_settings['ylabel'] = r'$\langle E_\mathrm{org} \rangle$'
-        elif attr == 'v':
-            plot_settings['ylim'] = None
-            plot_settings['ylabel'] = r'$\langle v \rangle$'
 
 
-        plot_settings['attr'] = attr
-        for i, folder_name in enumerate(folder_names):
+    for i, folder_name in enumerate(folder_names):
+        plt.figure(figsize=(10, 7))
+        gs = gridspec.GridSpec(2, 1)
+        for attr in attrs:
+            if attr == 'avg_energy':
+                plot_settings['ylim'] = (-1, 40)
+                plot_settings['ylabel'] = r'$\langle E_\mathrm{org} \rangle$'
+                plot_settings['axis'] = plt.subplot(gs[0])
+                plot_settings['savefig'] = False
+            elif attr == 'v':
+                plot_settings['ylim'] = None
+                plot_settings['ylabel'] = r'$\langle v \rangle$'
+                plot_settings['axis'] = plt.subplot(gs[1])
+                plot_settings['savefig'] = True
+
+            plot_settings['attr'] = attr
+
+            ###
+
             plot_settings['folder_name'] = folder_name
             if i == 0:
                 plot_settings['legend'] = True
