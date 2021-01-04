@@ -121,7 +121,9 @@ def plot(attrs_lists, plot_settings):
 
     if plot_settings['savefig']:
         ax.set_xlabel('Generation')
-        
+
+        plt.subplots_adjust(hspace=.05)
+
         save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
         save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
             format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
@@ -241,12 +243,14 @@ if __name__ == '__main__':
             if attr == 'avg_energy':
                 plot_settings['ylim'] = (-1, 40)
                 plot_settings['ylabel'] = r'$\langle E_\mathrm{org} \rangle$'
-                plot_settings['axis'] = plt.subplot(gs[0])
+                ax0 = plt.subplot(gs[0])
+                plot_settings['axis'] = ax0
                 plot_settings['savefig'] = False
             elif attr == 'v':
                 plot_settings['ylim'] = None
                 plot_settings['ylabel'] = r'$\langle v \rangle$'
-                plot_settings['axis'] = plt.subplot(gs[1])
+                ax1 = plt.subplot(gs[1])
+                plot_settings['axis'] = ax1
                 plot_settings['savefig'] = True
 
             plot_settings['attr'] = attr
