@@ -22,10 +22,7 @@ from matplotlib import gridspec
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
-    plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 26, 'serif': ['computer modern roman']}
-    plt.rc('font', **font)
-    plt.rc('axes', axisbelow=True)
+
     if plot_settings['only_copied']:
         plot_settings['only_copied_str'] = '_only_copied_orgs'
     else:
@@ -118,6 +115,8 @@ def plot(attrs_lists, plot_settings):
     if plot_settings['legend']:
         create_legend()
 
+    if plot_settings['no_tick_labels']:
+        plt.setp(ax.get_xticklabels(), visible=False)
 
     if plot_settings['savefig']:
         ax.set_xlabel('Generation')
@@ -234,33 +233,54 @@ if __name__ == '__main__':
                     'break_eat_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'break_eat_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT']
     attrs = ['avg_energy', 'v']
     # attrs = ['v']
+    experiments = ['break', 'break', 'normal', 'normal']
+    init_betas = [1, 10, 1, 10]
 
+    plt.rc('text', usetex=True)
+    font = {'family': 'serif', 'size': 26, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
+    plt.rc('axes', axisbelow=True)
 
-    for i, folder_name in enumerate(folder_names):
-        plt.figure(figsize=(10, 7))
+    for i, (folder_name, experiment, init_beta) in enumerate(zip(folder_names, experiments, init_betas)):
+        plt.figure(figsize=(10, 12))
         gs = gridspec.GridSpec(2, 1)
         for attr in attrs:
+            # Default settings:
+            plot_settings['no_tick_labels'] = False
+            plot_settings['ylim'] = None
+            plot_settings['legend'] = False
+
             if attr == 'avg_energy':
-                plot_settings['ylim'] = (-1, 40)
+                if experiment == 'normal' and init_beta == 1:
+                    plot_settings['legend'] = True
+                if experiment == 'break':
+                    plot_settings['ylim'] = (-0.25, 10)
+                elif experiment == 'normal':
+                    plot_settings['ylim'] = (-1, 40)
                 plot_settings['ylabel'] = r'$\langle E_\mathrm{org} \rangle$'
                 ax0 = plt.subplot(gs[0])
                 plot_settings['axis'] = ax0
                 plot_settings['savefig'] = False
+                plot_settings['no_tick_labels'] = True
             elif attr == 'v':
-                plot_settings['ylim'] = None
-                plot_settings['ylabel'] = r'$\langle v \rangle$'
+                if experiment == 'normal':
+                    plot_settings['ylim'] = (-0.01, 0.6)
+                if experiment == 'break' and init_beta == 1:
+                    plot_settings['ylim'] = (-0.005, 0.15)
+                if experiment == 'break' and init_beta == 10:
+                    plot_settings['ylim'] = (-0.0005, 0.010)
+
+                plot_settings['ylabel'] = r'$\langle v_\mathrm{org} \rangle$'
                 ax1 = plt.subplot(gs[1])
                 plot_settings['axis'] = ax1
                 plot_settings['savefig'] = True
+
 
             plot_settings['attr'] = attr
 
             ###
 
             plot_settings['folder_name'] = folder_name
-            if i == 0:
-                plot_settings['legend'] = True
-            else:
-                plot_settings['legend'] = False
+
             plot_settings['title_color'] = ''
             main_plot_parallel_sims(folder_name, plot_settings)
