@@ -267,11 +267,11 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
 
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', label='Critical Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
                markersize=20, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', label='Critical Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
                markersize=20, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', label='Sub-Critical Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=10$, Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
                markersize=20, alpha=0.75),
     ]
 
@@ -491,11 +491,11 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
                label=r'$\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = \frac{50000}{2000}$'),
         Line2D([0], [0], color='b', lw=4, c='grey', linestyle='dashed', alpha=0.7,
                label=r'arbitrary seperation $\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = 5$'),
-        Line2D([0], [0], marker='o', color='w', label='Critical Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
                markersize=20, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', label='Critical Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
                markersize=20, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', label='Sub-Critical Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=10$, Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
                markersize=20, alpha=0.75),
     ]
 
