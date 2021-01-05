@@ -22,6 +22,7 @@ import matplotlib.colors as colors_package
 from heat_capacity_parameter import calc_heat_cap_param_main
 from matplotlib.patches import Patch
 import matplotlib.cm as cm
+from matplotlib.colors import LinearSegmentedColormap
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
@@ -93,6 +94,17 @@ def dynamic_regime_param_all_sims(plot_settings, generation):
     return all_deltas
 
 
+def colormap_according_to_delta(generation, plot_settings):
+
+    colors = [plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    cmap_name = 'custom_cmap'
+    # cmap = plt.get_cmap('brg')
+    cmap = LinearSegmentedColormap.from_list(
+        cmap_name, colors)
+
+    return cmap
+
+
 def plot(attrs_lists, plot_settings):
     if plot_settings['first_plot']:
         plt.figure(figsize=(10, 7))
@@ -100,11 +112,12 @@ def plot(attrs_lists, plot_settings):
 
 
     all_deltas = dynamic_regime_param_all_sims(plot_settings, plot_settings['color_according_to_delta_in_generation'])
-    cmap = plt.get_cmap('brg')
+    # cmap = plt.get_cmap('brg')
+    cmap = colormap_according_to_delta(0, plot_settings)
     norm = colors_package.Normalize(vmin=min(all_deltas), vmax=max(all_deltas))
-    if plot_settings['last_plot']:
-        cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-        cbar.set_label(r'$\langle \delta \rangle$ at Generation 4000', rotation=270, labelpad=23)
+    # if plot_settings['last_plot']:
+    #     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+    #     cbar.set_label(r'$\langle \delta \rangle$ at Generation 0', rotation=270, labelpad=23)
 
     sim_names = all_sim_names_in_parallel_folder(plot_settings['folder_name'])
     deltas = []
@@ -229,7 +242,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
     plot_settings['decompress'] = True
 
     plot_settings['add_save_name'] = ''
@@ -257,15 +270,10 @@ if __name__ == '__main__':
     plot_settings['title'] = ''
     plot_settings['legend'] = True
 
-    # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
-    # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
-    # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201102-220107_parallel_b1_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201102-220135_parallel_b10_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
-    # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
-    # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
+    plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
+
     folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
+    # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
 
     plot_settings['color_according_to_delta_in_generation'] = 0
     init_betas = [1]

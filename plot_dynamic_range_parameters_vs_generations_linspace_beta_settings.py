@@ -13,6 +13,9 @@ import pickle
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+import matplotlib.colors as colors_package
+from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.cm as cm
 
 def main_plot_parallel_sims(folder_name, plot_settings):
     plt.rc('text', usetex=True)
@@ -52,9 +55,6 @@ def load_plot_data(folder_name, plot_settings):
 
 def create_legend():
     legend_elements = [
-        Patch(facecolor=plot_settings['colors']['b01'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.1$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['b1'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['b10'], edgecolor='w', label=r'$\beta_\mathrm{init} = 10$', alpha=1),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
 
     ]
@@ -67,6 +67,26 @@ def create_legend():
 
     plt.legend(handles=legend_elements, fontsize=17)
 
+
+def colormap_according_to_delta(delta_dicts_all_sims, generation, plot_settings):
+    delta_list_one_gen = []
+    for delta_dict in delta_dicts_all_sims:
+        # delta dict: mean delta of each generation
+
+        delta_one_gen = delta_dict[str(generation)]
+        delta_list_one_gen.append(delta_one_gen)
+
+    colors = [plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    cmap_name = 'custom_cmap'
+    # cmap = plt.get_cmap('brg')
+    cmap = LinearSegmentedColormap.from_list(
+        cmap_name, colors)
+    norm = colors_package.Normalize(vmin=min(delta_list_one_gen), vmax=max(delta_list_one_gen))
+    return cmap, norm
+
+
+
+
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     if plot_settings['new_fig']:
         plt.figure(figsize=(10, 7))
@@ -77,11 +97,15 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     #     "ytick.labelright": True
     # })
 
-    # colors = sns.color_palette("dark", len(delta_dicts_all_sims))
-    color = plot_settings['colors'][plot_settings['regime']]
+    cmap, norm = colormap_according_to_delta(delta_dicts_all_sims, plot_settings['color_according_to_delta_in_generation'],
+                                             plot_settings)
+
 
     for delta_dict, deltas_dict in zip(delta_dicts_all_sims, deltas_dicts_all_sims):
-        color = color
+        # delta dict: mean delta of each generation
+        # deltas_dict: delta of every individual
+
+
         # Handle delta dict, which includes mean delta of each generation
         generations = list(delta_dict.keys())
         generations = np.array([int(gen) for gen in generations])
@@ -105,6 +129,11 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
             for mean_attr_ind in mean_attr_list_ind:
                 generations_unnested_ind.append(gen_ind)
                 mean_attr_list_ind_unnested.append(mean_attr_ind)
+
+
+
+        curr_color_delta= delta_dict[str(plot_settings['color_according_to_delta_in_generation'])]
+        color = cmap(norm(curr_color_delta))
 
 
 
@@ -149,6 +178,9 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.xlabel('Generation')
     plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
+
+    cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+    cbar.set_label(r'$\langle \delta \rangle$ at Generation 0', rotation=270, labelpad=23)
 
 
     # plt.text(-200, 1, 'hallo', fontsize=14)
@@ -267,7 +299,7 @@ if __name__ == '__main__':
     plot_settings['plot_line'] = True
     plot_settings['smooth'] = True
     plot_settings['interpolate'] = True
-    plot_settings['smooth_window'] = 21  # 21
+    plot_settings['smooth_window'] = 7  # 21
     plot_settings['line_alpha'] = 0.6  # beta jump 0.4 # normal 0.6
 
     plot_settings['plot_deltas_of_individuals'] = False
@@ -275,6 +307,7 @@ if __name__ == '__main__':
     plot_settings['gaussian_kernel'] = True
 
     plot_settings['kernel_regression'] = False
+    plot_settings['color_according_to_delta_in_generation'] = 0
 
     plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
 
@@ -282,7 +315,7 @@ if __name__ == '__main__':
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
     # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
-    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
+    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
     regimes = ['b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
