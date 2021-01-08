@@ -52,7 +52,7 @@ def create_settings():
     settings['repeat_pipeline_switched_boo'] = None
     settings['save_subfolder'] = args.save_subfolder
     settings['switch_seasons_repeat_pipeline'] = False  #  This has to be activated For the repeat runs of switch_season_repeat_pipeline
-    settings['commands_in_folder_name'] = True
+    settings['commands_in_folder_name'] = args.commands_in_folder_name
 
 
 
@@ -99,6 +99,7 @@ def create_settings():
     settings['diff_init_betas'] = args.diff_init_betas
     settings['beta_jump_mutations'] = args.beta_jump_mutations
     settings['beta_linspace'] = args.beta_linspace
+    settings['change_beta_loaded_simulation'] = args.change_beta_loaded_simulation
 
     #settings['loadfile'] = sim-20191114-000009_server
     settings['loadfile'] = args.loadfile
@@ -184,19 +185,28 @@ def parse():
     parser = argparse.ArgumentParser(description=
                                      '''Agent-based evolutionary simulation of artificial organisms 
                                      controlled by a statistical neural net (ising model)
-                                     ------Saving Animation from loaded simulation------
+                                     #GENERATE ANIMATION FROM LOADED SIMULATION#
                                      Animating existing simulation for a certain generation:
                                      python3 train.py -l SIMULATION_NAME -li NUMBER_GENERATION -a 0 -g 1
                                      Animation will be saved in previous folder of simulation
-                                     ------Switch off all plots------
-                                     Use the following arguments: -ref 0 -noplt -nat_c 0 -dream_c 0 -rec_c 0
-                                     ------Default values-----
+                                     #SWITCH OFF ALL PLOTS#
+                                     Use the following argument: -noplt 
+                                     #DEFAULT VALUES#
                                      save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
-                        loadfile='', loaditer = 1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
-                        server_mode = False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
+                        loadfile='', loaditer=1999, pop_size=50, food_num=100, init_beta=1.0, seasons=False,
+                        server_mode=False, cost_speed=0.05, v_max=999.0, v_min=0.05, sig_beta=0.02, no_mut_beta=False,
                         init_energy=2, food_energy=1, no_ener_mod=False, plot_pipeline=True, chg_food_gen=None,
-                        years_per_iteration=1, min_food_winter=0.1, thermal_time=3, diff_init_betas=None, acc_motor=True,
-                        a_max=0.05
+                        years_per_iteration=1, min_food_winter=0.1, thermal_time=10, diff_init_betas=None, acc_motor=True,
+                        a_max=0.05, refresh_plot=0, dream_heat_capacity=0, laptop_mode=False, natural_heat_capacity_Nth_gen=0,
+                        natural_heat_capacity_beta_fac_props=[-1, 1, 100], recorded_heat_capacity=0, abrupt_seasons_len=0, cores=3,
+                        switch_off_evolution=False, fading_traces_animation=True, random_time_steps=False,
+                        random_time_step_limits=[100, 8000], heat_capacity_props=[100, 10, -2, 2, 100, 40], speciation=False,
+                        delta_threshold_speciation=1, shared_fitness_constants=[1, 1, 1], mutationRateDup=0.1,
+                        isolated_populations=False, beta_jump_mutations=False, animation_dpi=150,
+                        random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
+                        save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
+                        random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
+                        beta_linspace=None
                                      ''')
     parser.add_argument('-p', '--pop', dest='pop_size', type=int, help='Number of individuals in each generation')
     parser.add_argument('-f','--food', dest='food_num', type=int,
@@ -235,6 +245,8 @@ def parse():
                              'value is replaced by an exponentially distributed value of beta. This makes it easier'
                              'for a population to "hop out" of its current regime during evolution')
     parser.add_argument('-nmb', '--nomutb', dest='no_mut_beta', action='store_true', help='Switch off beta mutation')
+    parser.add_argument('-b_load', dest='change_beta_loaded_simulation', type=float, help='Can only be used, when -l argument is used.'
+                                                                              ' The beta of the loaded simulation is changed.')
     parser.add_argument('-a', '--ani', nargs='+', required=False, dest='plot_gens', type=int
                         , help='''Generations of which animation shall be created. 
                         Expects blank separated list of ints.''')
@@ -341,10 +353,11 @@ def parse():
                         help='By default energies and verlocities during the lifetime of each organism are'
                              'saved for the last generation of the simulation. This argument can switch that off.')
     parser.add_argument('-compress', dest='compress_save_isings', action='store_true',
-                        help='Compress pickle files when saving ising objects, reduces occupied diskspace by 2000% '
+                        help='Compress pickle files when saving ising objects, reduces occupied diskspace by 2000 percent '
                              'but increases loading times')
     parser.add_argument('-v_eat_max', dest='max_speed_eat', type=float, help='Max speed that organisms can go when they eat.'
                                                                          'If not used, this feature is not active')
+    parser.add_argument('-no_commands', dest='commands_in_folder_name', action='store_false', help='Commands are not saved in folder name')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
@@ -362,7 +375,7 @@ def parse():
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
                         random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
-                        beta_linspace=None)
+                        beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True)
     args = parser.parse_args()
     return args
 
@@ -424,6 +437,10 @@ def run(settings, Iterations):
             for I in isings:
                 I.species = 0
                 I.shared_fitness = 0
+        if settings['change_beta_loaded_simulation'] is not None:
+            for I in isings:
+                I.Beta = settings['change_beta_loaded_simulation']
+
 
     else:
         startstr = 'Starting simulation: (' + str(settings['TimeSteps']) + \
