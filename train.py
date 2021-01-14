@@ -360,7 +360,9 @@ def parse():
                              'but increases loading times')
     parser.add_argument('-v_eat_max', dest='max_speed_eat', type=float, help='Max speed that organisms can go when they eat.'
                                                                          'If not used, this feature is not active')
-    parser.add_argument('-no_commands', dest='commands_in_folder_name', action='store_false', help='Commands are not saved in folder name')
+    parser.add_argument('-no_commands', dest='commands_in_folder_name', action='store_false', help='Commands except for '
+                                                                                                   '-n (name of simualtion) '
+                                                                                                   'are not saved in folder name')
 
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 

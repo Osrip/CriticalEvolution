@@ -1185,6 +1185,14 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
     sim_name = 'sim-' + time.strftime("%Y%m%d-%H%M%S") + settings['add_save_name']
     if settings['commands_in_folder_name']:
         sim_name = sim_name + command_input
+    else:
+        name_command = ''
+        for i, elem in enumerate(s):
+            if elem == '-n':
+                name_command = '-n {}'.format(s[i+1])
+                break
+        sim_name = sim_name + name_command
+
 
     settings['sim_name'] = sim_name
 
