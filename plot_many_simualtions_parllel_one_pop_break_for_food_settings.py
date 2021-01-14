@@ -242,7 +242,7 @@ if __name__ == '__main__':
     plt.rc('axes', axisbelow=True)
 
     for i, (folder_name, experiment, init_beta) in enumerate(zip(folder_names, experiments, init_betas)):
-        plt.figure(figsize=(10, 12))
+        plt.figure(figsize=(10, 12))  #For horizontal figure  figsize=(10, 7) and hspace = 0.1
         gs = gridspec.GridSpec(2, 1)
         for attr in attrs:
             # Default settings:

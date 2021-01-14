@@ -21,7 +21,8 @@ def compute_plot_heat_capacity(sim_name, generation_list, cores, settings, recor
                   .format(sim_name, gens_str, cores, beta_num-1))
     else:
         os.system('bash bash-heat-capacity-generational-automatic.sh {} "{}" {}'.format(sim_name, gens_str, cores))
-    visualize_heat_capacity_generational_automatic.main(sim_name, settings, None, recorded)
+    if settings['plot_heat_cap']:
+        visualize_heat_capacity_generational_automatic.main(sim_name, settings, None, recorded)
     #visualize_heat_capacity_generational_automatic_recorded.main(sim_name, settings, None, recorded)
 
 if __name__ == '__main__':

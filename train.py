@@ -133,6 +133,7 @@ def create_settings():
     settings['recorded_heat_capacity'] = args.recorded_heat_capacity
 
     settings['heat_capacity_props'] = args.heat_capacity_props
+    settings['plot_heat_cap'] = args.plot_heat_cap
 
     # natural heat capacity is calculated for every nth generation, if 0 no heat capacity is calculated
     settings['natural_heat_capacity_Nth_gen'] = args.natural_heat_capacity_Nth_gen
@@ -319,6 +320,8 @@ def parse():
                         arguments 10 ** np.linspace(low_lim, high_lim, num_betas) expects blank seperated list len 3''')
     parser.add_argument('-c', '--cores', dest='cores', type=int,
                         help='Amount of cores available for heat capacity calculations. If 0 no heat cap calculations are done')
+    parser.add_argument('-plot_c', dest='plot_heat_cap', action='store_true', help='''Plots heat capacity data right after
+                        it was calulacted, only works with combination with rec_c''')
     parser.add_argument('-rand_ts', dest='random_time_steps', action='store_true', help='Activate random time steps every generation')
     parser.add_argument('-rand_ts_lim', dest='random_time_step_limits', nargs='+', type=int,
                         help='Expects blank seperated list X Y, where X is the lower and Y the upper limit of the '
@@ -375,7 +378,7 @@ def parse():
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
                         random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
-                        beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True)
+                        beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True, plot_heat_cap=False)
     args = parser.parse_args()
     return args
 
