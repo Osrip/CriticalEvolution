@@ -1189,7 +1189,7 @@ def EvolutionLearning(isings, foods, settings, Iterations = 1):
         name_command = ''
         for i, elem in enumerate(s):
             if elem == '-n':
-                name_command = '-n {}'.format(s[i+1])
+                name_command = '-n_{}'.format(s[i+1])
                 break
         sim_name = sim_name + name_command
 
