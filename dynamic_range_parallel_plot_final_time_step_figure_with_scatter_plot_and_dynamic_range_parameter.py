@@ -4,6 +4,7 @@ from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import attribute_from_isings
 from automatic_plot_helper import all_folders_in_dir_with
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import all_sim_names_in_parallel_folder
 import copy
 import pandas as pd
 import glob
@@ -528,18 +529,36 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
     '''
     for sim_data_list in sim_data_list_each_folder:
         for sim_data in sim_data_list:
-            complete_sim_name = sim_data.sim_name
+            alternative = True
+            try:
+                alternative_folder_name = plot_settings['alternative_folder_name_for_heat_capacities'][sim_data.folder_name][sim_data.dynamic_range_folder_includes]
+
+            except KeyError:
+                complete_sim_name = sim_data.sim_name
+                alternative = False
+            if alternative:
+                complete_sim_name = recreate_sim_name_for_alternativ_folder(sim_data, alternative_folder_name, plot_settings)
             calc_heat_cap_param_settings = {}
             mean_log_beta_distance_dict, log_beta_distance_dict, beta_distance_dict, beta_index_max, betas_max_gen_dict, heat_caps_max_dict, smoothed_heat_caps\
                 = calc_heat_cap_param_main(complete_sim_name, calc_heat_cap_param_settings)
             dynamic_range_param_dict = mean_log_beta_distance_dict
             gens_dynamic_range_param_dict = list(dynamic_range_param_dict.keys())
+            # !!!! Always loads in heat capacity from last detected generation !!!!
             index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[-1]
             last_heat_cap_gen = gens_dynamic_range_param_dict[index_last_heat_cap_gen]
             dynamic_range_param_last_heat_cap_gen = dynamic_range_param_dict[last_heat_cap_gen]
 
             sim_data.dynamic_range_param = dynamic_range_param_last_heat_cap_gen
     return sim_data_list_each_folder
+
+
+def recreate_sim_name_for_alternativ_folder(sim_data, alternative_folder_name, plot_settings):
+    sim_names = all_sim_names_in_parallel_folder(alternative_folder_name)
+
+    for it_sim_name in sim_names:
+        if 'Run_{}'.format(sim_data.sim_num) in it_sim_name:
+            return it_sim_name
+    raise Exception('No simulation found with "Run_{}" in {} out of {}'.format(sim_data.sim_num, alternative_folder_name, sim_names))
 
 
 def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
@@ -753,9 +772,11 @@ if __name__ == '__main__':
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = True
-    plot_settings['load_dynamic_range_parameter'] = False
+    plot_settings['load_dynamic_range_parameter'] = True
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats_THESIS_PLOT'
+    # plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats_THESIS_PLOT'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
+
     plot_settings['add_save_name'] = ''
     plot_settings['only_copied'] = True
     plot_settings['attr'] = 'avg_energy'
@@ -774,6 +795,9 @@ if __name__ == '__main__':
     plot_settings['trained_on_varying_parameter_value'] = 2000
     plot_settings['critical_folder_name_dict'] = critical_folder_name_dict
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
+
+    # When heat capacity values are saved in a different folder name (parallel simulation) than where include_names are, specify here
+    plot_settings['alternative_folder_name_for_heat_capacities'] = {critical_folder_name: {critical_low_gen_include_name: 'sim-20210117-224238_parallel_respone_plot_gen_100_heat_cap'}}
 
     #  This feature highlights certain simulation runs and relabels them. Those simulations, that shall be highlighted
     #  and relabeled have to be specified in plot_settings['label_highlighted_sims']. All other simulations are not
