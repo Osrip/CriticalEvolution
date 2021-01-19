@@ -613,6 +613,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     if not len(set(largest_varying_param_list)) == 1:
         raise BaseException('Different largest_varying_params')
 
+    fig, ax_lab = plt.subplots()
     plt.figure(figsize=(10, 10))
 
     ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
@@ -626,6 +627,10 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
     plt.ylabel(r'$\langle \delta \rangle$')
 
+    pad = -30
+    color = 'dimgray'
+
+
     plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
 
     plt.axvline(50000/2000, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
@@ -638,6 +643,9 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     türquise Linje: Unity (?) E time step 50000 / E time step 2000 =  50000/2000 = 25
     '''
 
+    ax_lab.annotate('Duration of $2$D-simulation', xy=(0, 0), xytext=(0, -ax_lab.xaxis.labelpad - pad),
+                    xycoords=ax_lab.xaxis.label, textcoords='offset points',
+                    size=15, ha='right', va='center', rotation=0, color=color)
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
