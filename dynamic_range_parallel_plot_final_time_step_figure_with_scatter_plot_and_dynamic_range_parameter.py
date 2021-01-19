@@ -191,6 +191,9 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     # plt.rcParams.update({'font.size': 22})
     plt.rc('text', usetex=True)
+    plt.rc('text.latex', preamble=r'\usepackage{xcolor}')
+
+    # matplotlib.use('ps')
 
 
     plt.figure(figsize=(10, 14))
@@ -214,6 +217,12 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
         plt.xlabel('Number of time steps')
     elif plot_settings['varying_parameter'] == 'food':
         plt.xlabel('Number of foods')
+
+    pad = +30
+    color = 'dimgray'
+    ax_main.annotate('Duration of $2$D-simulation', xy=(0, 1.5), xytext=(158, -ax_main.xaxis.labelpad - pad),
+                xycoords=ax_main.xaxis.label, textcoords='offset points',
+                size=15, ha='right', va='center', rotation=0, color=color)
 
 
 
