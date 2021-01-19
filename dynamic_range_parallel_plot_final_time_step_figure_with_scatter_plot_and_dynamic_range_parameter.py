@@ -501,8 +501,8 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
 
 
     # plt.plot([0, xlim], [0, xlim * slope])
-    plt.ylabel(r'$\langle E_\mathrm{org} \rangle_{%s \text{ time steps}}$' % (max_var_param))
-    plt.xlabel(r'$\langle E_\mathrm{org} \rangle_{%s \text{ time steps}}$' % (plot_settings['trained_on_varying_parameter_value']))
+    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (max_var_param))
+    plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ %s time steps' % (plot_settings['trained_on_varying_parameter_value']))
 
     plt.yscale('log')
 
@@ -510,9 +510,9 @@ def scatter_plot(sim_data_list_each_folder, plot_settings):
     # Legend
     legend_elements = [
         Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dashed', alpha=0.7,
-               label=r'$\frac{\langle E_\mathrm{org} \rangle_{ 50000 \textrm{time steps}}}{\langle E_\mathrm{org} \rangle_{2000 \textrm{ time steps}}} = \frac{50000}{2000}$'),
+               label=r'$\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = \frac{50000}{2000}$'),
         Line2D([0], [0], color='b', lw=4, c='grey', linestyle='dashed', alpha=0.7,
-               label=r'arbitrary seperation $\frac{\langle E_\mathrm{org} \rangle_{50000 \textrm{ time steps}}}{\langle E_\mathrm{org} \rangle_2000 \textrm{ time steps}}} = 5$'),
+               label=r'arbitrary seperation $\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = 5$'),
         Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
                markersize=20, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
@@ -624,7 +624,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     # plt.xscale('log')
 
     # plt.xlabel('{}/{}'.format(largest_varying_param_list[0], trained_varying_param_list[0]))
-    plt.xlabel(r'$\langle E_\mathrm{org} \rangle_{50000 \text{ time steps}} / \langle E_\mathrm{org} \rangle_{2000 \text{ time steps}}$')
+    plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
     plt.ylabel(r'$\langle \delta \rangle$')
 
     pad = -30
@@ -643,9 +643,9 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     türquise Linje: Unity (?) E time step 50000 / E time step 2000 =  50000/2000 = 25
     '''
 
-    # ax_lab.annotate('Duration of $2$D-simulation', xy=(0, 0), xytext=(0, -ax_lab.xaxis.labelpad - pad),
-    #                 xycoords=ax_lab.xaxis.label, textcoords='offset points',
-    #                 size=15, ha='right', va='center', rotation=0, color=color)
+    ax_lab.annotate('Duration of $2$D-simulation', xy=(0, 0), xytext=(0, -ax_lab.xaxis.labelpad - pad),
+                    xycoords=ax_lab.xaxis.label, textcoords='offset points',
+                    size=15, ha='right', va='center', rotation=0, color=color)
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
