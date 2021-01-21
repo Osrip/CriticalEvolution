@@ -274,7 +274,7 @@ if __name__ == '__main__':
 
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
-    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims']
+    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
 
     plot_settings['color_according_to_delta_in_generation'] = 0
     init_betas = [1]

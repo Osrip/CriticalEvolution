@@ -76,11 +76,12 @@ def colormap_according_to_delta(delta_dicts_all_sims, generation, plot_settings)
         delta_one_gen = delta_dict[str(generation)]
         delta_list_one_gen.append(delta_one_gen)
 
-    colors = [plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    colors = ['navy', plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
     cmap_name = 'custom_cmap'
     # cmap = plt.get_cmap('brg')
     cmap = LinearSegmentedColormap.from_list(
         cmap_name, colors)
+    cmap = shiftedColorMap(cmap=cmap, start=0, midpoint=0.38, stop=1, name=cmap_name)
     norm = colors_package.Normalize(vmin=min(delta_list_one_gen), vmax=max(delta_list_one_gen))
     return cmap, norm
 
@@ -281,6 +282,58 @@ def moving_average(interval, window_size):
     window = np.ones(int(window_size))/float(window_size)
     return np.convolve(interval, window, 'same')
 
+
+def shiftedColorMap(cmap, start=0, midpoint=0.5, stop=1.0, name='shiftedcmap'):
+    '''
+    Function to offset the "center" of a colormap. Useful for
+    data with a negative min and positive max and you want the
+    middle of the colormap's dynamic range to be at zero.
+
+    Input
+    -----
+      cmap : The matplotlib colormap to be altered
+      start : Offset from lowest point in the colormap's range.
+          Defaults to 0.0 (no lower offset). Should be between
+          0.0 and `midpoint`.
+      midpoint : The new center of the colormap. Defaults to
+          0.5 (no shift). Should be between 0.0 and 1.0. In
+          general, this should be  1 - vmax / (vmax + abs(vmin))
+          For example if your data range from -15.0 to +5.0 and
+          you want the center of the colormap at 0.0, `midpoint`
+          should be set to  1 - 5/(5 + 15)) or 0.75
+      stop : Offset from highest point in the colormap's range.
+          Defaults to 1.0 (no upper offset). Should be between
+          `midpoint` and 1.0.
+    '''
+    cdict = {
+        'red': [],
+        'green': [],
+        'blue': [],
+        'alpha': []
+    }
+
+    # regular index to compute the colors
+    reg_index = np.linspace(start, stop, 257)
+
+    # shifted index to match the data
+    shift_index = np.hstack([
+        np.linspace(0.0, midpoint, 128, endpoint=False),
+        np.linspace(midpoint, 1.0, 129, endpoint=True)
+    ])
+
+    for ri, si in zip(reg_index, shift_index):
+        r, g, b, a = cmap(ri)
+
+        cdict['red'].append((si, r, r))
+        cdict['green'].append((si, g, g))
+        cdict['blue'].append((si, b, b))
+        cdict['alpha'].append((si, a, a))
+
+    newcmap = matplotlib.colors.LinearSegmentedColormap(name, cdict)
+    plt.register_cmap(cmap=newcmap)
+
+    return newcmap
+
 if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
@@ -290,7 +343,7 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
 
-    plot_settings['ylim'] = (-1.5, 1.1)
+    plot_settings['ylim'] = (-1.8, 1.1)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['sliding_window'] = False
     plot_settings['sliding_window_size'] = 10
@@ -315,7 +368,7 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
     # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
-    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims']
+    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
     regimes = ['b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
