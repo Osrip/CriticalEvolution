@@ -5,9 +5,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 import pickle
-
+from matplotlib.lines import Line2D
 
 def mutation_coloring_main(sim_name, plot_settings):
+    plt.rc('text', usetex=True)
+    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
+
     if not plot_settings['only_plot']:
         multiple_isings_attrs = load_multiple_isings_attrs(sim_name, [plot_settings['x_attr'], plot_settings['y_attr'], 'prev_mutation'])
         save_plot_data(sim_name, multiple_isings_attrs, plot_settings)
@@ -40,9 +44,25 @@ def plot(multiple_isings_attrs, sim_name, plot_settings):
     plt.figure(figsize=(10,7))
     for gen, attr_dict in enumerate(multiple_isings_attrs):
         attr_dict['mutation_colors'] = list(map(plot_settings['prev_mutation_colors'].get, attr_dict['prev_mutation']))
-        plt.scatter(attr_dict[plot_settings['x_attr']], attr_dict[plot_settings['y_attr']], c=attr_dict['mutation_colors'], s=0.5, alpha=0.3)
-    plt.ylabel(plot_settings['y_attr'])
-    plt.xlabel(plot_settings['x_attr'])
+        attr_dict['mutation_sizes'] = list(map(plot_settings['prev_mutation_sizes'].get, attr_dict['prev_mutation']))
+        attr_dict['mutation_alphas'] = list(map(plot_settings['prev_mutation_alphas'].get, attr_dict['prev_mutation']))
+        for i in range(len(attr_dict[plot_settings['x_attr']])):
+            plt.scatter(attr_dict[plot_settings['x_attr']][i], attr_dict[plot_settings['y_attr']][i], c=attr_dict['mutation_colors'][i], s=attr_dict['mutation_sizes'][i], alpha=attr_dict['mutation_alphas'][i])
+            
+    plt.ylabel(plot_settings['y_label'])
+    plt.xlabel(plot_settings['x_label'])
+
+
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Organism'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['copy'], markersize=15, alpha=0.75, label=r'Previously selected and copied'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['mate'], markersize=15, alpha=0.75, label=r'Child of mating algorithm'),
+
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['point'], markersize=20, alpha=1, label=r'Point mutation'),
+    ]
+
+    plt.legend(handles=legend_elements, fontsize=17)
+
     savefolder = 'save/{}/figs/mutations_colored/'.format(sim_name)
     savefilename = 'mutations_colored.png'
     if not os.path.exists(savefolder):
@@ -63,6 +83,30 @@ if __name__ == '__main__':
 
         plot_settings['x_attr'] = 'generation'
         plot_settings['y_attr'] = 'avg_energy'
-        prev_mutation_colors = {'init': 'grey', 'copy': 'olive', 'point': 'slateblue', 'mate': 'maroon'}
-        plot_settings['prev_mutation_colors'] = prev_mutation_colors
+
+        plot_settings['x_label'] = 'Generation'
+        plot_settings['y_label'] = r'$\langle E_\mathrm{org} \rangle$'
+
+        normal_size = 0.4
+        normal_alpha = 0.2
+
+        mutated_size = 1.0
+        mutated_alpha = 1.0
+
+        plot_settings['prev_mutation_colors'] = {'init': 'olive', 'copy': 'olive', 'point': 'slateblue', 'mate': 'maroon'}
+        plot_settings['prev_mutation_sizes'] = {'init': normal_size, 'copy': normal_size, 'point': mutated_size, 'mate': normal_size}
+        plot_settings['prev_mutation_alphas'] = {'init': normal_alpha, 'copy': normal_alpha, 'point': mutated_alpha, 'mate': normal_alpha}
+
         mutation_coloring_main(sim_name, plot_settings)
+
+    # Explanation for 'init' being also marked as green and thus count as copied
+    # init are not really the initialized organisms, but in reality those, the fittest 10, that have been copied 15 times, but not point mutated
+
+    '''
+    Explanation of EA
+    Fittest 20 individuals are copied into next generation --> FIRST 20 POSITION OF NEW GENERATION
+    Fittest 10 are again copied 15 times, those copies are mutated by a probability of 10 % --> NEXT 15 POSITION OF NEW GENERATION
+    For mutation see self.mutate. This includes edge weight mutations, adding/removing of edges, beta mutations (again for certain probabilities)
+    The 25 individuals that were created this way will be parents to the last 15 individuals
+
+    '''
