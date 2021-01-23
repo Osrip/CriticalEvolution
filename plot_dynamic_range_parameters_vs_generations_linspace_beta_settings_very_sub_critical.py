@@ -90,7 +90,7 @@ def colormap_according_to_delta(delta_dicts_all_sims, generation, plot_settings)
 
 def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     if plot_settings['new_fig']:
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=(10, 5))
         ax = plt.subplot()
         plt.grid()
     # plt.rcParams.update({
@@ -200,10 +200,10 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
         ax.annotate('Super-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 155),
                     xycoords=ax.yaxis.label, textcoords='offset points',
                     size=15, ha='right', va='center', rotation=0, color=color)
-        ax.annotate('Critical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 5),
+        ax.annotate('Critical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 22),
                     xycoords=ax.yaxis.label, textcoords='offset points',
                     size=15, ha='right', va='center', rotation=0, color=color)
-        ax.annotate('Sub-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, -145),
+        ax.annotate('Sub-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, -115),
                     xycoords=ax.yaxis.label, textcoords='offset points',
                     size=15, ha='right', va='center', rotation=0, color=color)
 

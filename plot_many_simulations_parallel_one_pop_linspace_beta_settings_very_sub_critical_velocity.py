@@ -109,7 +109,7 @@ def colormap_according_to_delta(generation, plot_settings):
 
 def plot(attrs_lists, plot_settings):
     if plot_settings['first_plot']:
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=(10, 5))
     # colors = sns.color_palette("dark", len(attrs_lists))
 
 
@@ -158,7 +158,7 @@ def plot(attrs_lists, plot_settings):
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     plt.xlabel('Generation')
     # plt.ylabel(plot_settings['attr'])
-    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
+    plt.ylabel(r'$\langle v_\mathrm{org} \rangle$')
     plt.ylim(plot_settings['ylim'])
     # plt.title(plot_settings['title'], color=plot_settings['title_color'])
     if plot_settings['legend'] and plot_settings['last_plot']:
@@ -299,13 +299,13 @@ if __name__ == '__main__':
     plot_settings['decompress'] = True
 
     plot_settings['add_save_name'] = ''
-    plot_settings['attr'] = 'avg_energy' #'norm_food_and_ts_avg_energy' #'norm_avg_energy'
+    plot_settings['attr'] = 'v' #'norm_food_and_ts_avg_energy' #'norm_avg_energy'
     # plot_settings['only_plot_fittest']
     if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
         plot_settings['ylim'] = (-0.0001, 0.00025)
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
-    plot_settings['ylim'] = (-1, 10)
+    plot_settings['ylim'] = (-0.005, 0.11)
     # plot_settings['ylim'] = (-0.000001, 0.00007)
 
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
@@ -321,7 +321,7 @@ if __name__ == '__main__':
     plot_settings['only_plot_certain_generations'] = False
     plot_settings['lowest_and_highest_generations_to_be_plotted'] = [0, 1000]
     plot_settings['title'] = ''
-    plot_settings['legend'] = True
+    plot_settings['legend'] = False
 
     plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
 
