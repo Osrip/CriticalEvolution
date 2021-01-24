@@ -46,9 +46,14 @@ def plot(multiple_isings_attrs, sim_name, plot_settings):
         attr_dict['mutation_colors'] = list(map(plot_settings['prev_mutation_colors'].get, attr_dict['prev_mutation']))
         attr_dict['mutation_sizes'] = list(map(plot_settings['prev_mutation_sizes'].get, attr_dict['prev_mutation']))
         attr_dict['mutation_alphas'] = list(map(plot_settings['prev_mutation_alphas'].get, attr_dict['prev_mutation']))
-        for i in range(len(attr_dict[plot_settings['x_attr']])):
-            plt.scatter(attr_dict[plot_settings['x_attr']][i], attr_dict[plot_settings['y_attr']][i], c=attr_dict['mutation_colors'][i], s=attr_dict['mutation_sizes'][i], alpha=attr_dict['mutation_alphas'][i])
-            
+
+        attr_dict['mutation_sizes_only_point'] = list(map(plot_settings['prev_mutation_sizes_only_point'].get, attr_dict['prev_mutation']))
+
+    # for i in range(len(attr_dict[plot_settings['x_attr']])):
+        #     plt.scatter(attr_dict[plot_settings['x_attr']][i], attr_dict[plot_settings['y_attr']][i], c=attr_dict['mutation_colors'][i], s=attr_dict['mutation_sizes'][i], alpha=attr_dict['mutation_alphas'][i])
+        plt.scatter(attr_dict[plot_settings['x_attr']], attr_dict[plot_settings['y_attr']], c=attr_dict['mutation_colors'], s=attr_dict['mutation_sizes'], alpha=0.2)
+        plt.scatter(attr_dict[plot_settings['x_attr']], attr_dict[plot_settings['y_attr']], c=attr_dict['mutation_colors'], s=attr_dict['mutation_sizes_only_point'], alpha=0.8)
+
     plt.ylabel(plot_settings['y_label'])
     plt.xlabel(plot_settings['x_label'])
 
@@ -57,17 +62,16 @@ def plot(multiple_isings_attrs, sim_name, plot_settings):
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Organism'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['copy'], markersize=15, alpha=0.75, label=r'Previously selected and copied'),
         Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['mate'], markersize=15, alpha=0.75, label=r'Child of mating algorithm'),
-
-        Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['point'], markersize=20, alpha=1, label=r'Point mutation'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=plot_settings['prev_mutation_colors']['point'], markersize=15, alpha=1, label=r'Mutated'),
     ]
-
-    plt.legend(handles=legend_elements, fontsize=17)
-
+    if plot_settings['plot_legend']:
+        plt.legend(handles=legend_elements, fontsize=17)
+    plt.title(plot_settings['title'])
     savefolder = 'save/{}/figs/mutations_colored/'.format(sim_name)
     savefilename = 'mutations_colored.png'
     if not os.path.exists(savefolder):
         os.makedirs(savefolder)
-    plt.savefig(savefolder+savefilename, dpi=150, bbox_inches='tight')
+    plt.savefig(savefolder+savefilename, dpi=300, bbox_inches='tight')
 
 
 
@@ -76,10 +80,14 @@ if __name__ == '__main__':
     # sim_name = 'sim-20201026-224709_parallel_b10_fixed_4000ts/sim-20201026-224711-b_10_-g_8000_-t_4000_-rec_c_2000_-c_props_10_10_-2_2_100_40_-c_1_-subfolder_sim-20201026-224709_parallel_b10_fixed_4000ts_-n_Run_1'
     # sim_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000/sim-20201022-190555-b_1_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_-n_Run_1', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_1']
     sim_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190555-b_1_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_-n_Run_1', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_1']
-
-    for sim_name in sim_names :
+    plot_legend = [True, False]
+    titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$']
+    for sim_name, legend, title in zip(sim_names, plot_legend, titles):
         plot_settings = {}
         plot_settings['only_plot'] = True
+
+        plot_settings['title'] = title
+        plot_settings['plot_legend'] = legend
 
         plot_settings['x_attr'] = 'generation'
         plot_settings['y_attr'] = 'avg_energy'
@@ -88,15 +96,18 @@ if __name__ == '__main__':
         plot_settings['y_label'] = r'$\langle E_\mathrm{org} \rangle$'
 
         normal_size = 0.4
-        normal_alpha = 0.2
+        normal_alpha = 0.3
 
-        mutated_size = 1.0
+        mutated_size = 0.4
         mutated_alpha = 1.0
+        # 'slateblue'
 
-        plot_settings['prev_mutation_colors'] = {'init': 'olive', 'copy': 'olive', 'point': 'slateblue', 'mate': 'maroon'}
+        plot_settings['prev_mutation_colors'] = {'init': 'xkcd:mid green', 'copy': 'xkcd:mid green', 'point': 'navy', 'mate': 'xkcd:deep rose'}
+        # plot_settings['prev_mutation_colors'] = {'init': 'olive', 'copy': 'olive', 'point': 'navy', 'mate': 'maroon'}
         plot_settings['prev_mutation_sizes'] = {'init': normal_size, 'copy': normal_size, 'point': mutated_size, 'mate': normal_size}
         plot_settings['prev_mutation_alphas'] = {'init': normal_alpha, 'copy': normal_alpha, 'point': mutated_alpha, 'mate': normal_alpha}
 
+        plot_settings['prev_mutation_sizes_only_point'] = {'init': 0, 'copy': 0, 'point': mutated_size, 'mate': 0}
         mutation_coloring_main(sim_name, plot_settings)
 
     # Explanation for 'init' being also marked as green and thus count as copied
