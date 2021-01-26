@@ -95,7 +95,7 @@ def create_settings():
 
     settings['init_beta'] = args.init_beta
     settings['mutateB'] = not args.no_mut_beta  # toggle to allow Beta (temperature) mutations (toggle off if critical learning is on)
-    settings['sigB'] = args.sig_beta #0.02  # std for Beta mutation
+    bi = args.sig_beta #0.02  # std for Beta mutation
     settings['diff_init_betas'] = args.diff_init_betas
     settings['beta_jump_mutations'] = args.beta_jump_mutations
     settings['beta_linspace'] = args.beta_linspace

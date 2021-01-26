@@ -579,3 +579,4 @@ def compress_isings_in_parallel_simulations(folder_name):
     for sim_name in sim_names:
         compress_isings_in_simulation(sim_name)
 
+
