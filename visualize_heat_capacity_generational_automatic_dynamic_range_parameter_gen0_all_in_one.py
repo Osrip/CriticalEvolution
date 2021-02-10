@@ -254,7 +254,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
     if draw_critical:
         text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
         # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-        plt.text(text_y_pos, 0.35, plot_settings['dynamical_regime_label'])
+        plt.text(text_y_pos, 0.25, plot_settings['dynamical_regime_label'])
         plt.title(plot_settings['title'])
 
     else:
@@ -272,7 +272,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
             plt.text(text_y_pos, 0.35, plot_settings['dynamical_regime_label'])
             plt.title(plot_settings['title'])
-        plt.hlines(0.2, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
+        plt.hlines(0.34, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
     return smoothed_heat_caps
 
 
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     draw_critical_list = [True, False, False]
     save_plots = [False, False, True]
     first_plots = [True, False, False]
-    dynamical_regime_labels = [r'$\langle \delta \rangle \approx 1$', r'$\langle \delta \rangle \approx 10$', r'$\langle \delta \rangle \approx 0.1$']
+    dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
     # label_positions =
     plot_settings = {}
     for sim_name, draw_critical, dynamical_regime_label, save_plot, first_plot in zip(sim_names, draw_critical_list, dynamical_regime_labels, save_plots, first_plots):
@@ -334,8 +334,8 @@ if __name__ == '__main__':
         recorded = True
         draw_original_heat_cap_data = True
         draw_dynamic_range_param = True
-        draw_legend = False
-        draw_critical = True
+        draw_legend = save_plot
+        draw_critical = draw_critical
 
         # Use gaussian kernel in order to smooth heat capacity curves before calculating maximum
         gaussian_kernel = False
