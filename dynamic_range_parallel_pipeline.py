@@ -186,7 +186,7 @@ def run_repeat(num_foods, settings, pipeline_settings, food_num_arr, original_me
 
 if __name__=='__main__':
     '''
-    BETTER NAME: FOOD DENSITY RESPONSE CURVE
+    BETTER NAME: FOOD or TIME STEP DENSITY RESPONSE CURVE
     This module explores the dynamic range of random food simulations: 
     It expects a file with with random food season parameter active
     It then takes the last generation of that simulation and puts it into different environments with fixed amount of 
@@ -197,7 +197,7 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 25
+    pipeline_settings['cores'] = 58
     pipeline_settings['num_repeats'] = 3
     if pipeline_settings['varying_parameter'] == 'food':
         pipeline_settings['lowest_food_percent'] = 1
@@ -205,17 +205,17 @@ if __name__=='__main__':
     elif pipeline_settings['varying_parameter'] == 'time_steps':
         pipeline_settings['lowest_food_percent'] = 1
         pipeline_settings['highest_food_percent'] = 2500
-    pipeline_settings['resolution'] = 80
+    pipeline_settings['resolution'] = 40
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
-    pipeline_settings['add_save_file_name'] = 'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
+    pipeline_settings['add_save_file_name'] = 'res_40_3_repeats_gen_4000' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
     # This loads last / highest generation from trained simulation
     pipeline_settings['load_last_generation'] = False
     # Otherwise specify generation, that shall be loaded, make sure thsi generation exists in all loaded simulations:
-    pipeline_settings['load_generation'] = 100
+    pipeline_settings['load_generation'] = 4000
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
@@ -234,5 +234,5 @@ if __name__=='__main__':
     # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
     # folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']#, 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
-    folder_names = ['sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    folder_names = ['sim-20210206-122918_parallel_b1_normal_run_g4000_t2000_54_sims']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)

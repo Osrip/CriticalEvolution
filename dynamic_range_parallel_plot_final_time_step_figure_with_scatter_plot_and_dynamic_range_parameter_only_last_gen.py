@@ -4,6 +4,7 @@ from automatic_plot_helper import load_isings_specific_path
 from automatic_plot_helper import attribute_from_isings
 from automatic_plot_helper import all_folders_in_dir_with
 from automatic_plot_helper import load_settings
+from automatic_plot_helper import mscatter
 from automatic_plot_helper import all_sim_names_in_parallel_folder
 import copy
 import pandas as pd
@@ -30,7 +31,9 @@ import matplotlib.colors as colors
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib as mplou
 from heat_capacity_parameter import calc_heat_cap_param_main
+from automatic_plot_helper import custom_color_map
 import matplotlib
+import matplotlib.cm as cm
 
 
 
@@ -120,7 +123,7 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
-    font = {'family': 'serif', 'size': 22, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 25, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     scatter_plot(sim_data_list_each_folder, plot_settings)
     dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
@@ -575,10 +578,15 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     Make sure, that dynamic range parameter has been loaded into sim_data_list_each_folder before calling this!
     '''
 
+
+
     color_list = []
+    marker_list=[]
     fitness_at_largest_varying_param_list = []
     dynamic_range_param_list = []
     ratio_largest_trained_varying_param_list = []
+    fitness_at_trained_varying_param_list = []
+    color_at_trained_fitness_list = []
 
     largest_varying_param_list = []
     trained_varying_param_list = []
@@ -593,25 +601,38 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
             trained_varying_param = sim_data.food_num_list[index_trained_varying_param]
             fitness_at_trained_varying_param = sim_data.avg_attr_list[index_trained_varying_param]
 
-            ratio_largest_trained_varying_param = fitness_at_largest_varying_param / fitness_at_trained_varying_param
+            ratio_largest_trained_varying_param = (fitness_at_largest_varying_param / fitness_at_trained_varying_param)\
+                                                  / (largest_varying_param / trained_varying_param)
 
             colors = plot_settings['color'][sim_data.key]
+            markers = plot_settings['marker2'][sim_data.key]
             try:
                 color = colors[sim_data.dynamic_range_folder_includes_index]
+                marker = markers[sim_data.dynamic_range_folder_includes_index]
             except IndexError:
                 raise IndexError('Color list is out of bounds check whether dynamic_range_folder_includes_list is longer'
                                  ' than color lists in color dict')
             color_list.append(color)
+            marker_list.append(marker)
             fitness_at_largest_varying_param_list.append(fitness_at_largest_varying_param)
             dynamic_range_param_list.append(sim_data.dynamic_range_param)
             ratio_largest_trained_varying_param_list.append(ratio_largest_trained_varying_param)
 
             largest_varying_param_list.append(largest_varying_param)
             trained_varying_param_list.append(trained_varying_param)
+            fitness_at_trained_varying_param_list.append(fitness_at_trained_varying_param)
 
+    #
+    cmap, norm = custom_color_map(colors=['xkcd:darkish blue', 'xkcd:darkish green', 'xkcd:darkish red'], min_val=min(fitness_at_trained_varying_param_list),
+                                  max_val=max(fitness_at_trained_varying_param_list), cmap_name='fitness_cmap')
+    # cmap = plt.get_cmap('turbo')
+    cmap = plt.get_cmap('plasma')
+    colors_for_trained_fitness = [cmap(norm(fitness)) for fitness in fitness_at_trained_varying_param_list]
     # Check whether all entries in largest_varying_param_list are equal
     if not len(set(largest_varying_param_list)) == 1:
         raise BaseException('Different largest_varying_params')
+
+
 
     fig, ax_lab = plt.subplots()
     plt.figure(figsize=(10, 10))
@@ -619,21 +640,25 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
 
     # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
-    plt.scatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
+    mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=0.5,
+             m=marker_list)
     # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
     # plt.xscale('log')
 
     # plt.xlabel('{}/{}'.format(largest_varying_param_list[0], trained_varying_param_list[0]))
-    plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
-    plt.ylabel(r'$\langle \delta \rangle$')
+    # plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
+    plt.xlabel(r'Generalizability $\gamma_{t}$')
+    plt.ylabel(r'Dynamical Regime $\langle \delta \rangle$')
+    cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+    cbar.set_label(r'$\langle E_\mathrm{org} \rangle$ at Training Condition', rotation=270, labelpad=30)
 
     pad = -30
     color = 'dimgray'
 
 
-    plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
+    # plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
 
-    plt.axvline(50000/2000, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
+    plt.axvline(1, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
 
     '''
     Legende:
@@ -647,6 +672,20 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
                     xycoords=ax_lab.xaxis.label, textcoords='offset points',
                     size=15, ha='right', va='center', rotation=0, color=color)
 
+    legend_elements = [
+        Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dashed', alpha=0.7,
+               label=r'Linear Generalizability'),
+
+        Line2D([0], [0], marker=plot_settings['marker2']['critical'][0], color='w', label=r'Simulation $\beta_\mathrm{init}=1$', markerfacecolor='grey',
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker=plot_settings['marker2']['sub_critical'][0], color='w', label=r'Simulation $\beta_\mathrm{init}=10$', markerfacecolor='grey',
+               markersize=20, alpha=0.75),
+    ]
+    # Line2D([0], [0], color='b', lw=4, c='grey', linestyle='dashed', alpha=0.7,
+           # label=r'arbitrary seperation \newline $\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = 5$'),
+
+    plt.legend(loc='upper left', handles=legend_elements, fontsize=25, bbox_to_anchor=(0, 1.25))
+
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
 
@@ -655,12 +694,10 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
 
 
-
-
-
 def all_equal(lst):
     # Are all entries in list identical?
     return not lst or lst.count(lst[0]) == len(lst)
+
 
 def divide_x_axis_by_y_axis(list_of_avg_attr_list, list_of_food_num_list):
     list_of_avg_attr_list_new = []
@@ -780,7 +817,7 @@ if __name__ == '__main__':
     plot_settings['only_plot'] = True
     plot_settings['load_dynamic_range_parameter'] = False
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats_THESIS_PLOT_BUG_FIXED'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20210205-151202_time_steps_only_gen_4000'
     # plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
 
     plot_settings['add_save_name'] = ''
@@ -788,9 +825,13 @@ if __name__ == '__main__':
     plot_settings['attr'] = 'avg_energy'
     # Colors for each dynamical regime. The color lists of each dynamical regime are chosen by the index of the
     # currently plotted entry of dynamic_range_folder_includes_list
-    plot_settings['color'] = {'critical': ['darkorange', 'olive', 'turquoise'],
+    plot_settings['color'] = {'critical': ['olive', 'darkorange', 'turquoise'],
                               'sub_critical': ['royalblue', 'pink', 'magenta'],
                               'super_critical': ['maroon', 'red', 'steelblue']}
+
+    plot_settings['marker2'] = {'critical': ['o'],
+                               'sub_critical': ['X'],
+                               'super_critical': []}
     # This setting defines the markers, which are used in the order that the folder names are listed
     plot_settings['marker'] = ['.', 'x', '+']
     # This feature looks for compressed ising-files and decompresses them

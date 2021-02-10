@@ -10,6 +10,10 @@ import time
 import warnings
 import operator
 import gzip
+import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.colors as colors_package
+from matplotlib.colors import LinearSegmentedColormap
 
 '''
 This is a library with useful functions to load ising objects and extract information from them.
@@ -580,3 +584,97 @@ def compress_isings_in_parallel_simulations(folder_name):
         compress_isings_in_simulation(sim_name)
 
 
+
+# Some function from stackoverflow useful for actual plotting:
+
+def mscatter(x,y,ax=None, m=None, **kw):
+    '''
+    Scatter function that accepts list of markers and list of sizes in addition to list of colors
+    Example:
+    N = 40
+    x, y, c = np.random.rand(3, N)
+    s = np.random.randint(10, 220, size=N)
+    m = np.repeat(["o", "s", "D", "*"], N/4)
+    fig, ax = plt.subplots()
+    scatter = mscatter(x, y, c=c, s=s, m=m, ax=ax)
+    plt.show()
+    from https://stackoverflow.com/questions/52303660/iterating-markers-in-plots/52303895#52303895
+    '''
+
+    import matplotlib.markers as mmarkers
+    if not ax: ax=plt.gca()
+    sc = ax.scatter(x,y,**kw)
+    if (m is not None) and (len(m)==len(x)):
+        paths = []
+        for marker in m:
+            if isinstance(marker, mmarkers.MarkerStyle):
+                marker_obj = marker
+            else:
+                marker_obj = mmarkers.MarkerStyle(marker)
+            path = marker_obj.get_path().transformed(
+                marker_obj.get_transform())
+            paths.append(path)
+        sc.set_paths(paths)
+    return sc
+
+
+def custom_color_map(colors, min_val, max_val, cmap_name):
+
+    cmap = LinearSegmentedColormap.from_list(
+        cmap_name, colors)
+    # Add this to vary sizes of individual colors
+    # cmap = shiftedColorMap(cmap=cmap, start=0, midpoint=0.38, stop=1, name=cmap_name)
+    norm = colors_package.Normalize(vmin=min_val, vmax=max_val)
+    return cmap, norm
+
+
+def shiftedColorMap(cmap, start=0, midpoint=0.5, stop=1.0, name='shiftedcmap'):
+    '''
+    Function to offset the "center" of a colormap. Useful for
+    data with a negative min and positive max and you want the
+    middle of the colormap's dynamic range to be at zero.
+
+    Input
+    -----
+      cmap : The matplotlib colormap to be altered
+      start : Offset from lowest point in the colormap's range.
+          Defaults to 0.0 (no lower offset). Should be between
+          0.0 and `midpoint`.
+      midpoint : The new center of the colormap. Defaults to
+          0.5 (no shift). Should be between 0.0 and 1.0. In
+          general, this should be  1 - vmax / (vmax + abs(vmin))
+          For example if your data range from -15.0 to +5.0 and
+          you want the center of the colormap at 0.0, `midpoint`
+          should be set to  1 - 5/(5 + 15)) or 0.75
+      stop : Offset from highest point in the colormap's range.
+          Defaults to 1.0 (no upper offset). Should be between
+          `midpoint` and 1.0.
+    '''
+    cdict = {
+        'red': [],
+        'green': [],
+        'blue': [],
+        'alpha': []
+    }
+
+    # regular index to compute the colors
+    reg_index = np.linspace(start, stop, 257)
+
+    # shifted index to match the data
+    shift_index = np.hstack([
+        np.linspace(0.0, midpoint, 128, endpoint=False),
+        np.linspace(midpoint, 1.0, 129, endpoint=True)
+    ])
+
+    for ri, si in zip(reg_index, shift_index):
+        r, g, b, a = cmap(ri)
+
+        cdict['red'].append((si, r, r))
+        cdict['green'].append((si, g, g))
+        cdict['blue'].append((si, b, b))
+        cdict['alpha'].append((si, a, a))
+
+    newcmap = matplotlib.colors.LinearSegmentedColormap(name, cdict)
+    plt.register_cmap(cmap=newcmap)
+
+    return newcmap

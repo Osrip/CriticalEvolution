@@ -53,7 +53,9 @@ def load_dynamic_range_param(folder_name, generation):
 
 
 if __name__ == '__main__':
-
+    '''
+    Calculates means of dynamic regimes between simulations and performs double sided t-test"
+    '''
 
     # compare_folder_pairs = [['sim-20210126-013450_parallel_normal_seas_heat_cap_b_1', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1'],
     #                         ['sim-20210126-013510_parallel_normal_seas_heat_cap_b_10', 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10']]
