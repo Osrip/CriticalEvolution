@@ -798,9 +798,9 @@ if __name__ == '__main__':
     # shall be loaded in the dynamic range folder of each simulation
     #
 
-    critical_folder_name = 'sim-20201119-190135_parallel_b1_normal_run_g4000_t2000_27_sims'
+    critical_folder_name = 'sim-20210206-122918_parallel_b1_normal_run_g4000_t2000_54_sims'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d'
+    critical_last_gen_include_name = 'gen4000_100foods_res_40_3_repeats_gen_4000d'
 
     sub_critical_folder_name = 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims'
     sub_critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d'
