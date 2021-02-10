@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.colors as colors_package
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.patches import Rectangle
+from matplotlib.legend_handler import HandlerBase
 
 '''
 This is a library with useful functions to load ising objects and extract information from them.
@@ -678,3 +680,23 @@ def shiftedColorMap(cmap, start=0, midpoint=0.5, stop=1.0, name='shiftedcmap'):
     plt.register_cmap(cmap=newcmap)
 
     return newcmap
+
+
+
+class HandlerColormap(HandlerBase):
+    def __init__(self, cmap, num_stripes=8, **kw):
+        HandlerBase.__init__(self, **kw)
+        self.cmap = cmap
+        self.num_stripes = num_stripes
+
+    def create_artists(self, legend, orig_handle,
+                       xdescent, ydescent, width, height, fontsize, trans):
+        stripes = []
+        for i in range(self.num_stripes):
+            s = Rectangle([xdescent + i * width / self.num_stripes, ydescent],
+                          width / self.num_stripes,
+                          height,
+                          fc=self.cmap((2 * i + 1) / (2 * self.num_stripes)),
+                          transform=trans)
+            stripes.append(s)
+        return stripes

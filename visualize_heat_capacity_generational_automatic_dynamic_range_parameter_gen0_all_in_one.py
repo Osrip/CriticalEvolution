@@ -20,6 +20,7 @@ from matplotlib.legend_handler import HandlerBase
 import matplotlib.collections as collections
 # from automatic_plot_helper import custom_color_map
 from matplotlib.colors import LinearSegmentedColormap
+from automatic_plot_helper import HandlerColormap
 
 
 
@@ -168,8 +169,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
     legend_elements = [
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(1.3)),
         #        markersize=15, alpha=0.75),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(2)),
-               markersize=15, alpha=0.75, label=r'Organisms'),
+
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(3)),
         #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='maroon',
@@ -178,14 +178,26 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
         Line2D([0], [0], color='b', lw=3, c='maroon', linestyle='dashed', alpha=0.7, label=r'$\langle \beta_\mathrm{fac}^\mathrm{crit} \rangle$'),
         Line2D([0], [0], color='b', lw=3, c='darkorange', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$'),
         Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dotted', alpha=0.7, label=r'$\langle \delta \rangle$'),
+
         # collections.CircleCollection((15,16,17), cmap=cmap, offsets=((150,0),(50,0),(100,0)), label='bla',transOffset=5)
     ]
     if draw_smoothed_heat_caps:
         add_element = Line2D([0], [0], color='b', lw=4, c='grey', alpha=0.7, label=r'Organism Smoothed')
         legend_elements.append(add_element)
+    cmaps = [plt.get_cmap(cmap_name) for cmap_name in plot_settings['cmaps']]
+    cmap_handles = [Rectangle((0, 0), 1, 1) for _ in cmaps]
+    handler_map = dict(zip(cmap_handles,
+                           [HandlerColormap(cm, num_stripes=8) for cm in cmaps]))
+    [cmap_handles.append(legend_entry) for legend_entry in legend_elements]
+    legend_labels_cmap = plot_settings['legend_labels']
+    plt.legend(handles=cmap_handles,
+               labels=[legend_labels_cmap[0], legend_labels_cmap[1], legend_labels_cmap[2], r'Maximum',
+                       r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$',
+                       r'$\langle \delta \rangle$'],
+               handler_map=handler_map,
+               fontsize=27)
 
-    # handler_map = {('bla1','bla2'): HandlerTuple(ndivide=None)}
-    plt.legend(loc="upper right", handles=legend_elements, fontsize=26.5)
+    # plt.legend(loc="upper right", handles=legend_elements, fontsize=26.5)
 
 
 # class HandlerColormap(HandlerBase):
@@ -325,7 +337,8 @@ if __name__ == '__main__':
     dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
     # color_lists = [['olive', 'xkcd:neon green'], ['royalblue', 'xkcd:grape purple'], ['maroon', 'xkcd:neon red']]
     color_lists = [['olive', 'olive'], ['royalblue', 'royalblue'], ['maroon', 'maroon']]
-    cmaps = ['cmo.algae', 'cmo.deep' , 'cmo.solar']
+    legend_labels = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
+    cmaps = ['cmo.algae', 'cmo.deep', 'cmo.solar']
     # 'cmo.thermal' 'gist_earth'
     # cmaps = ['cmo.algae', 'winter' , 'cmo.solar']
 
@@ -341,6 +354,8 @@ if __name__ == '__main__':
         plot_settings['first_plot'] = first_plot
         plot_settings['color_list'] = color_list
         plot_settings['cmap'] = cmap
+        plot_settings['cmaps'] = cmaps
+        plot_settings['legend_labels'] = legend_labels
         generation_list = [0]
         settings = load_settings(sim_name)
         recorded = True
