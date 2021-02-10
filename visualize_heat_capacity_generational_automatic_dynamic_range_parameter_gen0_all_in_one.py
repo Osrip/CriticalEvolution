@@ -18,6 +18,8 @@ from matplotlib.legend_handler import HandlerLineCollection, HandlerTuple
 from matplotlib.patches import Rectangle
 from matplotlib.legend_handler import HandlerBase
 import matplotlib.collections as collections
+# from automatic_plot_helper import custom_color_map
+from matplotlib.colors import LinearSegmentedColormap
 
 
 
@@ -96,7 +98,8 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
         upperbound = 0.4
         label = iter
 
-        cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
+        # cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
+        cm = LinearSegmentedColormap.from_list('my_cmap', plot_settings['color_list'])
         ax.set_prop_cycle(color=[cm(1.*i/numAgents) for i in range(numAgents)])
         if draw_original_heat_cap_data:
             for numOrg in range(numAgents):
@@ -320,15 +323,20 @@ if __name__ == '__main__':
     save_plots = [False, False, True]
     first_plots = [True, False, False]
     dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
-    # label_positions =
+    # color_lists = [['olive', 'xkcd:neon green'], ['royalblue', 'xkcd:grape purple'], ['maroon', 'xkcd:neon red']]
+    color_lists = [['olive', 'olive'], ['royalblue', 'royalblue'], ['maroon', 'maroon']]
+
+# label_positions =
     plot_settings = {}
-    for sim_name, draw_critical, dynamical_regime_label, save_plot, first_plot in zip(sim_names, draw_critical_list, dynamical_regime_labels, save_plots, first_plots):
+    for sim_name, draw_critical, dynamical_regime_label, save_plot, first_plot, color_list in \
+            zip(sim_names, draw_critical_list, dynamical_regime_labels, save_plots, first_plots, color_lists):
 
 
         plot_settings['title'] = r'$\beta_\mathrm{init} = 1$ Generation $0$'
         plot_settings['dynamical_regime_label'] = dynamical_regime_label
         plot_settings['save_plot'] = save_plot
         plot_settings['first_plot'] = first_plot
+        plot_settings['color_list'] = color_list
         generation_list = [0]
         settings = load_settings(sim_name)
         recorded = True
