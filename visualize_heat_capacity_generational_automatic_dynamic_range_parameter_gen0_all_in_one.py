@@ -67,9 +67,9 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
     print('Done.')
 
     plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 30, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': plot_settings['font_size'], 'serif': ['computer modern roman']}
     plt.rc('font', **font)
-    plt.rc('legend', **{'fontsize': 20})
+    plt.rc('legend', **{'fontsize': plot_settings['font_size']})
 
     b = 0.8
     alpha = 0.3
@@ -77,7 +77,7 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
     print('Generating figures...')
     for ii, iter in enumerate(iter_gen):
         if plot_settings['first_plot']:
-            fig, ax = plt.subplots(1, 1, figsize=(14, 10), sharex=True)
+            fig, ax = plt.subplots(1, 1, figsize=(20, 10), sharex=True)
 
         else:
             fig, ax = plot_settings['fig, ax']
@@ -120,7 +120,7 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
                 ax.plot(betas, smoothed_heat_caps_dict[iter][numOrg], linewidth=1, alpha=0.35, label=label, color='grey')
 
         if draw_dynamic_range_param:
-            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel, plot_settings)
+            plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel, plot_settings, cm)
 
         xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
         ax.set_xscale("log") # , nonposx='clip'
@@ -187,7 +187,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
     cmaps = [plt.get_cmap(cmap_name) for cmap_name in plot_settings['cmaps']]
     cmap_handles = [Rectangle((0, 0), 1, 1) for _ in cmaps]
     handler_map = dict(zip(cmap_handles,
-                           [HandlerColormap(cm, num_stripes=8) for cm in cmaps]))
+                           [HandlerColormap(cm, num_stripes=200) for cm in cmaps]))
     [cmap_handles.append(legend_entry) for legend_entry in legend_elements]
     legend_labels_cmap = plot_settings['legend_labels']
     plt.legend(handles=cmap_handles,
@@ -195,7 +195,9 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
                        r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$',
                        r'$\langle \delta \rangle$'],
                handler_map=handler_map,
-               fontsize=27)
+               fontsize=plot_settings['font_size'],
+               bbox_to_anchor=(1, 1.05)
+               )
 
     # plt.legend(loc="upper right", handles=legend_elements, fontsize=26.5)
 
@@ -248,7 +250,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
 #                fontsize=12)
 
 
-def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gaussian_kernel, plot_settings):
+def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gaussian_kernel, plot_settings, cmap):
     module_settings = {}
 
     gen_list = [generation]
@@ -269,8 +271,8 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
     if draw_critical:
         text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
         # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-        plt.text(text_y_pos, 0.25, plot_settings['dynamical_regime_label'])
-        plt.title(plot_settings['title'])
+        plt.text(text_y_pos, 0.27, plot_settings['dynamical_regime_label'])
+        # plt.title(plot_settings['title'])
 
     else:
         if mean_beta_distance < 1:
@@ -278,16 +280,18 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
             x_max = 1
             text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-            plt.text(text_y_pos, 0.35, plot_settings['dynamical_regime_label'])
+            plt.text(text_y_pos, 0.36, plot_settings['dynamical_regime_label'])
             plt.title(plot_settings['title'])
+            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
         else:
             x_min = 1
             x_max = mean_beta_distance
             text_y_pos = 1 + (1 * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-            plt.text(text_y_pos, 0.35, plot_settings['dynamical_regime_label'])
+            plt.text(text_y_pos, 0.36, plot_settings['dynamical_regime_label'])
             plt.title(plot_settings['title'])
-        plt.hlines(0.34, x_min, x_max, linestyles='dotted', linewidths=5, colors='darkcyan')
+            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
+
     return smoothed_heat_caps
 
 
@@ -337,13 +341,15 @@ if __name__ == '__main__':
     dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
     # color_lists = [['olive', 'xkcd:neon green'], ['royalblue', 'xkcd:grape purple'], ['maroon', 'xkcd:neon red']]
     color_lists = [['olive', 'olive'], ['royalblue', 'royalblue'], ['maroon', 'maroon']]
-    legend_labels = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
+    legend_labels = [r'$\beta_\mathrm{init}^\mathrm{crit} = 1$', r'$\beta_\mathrm{init}^\mathrm{sub} = 10$', r'$\beta_\mathrm{init}^\mathrm{super} = 0.1$']
     cmaps = ['cmo.algae', 'cmo.deep', 'cmo.solar']
     # 'cmo.thermal' 'gist_earth'
     # cmaps = ['cmo.algae', 'winter' , 'cmo.solar']
 
+
 # label_positions =
     plot_settings = {}
+    plot_settings['font_size'] = 40
     for sim_name, draw_critical, dynamical_regime_label, save_plot, first_plot, color_list, cmap in \
             zip(sim_names, draw_critical_list, dynamical_regime_labels, save_plots, first_plots, color_lists, cmaps):
 
