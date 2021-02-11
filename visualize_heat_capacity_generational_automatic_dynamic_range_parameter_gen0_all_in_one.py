@@ -81,8 +81,10 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
 
         else:
             fig, ax = plot_settings['fig, ax']
-        fig.text(0.51, 0.030, r'$\beta_{fac}$', ha='center', fontsize=30)
-        fig.text(0.005, 0.5, r'$C_\mathrm{H}/N$', va='center', rotation='vertical', fontsize=30)
+        # fig.text(0.51, 0.030, r'$\beta_{fac}$', ha='center', fontsize=30)
+        # fig.text(0.005, 0.5, r'$C_\mathrm{H}/N$', va='center', rotation='vertical', fontsize=30)
+        plt.xlabel(r'$\beta_{fac}$')
+        plt.ylabel(r'$C_\mathrm{H}/N$')
         title = 'Specific Heat of Foraging Community\n Generation: ' + str(iter)
         # fig.suptitle(title)
         if draw_dynamic_range_param:
@@ -281,7 +283,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
             text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
             plt.text(text_y_pos, 0.36, plot_settings['dynamical_regime_label'])
-            plt.title(plot_settings['title'])
+            # plt.title(plot_settings['title'])
             plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
         else:
             x_min = 1
@@ -289,7 +291,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
             text_y_pos = 1 + (1 * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
             plt.text(text_y_pos, 0.36, plot_settings['dynamical_regime_label'])
-            plt.title(plot_settings['title'])
+            # plt.title(plot_settings['title'])
             plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
 
     return smoothed_heat_caps
