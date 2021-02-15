@@ -233,7 +233,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
 
     # ax_zoom1 = inset_axes(ax_main, 4.3, 4.9, loc='upper right')
-    plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
+    # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
     # plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     # plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
     #
@@ -352,19 +352,19 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
         for food_num_list, avg_attr_list, sim_data, color in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, color_list_sims):
             if sim_data.highlight_this_sim:
                 if zoomed_axis:
-                    alpha = 0.5
-                    linewidth=2
+                    alpha = 1
+                    linewidth=5
                 else:
                     alpha = 1
-                    linewidth=1
+                    linewidth=5
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
             else:
                 if zoomed_axis:
-                    alpha = 0.5
-                    linewidth=0.6
+                    alpha = 1
+                    linewidth=5
                 else:
-                    alpha = 0.3
-                    linewidth=0.6
+                    alpha = 1
+                    linewidth=5
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
 
         # Plot averages of each folder

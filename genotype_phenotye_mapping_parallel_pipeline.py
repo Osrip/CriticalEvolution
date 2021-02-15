@@ -169,7 +169,7 @@ if __name__=='__main__':
     pipeline_settings['number_of_edges_to_perturb'] = 10
 
 
-    pipeline_settings['resolution'] = 3
+    pipeline_settings['resolution'] = 24
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
     pipeline_settings['add_save_file_name'] = 'res_40_3_repeats_gen_4000' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
@@ -199,8 +199,7 @@ if __name__=='__main__':
 
 
     pipeline_settings['compress_save_isings'] = True
-    # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
-    # folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']#, 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
-    # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
-    folder_names = ['sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+
+    # folder_names = ['sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype', 'sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
