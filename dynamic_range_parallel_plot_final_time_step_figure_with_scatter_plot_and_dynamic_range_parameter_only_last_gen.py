@@ -123,7 +123,7 @@ def dynamic_range_main(folder_name_dict, plot_settings):
         save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
-    font = {'family': 'serif', 'size': 25, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 32, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
     scatter_plot(sim_data_list_each_folder, plot_settings)
     dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
@@ -650,7 +650,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     plt.xlabel(r'Generalizability $\gamma_{t}$')
     plt.ylabel(r'Dynamical Regime $\langle \delta \rangle$')
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-    cbar.set_label(r'$\langle E_\mathrm{org} \rangle$ at Training Condition', rotation=270, labelpad=30)
+    cbar.set_label(r'$\langle E_\mathrm{org} \rangle$ at Training Condition', rotation=270, labelpad=33)
 
     pad = -30
     color = 'dimgray'
@@ -684,7 +684,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     # Line2D([0], [0], color='b', lw=4, c='grey', linestyle='dashed', alpha=0.7,
            # label=r'arbitrary seperation \newline $\frac{\langle E_\mathrm{org} \rangle \textrm{ } 50000 \textrm{ \small{time steps}}}{\langle E_\mathrm{org} \rangle \textrm{ } 2000 \textrm{ \small{time steps}}} = 5$'),
 
-    plt.legend(loc='upper left', handles=legend_elements, fontsize=25, bbox_to_anchor=(0, 1.25))
+    plt.legend(loc='upper left', handles=legend_elements, fontsize=32, bbox_to_anchor=(0, 1.32))
 
     save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
@@ -817,7 +817,7 @@ if __name__ == '__main__':
     plot_settings['only_plot'] = True
     plot_settings['load_dynamic_range_parameter'] = False
 
-    plot_settings['only_plot_folder_name'] = 'response_plot_20210205-151202_time_steps_only_gen_4000'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20210210-121901_time_steps'
     # plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
 
     plot_settings['add_save_name'] = ''

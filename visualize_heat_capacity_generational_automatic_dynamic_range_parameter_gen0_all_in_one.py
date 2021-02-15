@@ -77,7 +77,7 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
     print('Generating figures...')
     for ii, iter in enumerate(iter_gen):
         if plot_settings['first_plot']:
-            fig, ax = plt.subplots(1, 1, figsize=(20, 10), sharex=True)
+            fig, ax = plt.subplots(1, 1, figsize=(30, 8), sharex=True)
 
         else:
             fig, ax = plot_settings['fig, ax']
@@ -124,8 +124,9 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
         if draw_dynamic_range_param:
             plot_dynamic_range_parameter(sim_name, betas, iter, draw_critical, gaussian_kernel, plot_settings, cm)
 
-        xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
+        # xticks = [0.01, 0.05, 0.1, 0.5, 1, 2, 10, 20, 100]
         ax.set_xscale("log") # , nonposx='clip'
+        ax.tick_params(axis='x', which='major', pad=15)
         # This makes custom x ticks
         # ax.set_xticks(xticks)
         # This makes x-ticks
@@ -178,7 +179,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
                markersize=15, alpha=0.75, label=r'Maximum'),
         Patch(facecolor='maroon', edgecolor='w', label=r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', alpha=0.4),
         Line2D([0], [0], color='b', lw=3, c='maroon', linestyle='dashed', alpha=0.7, label=r'$\langle \beta_\mathrm{fac}^\mathrm{crit} \rangle$'),
-        Line2D([0], [0], color='b', lw=3, c='darkorange', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$'),
+        Line2D([0], [0], color='b', lw=3, c='xkcd:vivid purple', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$'),
         Line2D([0], [0], color='b', lw=4, c='darkcyan', linestyle='dotted', alpha=0.7, label=r'$\langle \delta \rangle$'),
 
         # collections.CircleCollection((15,16,17), cmap=cmap, offsets=((150,0),(50,0),(100,0)), label='bla',transOffset=5)
@@ -189,12 +190,15 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
     cmaps = [plt.get_cmap(cmap_name) for cmap_name in plot_settings['cmaps']]
     cmap_handles = [Rectangle((0, 0), 1, 1) for _ in cmaps]
     handler_map = dict(zip(cmap_handles,
-                           [HandlerColormap(cm, num_stripes=200) for cm in cmaps]))
+                           [HandlerColormap(cm, num_stripes=1000) for cm in cmaps]))
     [cmap_handles.append(legend_entry) for legend_entry in legend_elements]
     legend_labels_cmap = plot_settings['legend_labels']
     plt.legend(handles=cmap_handles,
-               labels=[legend_labels_cmap[0], legend_labels_cmap[1], legend_labels_cmap[2], r'Maximum',
-                       r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$',
+               labels=[legend_labels_cmap[0], legend_labels_cmap[1], legend_labels_cmap[2],
+                       r'Maximum',
+                       r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$',
+                       r'$\langle \beta_\mathrm{fac}^\mathrm{crit} \rangle$',
+                       r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$',
                        r'$\langle \delta \rangle$'],
                handler_map=handler_map,
                fontsize=plot_settings['font_size'],
@@ -266,9 +270,9 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
     # Mark max beta values red
     plt.scatter(betas_max_gen_dict[generation], heat_caps_max_dict[generation], s=10, c='maroon')
     # Mean max beta values
-    plt.axvline(mean_max_betas, c='maroon', linestyle='dashed', alpha=0.7, linewidth=2)
+    plt.axvline(mean_max_betas, c='maroon', linestyle='dashed', alpha=0.7, linewidth=3)
     # Mark hypothetical critical value
-    plt.axvline(1, c='darkorange', linestyle='dashed', alpha=0.7, linewidth=2)
+    plt.axvline(1, c='xkcd:vivid purple', linestyle='dashed', alpha=0.7, linewidth=3)
     # if mean_log_beta_distance > 1.1 and mean_log_beta_distance < 0.9:
     if draw_critical:
         text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
@@ -333,10 +337,8 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    # sim_name = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201210-200606-b_1_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_4_-subfolder_sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1' #'sim-20201204-203157-g_2_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_test_default_setup' #'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT' # 'sim-20201207-145420-g_2_-b_10_-t_20_-rec_c_1_-c_props_100_10_-2_2_100_40_-c_20_-noplt_-n_heat_cap_TEST_default_setup'
-    # sim_name = 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201210-200614-b_10_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_4_-subfolder_sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1'
-    # sim_name = 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT/sim-20201211-211024-b_0.1_-g_4001_-t_2000_-compress_-noplt_-rec_c_20_-c_7_-subfolder_sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_-n_Run_1'
-    sim_names = ['sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT', 'sim-20201207-214853-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20201207-214834-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_super_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
+   # sim_names = ['sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT', 'sim-20201207-214853-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20201207-214834-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_super_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
+    sim_names = ['sim-20210211-012742-b_1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20210211-012746-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20210211-012750-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
     draw_critical_list = [True, False, False]
     save_plots = [False, False, True]
     first_plots = [True, False, False]

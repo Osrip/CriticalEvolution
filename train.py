@@ -390,9 +390,6 @@ def parse():
 # --- MAIN ---------------------------------------------------------------------+
 
 def run(settings, Iterations):
-
-
-
     size = settings['size']
     nSensors = settings['nSensors']
     nMotors = settings['nMotors']
