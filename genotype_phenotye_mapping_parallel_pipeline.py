@@ -102,14 +102,23 @@ def run_all_repeats(settings, original_settings, pipeline_settings, sim_name):
     gen_perturb_arr = np.linspace(pipeline_settings['lowest_genetic_perturbation'], pipeline_settings['largest_genetic_perturbation'],
                 pipeline_settings['resolution']).astype(int)  # astype int kann theoretisch auch weg
 
-    [run_repeat(gen_perturb, isings_orig, settings, pipeline_settings)
-     for gen_perturb in gen_perturb_arr]
+    if pipeline_settings['parallelize_run_repeats']:
+        ray.init(num_cpus=pipeline_settings['cores']) #, ignore_reinit_error=True
+        ray_funcs = [run_repeat_remote.remote(gen_perturb, isings_orig, settings, pipeline_settings)
+                     for gen_perturb in gen_perturb_arr]
+
+        ray.get(ray_funcs)
+        ray.shutdown()
+    else:
+
+        [run_repeat(gen_perturb, isings_orig, settings, pipeline_settings)
+         for gen_perturb in gen_perturb_arr]
 
 
     # run_repeat(20, settings, pipeline_settings)
 
 @ray.remote
-def run_repeat_remote(gene_perturb, isings_orig, sim_name, settings, pipeline_settings):
+def run_repeat_remote(gene_perturb, isings_orig, settings, pipeline_settings):
 
     settings['save_energies_velocities_last_gen'] = pipeline_settings['save_energies_velocities']
     print('Genetic perturbation with factor {}'.format(gene_perturb))
@@ -123,14 +132,15 @@ def run_repeat_remote(gene_perturb, isings_orig, sim_name, settings, pipeline_se
     train.run(settings, Iterations)
 
 # Exact copy of run_repeat_remote but without ray.remote decorator
-def run_repeat(gene_perturb, isings_orig, sim_name, settings, pipeline_settings):
+def run_repeat(gene_perturb, isings_orig, settings, pipeline_settings):
 
     settings['save_energies_velocities_last_gen'] = pipeline_settings['save_energies_velocities']
     print('Genetic perturbation with factor {}'.format(gene_perturb))
 
     settings['dynamic_range_pipeline_save_name'] = '{}genotype_phenotype_mapping_{}'.format(pipeline_settings['add_save_file_name'], gene_perturb)
 
-    perturbed_isings = mutate_genotype_main(isings_orig, gene_perturb, pipeline_settings['genetic_perturbation_constant'])
+    perturbed_isings = mutate_genotype_main(isings_orig, gene_perturb, pipeline_settings['genetic_perturbation_constant']
+                                            , pipeline_settings['number_of_edges_to_perturb'], settings)
 
     settings['set_isings'] = perturbed_isings
     Iterations = pipeline_settings['num_repeats']
@@ -168,8 +178,8 @@ if __name__=='__main__':
     # This loads last / highest generation from trained simulation
     pipeline_settings['load_last_generation'] = False
     # Otherwise specify generation, that shall be loaded, make sure thsi generation exists in all loaded simulations:
-    pipeline_settings['load_generation'] = 4000
-    pipeline_settings['decompress_loaded_ising'] = True
+    pipeline_settings['load_generation'] = 9
+    pipeline_settings['decompress_loaded_ising'] = False
     # The following command allows to only plot a certain number of simulations in each parallel simulations folder
     # If all simulations in those folders shall be plotted, set to None
     pipeline_settings['only_plot_certain_num_of_simulations'] = None
@@ -177,8 +187,10 @@ if __name__=='__main__':
     # parallelization when plotting few simulations. use high level parallelization with 'parallelize_each_sim' when
     # plotting many simulations. Both does not work at the same time. 'parallelize_each_sim' particularly recommended
     # when varying time steps
-    pipeline_settings['parallelize_each_sim'] = True
-    pipeline_settings['save_energies_velocities']
+    pipeline_settings['parallelize_each_sim'] = False
+    pipeline_settings['parallelize_run_repeats'] = False
+
+    pipeline_settings['save_energies_velocities'] = False
 
 
     # Specific memory usage per parallel task has to be specified in dynamic_pipeline_one_sim_remote_memory
@@ -189,5 +201,5 @@ if __name__=='__main__':
     # folder_names = ['sim-20201022-184145_parallel_TEST_repeated']
     # folder_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']#, 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
     # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900']
-    folder_names = ['sim-20210206-122918_parallel_b1_normal_run_g4000_t2000_54_sims']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    folder_names = ['sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
