@@ -798,12 +798,12 @@ if __name__ == '__main__':
     # shall be loaded in the dynamic range folder of each simulation
     #
 
-    critical_folder_name = 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype'
+    critical_folder_name = 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'res_40_3_repeats_gen_4000'
+    critical_last_gen_include_name = 'jap_test'
 
-    sub_critical_folder_name = 'sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype'
-    sub_critical_last_gen_include_name = 'res_40_3_repeats_gen_4000'
+    sub_critical_folder_name = 'sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
+    sub_critical_last_gen_include_name = 'jap_test'
 
     # Plot with generation 100 critical:
     # critical_folder_name_dict = {critical_folder_name: [critical_low_gen_include_name, critical_last_gen_include_name]}
