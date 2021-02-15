@@ -108,6 +108,9 @@ def create_settings():
         settings['LoadIsings'] = False
     else:
         settings['LoadIsings'] = True
+
+    # If set_isings is an ising object array, the simulation starts with those isings in generation 0
+    settings['set_isings'] = None
     #Seasons
     settings['seasons'] = args.seasons #BOO; Activates seasons
     settings['years_per_iteration'] = args.years_per_iteration #Float amount of seasonal changes per iteration
@@ -364,6 +367,7 @@ def parse():
                                                                                                    '-n (name of simualtion) '
                                                                                                    'are not saved in folder name')
 
+
     #-n does not do anything in the code as input arguments already define name of folder. Practical nonetheless.
 
     parser.set_defaults(save_data=True, plot=False, iterations=2000, time_steps=2000, plot_gens=[], fps=20,
@@ -411,7 +415,14 @@ def run(settings, Iterations):
         settings['init_beta'] = beta_linspace(settings)
 
     # --- POPULATE THE ENVIRONMENT WITH ORGANISMS ----------+
-    if settings['LoadIsings']:
+    try:
+        set_isings = settings['set_isings']
+    except KeyError:
+        set_isings = None
+
+    if set_isings is not None:
+        isings = settings['set_isings']
+    elif settings['LoadIsings']:
         if not settings['switch_seasons_repeat_pipeline']:
             loadfile = 'save/' + settings['loadfile'] + '/isings/gen[' + str(settings['iter']) + ']-isings.pickle'
         else:
