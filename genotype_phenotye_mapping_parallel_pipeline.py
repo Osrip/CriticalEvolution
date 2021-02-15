@@ -28,18 +28,18 @@ def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
                 elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
-    else:
-        all_sim_names = np.array([])
-        for folder_name in folder_names:
-            sim_names = all_sim_names_in_parallel_folder(folder_name)
-            all_sim_names = np.append(all_sim_names, sim_names)
+        else:
+            all_sim_names = np.array([])
+            for folder_name in folder_names:
+                sim_names = all_sim_names_in_parallel_folder(folder_name)
+                all_sim_names = np.append(all_sim_names, sim_names)
 
-        ray.init(num_cpus=pipeline_settings['cores'])
+            ray.init(num_cpus=pipeline_settings['cores'])
 
-        ray_funcs = [dynamic_pipeline_one_sim_remote_memory.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+            ray_funcs = [dynamic_pipeline_one_sim_remote_memory.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
 
-        ray.get(ray_funcs)
-        ray.shutdown()
+            ray.get(ray_funcs)
+            ray.shutdown()
 
 
 
@@ -125,7 +125,8 @@ def run_repeat_remote(gene_perturb, isings_orig, settings, pipeline_settings):
 
     settings['dynamic_range_pipeline_save_name'] = '{}genotype_phenotype_mapping_{}'.format(pipeline_settings['add_save_file_name'], gene_perturb)
 
-    perturbed_isings = mutate_genotype_main(isings_orig, gene_perturb, pipeline_settings['genetic_perturbation_constant'])
+    perturbed_isings = mutate_genotype_main(isings_orig, gene_perturb, pipeline_settings['genetic_perturbation_constant']
+                                            , pipeline_settings['number_of_edges_to_perturb'], settings)
 
     settings['set_isings'] = perturbed_isings
     Iterations = pipeline_settings['num_repeats']
@@ -159,7 +160,7 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 58
+    pipeline_settings['cores'] = 24
     pipeline_settings['num_repeats'] = 3
     pipeline_settings['lowest_genetic_perturbation'] = 0
     pipeline_settings['largest_genetic_perturbation'] = 300
@@ -168,7 +169,7 @@ if __name__=='__main__':
     pipeline_settings['number_of_edges_to_perturb'] = 10
 
 
-    pipeline_settings['resolution'] = 40
+    pipeline_settings['resolution'] = 3
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
     pipeline_settings['add_save_file_name'] = 'res_40_3_repeats_gen_4000' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
@@ -188,7 +189,7 @@ if __name__=='__main__':
     # plotting many simulations. Both does not work at the same time. 'parallelize_each_sim' particularly recommended
     # when varying time steps
     pipeline_settings['parallelize_each_sim'] = False
-    pipeline_settings['parallelize_run_repeats'] = False
+    pipeline_settings['parallelize_run_repeats'] = True
 
     pipeline_settings['save_energies_velocities'] = False
 

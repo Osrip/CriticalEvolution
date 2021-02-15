@@ -26,19 +26,19 @@ def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
                 elif pipeline_settings['only_plot_certain_num_of_simulations'] > i:
                     dynamic_pipeline_one_sim(sim_name, pipeline_settings)
-    else:
-        all_sim_names = np.array([])
-        for folder_name in folder_names:
-            sim_names = all_sim_names_in_parallel_folder(folder_name)
-            all_sim_names = np.append(all_sim_names, sim_names)
-
-        ray.init(num_cpus=pipeline_settings['cores'])
-        if pipeline_settings['specify_memory_usage']:
-            ray_funcs = [dynamic_pipeline_one_sim_remote_memory.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
         else:
-            ray_funcs = [dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
-        ray.get(ray_funcs)
-        ray.shutdown()
+            all_sim_names = np.array([])
+            for folder_name in folder_names:
+                sim_names = all_sim_names_in_parallel_folder(folder_name)
+                all_sim_names = np.append(all_sim_names, sim_names)
+
+            ray.init(num_cpus=pipeline_settings['cores'])
+            if pipeline_settings['specify_memory_usage']:
+                ray_funcs = [dynamic_pipeline_one_sim_remote_memory.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+            else:
+                ray_funcs = [dynamic_pipeline_one_sim_remote.remote(sim_name, pipeline_settings)for sim_name in all_sim_names]
+            ray.get(ray_funcs)
+            ray.shutdown()
 
 @ray.remote
 def dynamic_pipeline_one_sim_remote(sim_name, pipeline_settings):
