@@ -199,7 +199,7 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # matplotlib.use('ps')
 
 
-    plt.figure(figsize=(10, 14))
+    plt.figure(figsize=(14, 10))
     ax_main = plt.subplot(111)
 
     # Make main plot
@@ -352,19 +352,19 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
         for food_num_list, avg_attr_list, sim_data, color in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, color_list_sims):
             if sim_data.highlight_this_sim:
                 if zoomed_axis:
-                    alpha = 1
-                    linewidth=5
+                    alpha = 0.5
+                    linewidth=2
                 else:
-                    alpha = 1
-                    linewidth=5
+                    alpha = 0.5
+                    linewidth=2
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
             else:
                 if zoomed_axis:
-                    alpha = 1
-                    linewidth=5
+                    alpha = 0.5
+                    linewidth=2
                 else:
-                    alpha = 1
-                    linewidth=5
+                    alpha = 0.5
+                    linewidth=2
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
 
         # Plot averages of each folder
@@ -798,12 +798,14 @@ if __name__ == '__main__':
     # shall be loaded in the dynamic range folder of each simulation
     #
 
+    critical_folder_name = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims'
     critical_folder_name = 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'jap2_test'
+    critical_last_gen_include_name = 'rerun_small_test'
 
+    sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims'
     sub_critical_folder_name = 'sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
-    sub_critical_last_gen_include_name = 'jap_test'
+    sub_critical_last_gen_include_name = 'rerun_small_test'
 
     # Plot with generation 100 critical:
     # critical_folder_name_dict = {critical_folder_name: [critical_low_gen_include_name, critical_last_gen_include_name]}
