@@ -86,6 +86,7 @@ def create_settings_for_repeat(settings, sim_name, pipeline_settings):
     # switches off animation:
     settings['plot'] = False
     settings['save_energies_velocities_last_gen'] = False
+    settings['beta_linspace'] = None
 
     settings['compress_save_isings'] = pipeline_settings['compress_save_isings']
 
@@ -160,19 +161,19 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 24
+    pipeline_settings['cores'] = 90
     pipeline_settings['num_repeats'] = 3
     pipeline_settings['lowest_genetic_perturbation'] = 0
     pipeline_settings['largest_genetic_perturbation'] = 300
 
-    pipeline_settings['genetic_perturbation_constant'] = 0.05
-    pipeline_settings['number_of_edges_to_perturb'] = 10
+    pipeline_settings['genetic_perturbation_constant'] = 0.005
+    pipeline_settings['number_of_edges_to_perturb'] = 5
 
 
-    pipeline_settings['resolution'] = 20
+    pipeline_settings['resolution'] = 45
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
-    pipeline_settings['add_save_file_name'] = 'jap_test' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
+    pipeline_settings['add_save_file_name'] = 'second_big_test' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
@@ -200,6 +201,7 @@ if __name__=='__main__':
 
     pipeline_settings['compress_save_isings'] = True
 
-    folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2', 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    # folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2', 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     # folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)

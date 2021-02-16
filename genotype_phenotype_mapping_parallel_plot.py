@@ -800,7 +800,7 @@ if __name__ == '__main__':
 
     critical_folder_name = 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'jap_test'
+    critical_last_gen_include_name = 'jap2_test'
 
     sub_critical_folder_name = 'sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2'
     sub_critical_last_gen_include_name = 'jap_test'
