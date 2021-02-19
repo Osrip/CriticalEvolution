@@ -420,6 +420,11 @@ def run(settings, Iterations):
     except KeyError:
         set_isings = None
 
+    try:
+        change_beta_loaded_simulation = settings['change_beta_loaded_simulation']
+    except KeyError:
+        change_beta_loaded_simulation = None
+
     if set_isings is not None:
         isings = settings['set_isings']
     elif settings['LoadIsings']:
@@ -450,9 +455,9 @@ def run(settings, Iterations):
             for I in isings:
                 I.species = 0
                 I.shared_fitness = 0
-        if settings['change_beta_loaded_simulation'] is not None:
+        if change_beta_loaded_simulation is not None:
             for I in isings:
-                I.Beta = settings['change_beta_loaded_simulation']
+                I.Beta = change_beta_loaded_simulation
 
 
     else:

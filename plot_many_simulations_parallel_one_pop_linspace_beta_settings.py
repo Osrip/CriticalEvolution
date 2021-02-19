@@ -242,7 +242,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = True
+    plot_settings['only_plot'] = False
     plot_settings['decompress'] = True
 
     plot_settings['add_save_name'] = ''
@@ -274,7 +274,7 @@ if __name__ == '__main__':
 
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
-    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims']
+    folder_names = ['sim-20210216-210708_parallel_beta_linspace_rec_c100_10_sims_no_mut_beta']
 
     plot_settings['color_according_to_delta_in_generation'] = 0
     init_betas = [1]
