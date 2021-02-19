@@ -128,7 +128,7 @@ def run_all_repeats(settings, original_settings, pipeline_settings):
 
     resolution = pipeline_settings['resolution']
 
-    food_num_arr = np.linspace(lowest_food_num, highest_food_num, resolution).astype(int)
+    food_num_arr = l
     # Append food_num of original simulation if not already in list
     if not original_mean_food_num in food_num_arr:
         food_num_arr = np.append(food_num_arr, original_mean_food_num)

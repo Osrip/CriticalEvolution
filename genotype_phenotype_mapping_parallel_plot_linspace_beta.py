@@ -34,6 +34,7 @@ from heat_capacity_parameter import calc_heat_cap_param_main
 from automatic_plot_helper import custom_color_map
 import matplotlib
 import matplotlib.cm as cm
+import matplotlib.colors as colors_package
 
 
 
@@ -118,9 +119,9 @@ def dynamic_range_main(folder_name_dict, plot_settings):
     else:
         sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
         plot_settings['savefolder_name'] = plot_settings['only_plot_folder_name']
-    # if plot_settings['load_dynamic_range_parameter'] or not plot_settings['only_plot']:
-    #     sim_data_list_each_folder = load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings)
-    #     save_plot_data(sim_data_list_each_folder, plot_settings)
+    if plot_settings['load_dynamic_range_parameter'] or not plot_settings['only_plot']:
+        sim_data_list_each_folder = load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings)
+        save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
     font = {'family': 'serif', 'size': 32, 'serif': ['computer modern roman']}
@@ -298,10 +299,24 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
 
 def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_upper_cut_off_label_sim=None, x_offset_boo=True, y_offset_boo=True, zoomed_axis=False):
+    all_dynamic_range_params = []
+    for sim_data_list in sim_data_list_each_folder:
+        for sim_data in sim_data_list:
+            all_dynamic_range_params.append(sim_data.dynamic_range_param)
+
+
+    colors = ['navy', plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    cmap_name = 'custom_cmap'
+    # cmap = plt.get_cmap('brg')
+    cmap = LinearSegmentedColormap.from_list(
+        cmap_name, colors)
+    norm = colors_package.Normalize(vmin=min(all_dynamic_range_params), vmax=max(all_dynamic_range_params))
+
     # Iterating through each folder
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
         list_of_food_num_list = []
+        list_of_cmap_colors = []
         for sim_data in sim_data_list:
             list_of_avg_attr_list.append(sim_data.avg_attr_list)
             list_of_food_num_list.append(sim_data.food_num_list)
@@ -311,6 +326,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
                 sim_data.highlight_certain_sims(plot_settings)
             if plot_settings['customize_legend_labels']:
                 sim_data.create_custom_legend_labels(plot_settings)
+            list_of_cmap_colors.append(cmap(norm(sim_data.dynamic_range_param)))
 
         # for food_num_list in list_of_food_num_list:
         #     if not food_num_list == list_of_food_num_list[0]:
@@ -346,8 +362,8 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
 
 
         # Plot each simulation
-        for food_num_list, avg_attr_list, color in zip(list_of_food_num_list, list_of_avg_attr_list, color_list_sims):
-            plt.scatter(food_num_list, avg_attr_list, marker=marker, c=color, s=3, alpha=0.2)
+        for food_num_list, avg_attr_list, color, cmap_color in zip(list_of_food_num_list, list_of_avg_attr_list, color_list_sims, list_of_cmap_colors):
+            plt.scatter(food_num_list, avg_attr_list, marker=marker, c=cmap_color, s=3, alpha=0.2)
         # Connect each simulation datapoint with lines
         for food_num_list, avg_attr_list, sim_data, color in zip(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, color_list_sims):
             if sim_data.highlight_this_sim:
@@ -543,8 +559,10 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
         for sim_data in sim_data_list:
             alternative = True
             try:
-                alternative_folder_name = plot_settings['alternative_folder_name_for_heat_capacities'][sim_data.folder_name][sim_data.dynamic_range_folder_includes]
-
+                if plot_settings['use_alternative_folder_name_for_heat_capacities']:
+                    alternative_folder_name = plot_settings['alternative_folder_name_for_heat_capacities'][sim_data.folder_name][sim_data.dynamic_range_folder_includes]
+                else:
+                    alternative = False
             except KeyError:
                 complete_sim_name = sim_data.sim_name
                 alternative = False
@@ -556,10 +574,13 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
             dynamic_range_param_dict = mean_log_beta_distance_dict
             gens_dynamic_range_param_dict = list(dynamic_range_param_dict.keys())
             # !!!! Always loads in heat capacity from last detected generation !!!!
-            index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[-1]
+            try:
+                index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[plot_settings['index_load_dynamic_regime_parameter_generation']]
+            except KeyError:
+                index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[-1]
+                
             last_heat_cap_gen = gens_dynamic_range_param_dict[index_last_heat_cap_gen]
             dynamic_range_param_last_heat_cap_gen = dynamic_range_param_dict[last_heat_cap_gen]
-
             sim_data.dynamic_range_param = dynamic_range_param_last_heat_cap_gen
     return sim_data_list_each_folder
 
@@ -577,7 +598,6 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     '''
     Make sure, that dynamic range parameter has been loaded into sim_data_list_each_folder before calling this!
     '''
-
 
 
     color_list = []
@@ -800,8 +820,8 @@ if __name__ == '__main__':
 
     critical_folder_name = 'sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims'
     # critical_folder_name = 'sim-20201210-200605_parallel_b1_genotype_phenotype_test'
-    critical_low_gen_include_name = 'linspace_5_edges_0-005'
-    critical_last_gen_include_name = 'all_edges'
+    critical_low_gen_include_name = 'fffflinspace_5_edges_0-005'
+    critical_last_gen_include_name = 'linspace_5_edges_0-005'
 
     sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims'
     # sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_genotype_phenotype_test'
@@ -818,6 +838,10 @@ if __name__ == '__main__':
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = False
     plot_settings['load_dynamic_range_parameter'] = True
+    plot_settings['alternative_folder_name_for_heat_capacities'] = {critical_folder_name: {critical_low_gen_include_name: 'sim-20210117-224238_parallel_respone_plot_gen_100_heat_cap'}}
+    plot_settings['use_alternative_folder_name_for_heat_capacities'] = False
+    # Index of generation, that dynamic regime has been calculated for. 0 for first generation, -1 for lastgeneration
+    plot_settings['index_load_dynamic_regime_parameter_generation'] = 0
 
     plot_settings['only_plot_folder_name'] = ''
     # plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
@@ -846,7 +870,7 @@ if __name__ == '__main__':
     plot_settings['sub_critical_folder_name_dict'] = sub_critical_folder_name_dict
 
     # When heat capacity values are saved in a different folder name (parallel simulation) than where include_names are, specify here
-    plot_settings['alternative_folder_name_for_heat_capacities'] = {critical_folder_name: {critical_low_gen_include_name: 'sim-20210117-224238_parallel_respone_plot_gen_100_heat_cap'}}
+
 
     #  This feature highlights certain simulation runs and relabels them. Those simulations, that shall be highlighted
     #  and relabeled have to be specified in plot_settings['label_highlighted_sims']. All other simulations are not
