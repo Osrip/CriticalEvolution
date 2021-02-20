@@ -578,7 +578,7 @@ def load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings):
                 index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[plot_settings['index_load_dynamic_regime_parameter_generation']]
             except KeyError:
                 index_last_heat_cap_gen = np.argsort(np.array(gens_dynamic_range_param_dict, dtype=int))[-1]
-                
+
             last_heat_cap_gen = gens_dynamic_range_param_dict[index_last_heat_cap_gen]
             dynamic_range_param_last_heat_cap_gen = dynamic_range_param_dict[last_heat_cap_gen]
             sim_data.dynamic_range_param = dynamic_range_param_last_heat_cap_gen

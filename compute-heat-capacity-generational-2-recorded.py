@@ -78,7 +78,8 @@ def main():
             initialize_sensors_from_record_randomize_neurons(I)
 
             # Initialize network state with lowest energy network energy state
-            if True:
+            # TODO: This eats up most of the computation, make this JIT!!!
+            if settings['minimal_energy_initializatin_heat_cap']:
                 sensor_vals = I.s[0:(settings['nSensors'])]
                 permutated_states, permutated_states_with_sensors = all_states(I, settings, sensor_vals)
                 energies_perm = calculate_energies(I, settings, permutated_states_with_sensors)

@@ -134,6 +134,7 @@ def create_settings():
     settings['refresh_plot'] = args.refresh_plot
     settings['dream_heat_capacity'] = args.dream_heat_capacity
     settings['recorded_heat_capacity'] = args.recorded_heat_capacity
+    settings['minimal_energy_initializatin_heat_cap'] = args.minimal_energy_initializatin_heat_cap
 
     settings['heat_capacity_props'] = args.heat_capacity_props
     settings['plot_heat_cap'] = args.plot_heat_cap
@@ -311,6 +312,9 @@ def parse():
                         Every nth generation that recorded heat capacity is calculated and plotted. 
                         If 0 dream heat capacity is never calculated and plotted. In the recorded heat capacity sensor 
                         input values are recorded during the simulation and subsequently used to calculate heat cap.''')
+    parser.add_argument('-no_min_init', dest='minimal_energy_initializatin_heat_cap', action='store_false',
+                        help='Deactivates brute force minimal energy initialization in recorded heat capacity. Deactivating'
+                             'this leads to outliers in the heat capacity plots')
     parser.add_argument('-c_props', dest='heat_capacity_props', type=int, nargs='+', help='''Properties of dream and recorded heat 
                         capacity calculation. As blank spaced integer list: R, thermal_time, beta_low, beta_high, num_betas, y_lim_high 
                         R = number of repititions (with newly initialized sensor values) thermal_time = number of thermal iterations used
@@ -384,7 +388,8 @@ def parse():
                         random_food_seasons=False, rand_food_season_limits=[1, 199], save_subfolder='',
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
                         random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
-                        beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True, plot_heat_cap=False)
+                        beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True, plot_heat_cap=False,
+                        minimal_energy_initializatin_heat_cap=True)
     args = parser.parse_args()
     return args
 
