@@ -152,8 +152,18 @@ def RepresentsInt(s):
         return False
 
 if __name__ == '__main__':
-    sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT'
-    generation_list = [0]
-    settings = load_settings(sim_name)
-    recorded = True
-    main(sim_name, settings, None, recorded)
+    # sim_name = 'sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT'
+
+    sim_names = ['sim-20210220-020451-num_neurons_20_-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_120_-no_min_init_-c_5_-plot_c_-noplt_-n_finite_size_scaling',
+                 'sim-20210220-020505-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_120_-no_min_init_-c_5_-plot_c_-noplt_-n_finite_size_scaling',
+                 'sim-20210220-020523-num_neurons_40_-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_120_-no_min_init_-c_5_-plot_c_-noplt_-n_finite_size_scaling',
+                 'sim-20210220-020537-num_neurons_60_-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_120_-no_min_init_-c_5_-plot_c_-noplt_-n_finite_size_scaling',
+                 'sim-20210220-020613-num_neurons_100_-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_250_-no_min_init_-c_10_-plot_c_-noplt_-n_finite_size_scaling',
+                 'sim-20210220-020641-num_neurons_200_-b_1_-g_2_-rec_c_1_-c_props_1_100000_-2_2_100_400_-no_min_init_-c_15_-plot_c_-noplt_-n_finite_size_scaling']
+    for sim_name in sim_names:
+
+        generation_list = [0]
+        settings = load_settings(sim_name)
+        settings['heat_capacity_props'][-1] = 100
+        recorded = True
+        main(sim_name, settings, None, recorded)
