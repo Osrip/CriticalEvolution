@@ -14,11 +14,19 @@ from switch_season_repeat_plotting import plot_pipeline
 import pickle
 from run_combi import RunCombi
 import numpy as np
+
 from mutate_genotype import mutate_genotype_main
-
-
+mutate_masked = mutate_genotype_main
+from mutate_genotype_from_unconnected import mutate_genotype_main
+mutate_all_connectable = mutate_genotype_main
 
 def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
+    if pipeline_settings['mutate_function'] == 'masked_edges':
+        mutate_genotype_main = mutate_masked
+    elif pipeline_settings['mutate_function'] == 'all_connectable_edges':
+        mutate_genotype_main = mutate_masked
+
+
     for folder_name in folder_names:
         sim_names = all_sim_names_in_parallel_folder(folder_name)
 
@@ -40,7 +48,6 @@ def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
 
             ray.get(ray_funcs)
             ray.shutdown()
-
 
 
 # Exact copy of run_repeat_remote but with specific memory usage. Memory usage par task!!
@@ -161,19 +168,21 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 24
+    pipeline_settings['cores'] = 6
     pipeline_settings['num_repeats'] = 3
     pipeline_settings['lowest_genetic_perturbation'] = 0
     pipeline_settings['largest_genetic_perturbation'] = 300
 
     pipeline_settings['genetic_perturbation_constant'] = 0.005 #0.005
-    pipeline_settings['number_of_edges_to_perturb'] = 10 #5
+    pipeline_settings['number_of_edges_to_perturb'] = 5 #5
+
+    pipeline_settings['mutate_function'] = 'all_connectable_edges' # Either 'masked_edges' or 'all_connectable_edges'
 
 
-    pipeline_settings['resolution'] = 24
+    pipeline_settings['resolution'] = 50
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
-    pipeline_settings['add_save_file_name'] = 'testy' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
+    pipeline_settings['add_save_file_name'] = 'first_high_res_test_all_connectable_5_edges_0-005' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []

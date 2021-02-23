@@ -52,9 +52,9 @@ def load_plot_data(folder_name, plot_settings):
 
 def create_legend():
     legend_elements = [
-        Patch(facecolor=plot_settings['colors']['b01'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.1$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['b1'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['b10'], edgecolor='w', label=r'$\beta_\mathrm{init} = 10$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['d0'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['d-0.25'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.32$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['d-0.5'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.56$', alpha=1),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
 
     ]
@@ -276,16 +276,14 @@ if __name__ == '__main__':
 
     plot_settings['kernel_regression'] = False
 
-    plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
+    plot_settings['colors'] = {'d0': 'olive', 'd-0.25': 'maroon', 'd-0.5': 'royalblue'}
 
     beta_inits = [1, 10, 0.1]
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
-    # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims','sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
 
-    regimes = ['b1', 'b10', 'b01']
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
+    # regimes = ['d0', 'd-0.25', 'd-0.5']
+    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210222-235656_parallel_b1-78_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210222-235701_parallel_b3-16_dynamic_range_c_50_g4000_t2000_10_sims']
+    regimes = ['d0', 'd-0.25', 'd-0.5']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
         plot_settings['regime'] = regime

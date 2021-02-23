@@ -18,6 +18,11 @@ def change_genotype_ising(I, gene_perturb, perturb_const, num_perturbed_edges, s
     # number of (dis)connected edges
     connected = copy.deepcopy(I.maskJ)
 
+    # make all hidden neurons be able to connect, upper triangle only
+    # Recently added line
+    for i in np.arange(I.Ssize, I.size - I.Msize):
+        connected[i, i:] = 1
+
     disconnected = ~connected #disconnected not connected
     np.fill_diagonal(disconnected, 0)
     disconnected = np.triu(disconnected)
