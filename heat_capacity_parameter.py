@@ -4,6 +4,7 @@ from automatic_plot_helper import load_settings
 from sklearn.neighbors import KernelDensity
 from tqdm import tqdm
 from scipy.signal import find_peaks
+import warnings
 
 
 def calc_heat_cap_param_main(sim_name, module_settings, gen_list=None, gaussian_kernel=True):
@@ -134,7 +135,11 @@ def load_heat_cap_files(sim_name, settings, gen_list):
             #  Depending on whether we are dealing with recorded or dream heat capacity
             filename = folder + '/C_recorded/C_' + str(gen) + '/C-size_' + str(size) + '-Nbetas_' + \
                        str(Nbetas) + '-bind_' + str(bind) + '.npy'
-            C[:, :, bind, i_gen] = np.load(filename)
+            try:
+                C[:, :, bind, i_gen] = np.load(filename)
+            except FileNotFoundError:
+                warnings.warn('C file with bind {} in generation {} of simulation {}'.format(bind, gen, sim_name))
+                pass
     print('Done.')
     return C, betas
 

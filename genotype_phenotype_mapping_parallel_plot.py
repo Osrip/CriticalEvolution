@@ -801,11 +801,11 @@ if __name__ == '__main__':
     critical_folder_name = 'sim-20201210-200605_parallel_b1_genotype_phenotype_test' #'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims'
     # critical_folder_name = 'sim-20201210-200605_parallel_b1_genotype_phenotype_test'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'first_test_all_connectab'
+    critical_last_gen_include_name = 'third_try_10_runs_all_connectable_ALL_edges_0-005'
 
     sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_genotype_phenotype_test' #'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims'
     # sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_genotype_phenotype_test'
-    sub_critical_last_gen_include_name = 'first_test_all_connectab'
+    sub_critical_last_gen_include_name = 'third_try_10_runs_all_connectable_ALL_edges_0-005'
 
     # Plot with generation 100 critical:
     # critical_folder_name_dict = {critical_folder_name: [critical_low_gen_include_name, critical_last_gen_include_name]}

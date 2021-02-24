@@ -97,7 +97,7 @@ def plot(attrs_lists, plot_settings):
             '''
             # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
             # Savitzky-Golay filter:
-            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 201, 3) # window size, polynomial order
+            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, plot_settings['smooth_window_size'], 3) # window size, polynomial order
             # plt.plot(generations, smoothed_mean_attrs_list, c=color)
 
             # Uncommand the following, if interpolation shall be applied to smoothed data
@@ -205,15 +205,16 @@ if __name__ == '__main__':
         plot_settings['ylim'] = (-0.0001, 0.00025)
     else:
         plot_settings['ylim'] = (-0.001, 0.015)
-    plot_settings['ylim'] = (-1, 40)
-    plot_settings['xlim'] = (0, 900)
+    plot_settings['ylim'] = (-0.2, 10)
+    plot_settings['xlim'] = (-1, 20)
     # plot_settings['ylim'] = (-0.000001, 0.00007)
 
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['only_copied'] = True
     plot_settings['sliding_window'] = False
+    plot_settings['sliding_window_size'] = 10
     plot_settings['smooth'] = True
-    plot_settings['sliding_window_size'] = 100
+    plot_settings['smooth_window_size'] = 5 # 201
 
     # ONLY PLOT HAS TO BE FALSE FOR FOLLOWING SETTINGS to work:
     plot_settings['min_ts_for_plot'] = 0
@@ -226,7 +227,7 @@ if __name__ == '__main__':
 
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210222-235656_parallel_b1-78_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210222-235701_parallel_b3-16_dynamic_range_c_50_g4000_t2000_10_sims']
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims']
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims']
 
     title_colors = ['olive', 'royalblue', 'maroon']
     titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 1.78$', r'$\beta_\mathrm{init} = 3.16$']

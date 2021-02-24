@@ -58,16 +58,23 @@ if __name__ == '__main__':
     '''
 
     # Thesis:
-    # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1'],
-    #                         ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10']]
+    compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1'],
+                            ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10']]
+    #'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1' includes heat capacity calculations in generation 0 from 'sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims' in generation 4000
+    # sam applies to 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10' and 'sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims'
 
     # delta 0, 0.25, 0.5
-    compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims'],
-                            ['sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims'],
-                            ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims']]
+    # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims'],
+    #                         ['sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims'],
+    #                         ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims']]
 
-    # compare_generations = [['4000', '0'], ['4000', '0']]
-    compare_generations = [['2000', '100'], ['2000', '100']]
+    # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims'],
+    #                         ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims']]
+
+    compare_generations = [['4000', '0'], ['4000', '0']]
+    # compare_generations = [['4000', '4000'], ['4000', '4000']]
+
+# compare_generations = [['2000', '100'], ['2000', '100']]
     plot_settings = {}
     for compare_folders, generations in zip(compare_folder_pairs, compare_generations):
 

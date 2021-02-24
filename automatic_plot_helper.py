@@ -58,6 +58,16 @@ def load_settings(loadfile):
     return settings
 
 
+def save_settings(sim_name, settings):
+    folder = 'save/{}/'.format(sim_name)
+    with open(folder + 'settings.csv', 'w') as f:
+        for key in settings.keys():
+            f.write("%s,%s\n" % (key, settings[key]))
+    pickle_out = open('{}settings.pickle'.format(folder), 'wb')
+    pickle.dump(settings, pickle_out)
+    pickle_out.close()
+
+
 def load_isings_attr(loadfile, attr):
     '''
     Load all isings attributes from pickle files and return them as nested list
@@ -584,6 +594,9 @@ def compress_isings_in_parallel_simulations(folder_name):
     sim_names = all_sim_names_in_parallel_folder(folder_name)
     for sim_name in sim_names:
         compress_isings_in_simulation(sim_name)
+
+
+
 
 
 

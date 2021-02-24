@@ -210,7 +210,7 @@ if __name__ == '__main__':
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['only_copied'] = True
     plot_settings['sliding_window'] = False
-    plot_settings['smooth'] = True
+    plot_settings['smooth'] = True # True
     plot_settings['sliding_window_size'] = 100
 
     # ONLY PLOT HAS TO BE FALSE FOR FOLLOWING SETTINGS to work:
@@ -222,23 +222,25 @@ if __name__ == '__main__':
     plot_settings['title'] = ''
     plot_settings['legend'] = True
 
-    # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
-    # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
-    # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
-    # folder_names = ['sim-20201026-224639_parallel_b1_fixed_4000ts_', 'sim-20201026-224655_parallel_b1_random_100-7900ts_', 'sim-20201026-224709_parallel_b10_fixed_4000ts_', 'sim-20201026-224722_parallel_b10_random_100-7900ts_', 'sim-20201026-224748_parallel_b1_fixed_POWER_ts', 'sim-20201026-224817_parallel_b10_fixed_POWER_ts', 'sim-20201028-185409_parallel_b1_rand_seas_g4000_t2000_lim_1_499', 'sim-20201028-185436_parallel_b10_rand_seas_g4000_t2000_lim_1_499', 'sim-20201102-220107_parallel_b1_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201102-220135_parallel_b10_rand_seas_g4000_t2000_fixed_250_foods', 'sim-20201105-202455_parallel_b1_random_ts_2000_lim_100_3900', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000', 'sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201023-191408_parallel_b10_rand_seas_g4000_t2000']
-    # folder_names = ['sim-20201105-202517_parallel_b10_random_ts_2000_lim_100_3900', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000']
     folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
+    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1']
 
-
-    title_colors = ['olive', 'royalblue', 'maroon']
+    title_colors = ['olive', 'royalblue']
     titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
     for i, (folder_name, title, title_color) in enumerate(zip(folder_names, titles, title_colors)):
         plot_settings['folder_name'] = folder_name
         plot_settings['title'] = title
-        if i == 2:
-            plot_settings['legend'] = True
+        if i == 0:
+            plot_settings['new_fig'] = True
         else:
+            plot_settings['new_fig'] = False
+        if i+1 == len(folder_names):
+            plot_settings['legend'] = True
+            plot_settings['save_fig'] = True
+        else:
+            plot_settings['save_fig'] = False
             plot_settings['legend'] = False
+
         plot_settings['title_color'] = title_color
         main_plot_parallel_sims(folder_name, plot_settings)

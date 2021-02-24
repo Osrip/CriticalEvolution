@@ -53,8 +53,8 @@ def load_plot_data(folder_name, plot_settings):
 def create_legend():
     legend_elements = [
         Patch(facecolor=plot_settings['colors']['d0'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['d-0.25'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.32$', alpha=1),
-        Patch(facecolor=plot_settings['colors']['d-0.5'], edgecolor='w', label=r'$\beta_\mathrm{init} = 0.56$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['d-0.25'], edgecolor='w', label=r'$\beta_\mathrm{init} = 1.78$', alpha=1),
+        Patch(facecolor=plot_settings['colors']['d-0.5'], edgecolor='w', label=r'$\beta_\mathrm{init} = 3.16$', alpha=1),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='grey', markersize=15, alpha=0.75, label=r'One Generation'),
 
     ]
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = False
+    plot_settings['only_plot'] = True
 
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
@@ -265,8 +265,8 @@ if __name__ == '__main__':
 
     # smooth works only if plot_settings['interpolate'] = True
     plot_settings['plot_line'] = True
-    plot_settings['smooth'] = True
-    plot_settings['interpolate'] = True
+    plot_settings['smooth'] = False
+    plot_settings['interpolate'] = False
     plot_settings['smooth_window'] = 21  # 21
     plot_settings['line_alpha'] = 0.6  # beta jump 0.4 # normal 0.6
 

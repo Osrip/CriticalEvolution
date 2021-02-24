@@ -14,6 +14,7 @@ import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
+
 def main_plot_parallel_sims(folder_name, plot_settings):
     plt.rc('text', usetex=True)
     font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
@@ -264,9 +265,9 @@ if __name__ == '__main__':
     plot_settings['sliding_window_size'] = 10
 
     # smooth works only if plot_settings['interpolate'] = True
-    plot_settings['plot_line'] = True
-    plot_settings['smooth'] = True
-    plot_settings['interpolate'] = True
+    plot_settings['plot_line'] = True # True
+    plot_settings['smooth'] = False # True
+    plot_settings['interpolate'] = False # True
     plot_settings['smooth_window'] = 21  # 21
     plot_settings['line_alpha'] = 0.6  # beta jump 0.4 # normal 0.6
 
@@ -283,9 +284,13 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
     # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims','sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210219-202921_parallel_b0-32_dynamic_range_c_50_g4000_t2000_10_sims', 'sim-20210219-202936_parallel_b0-56_dynamic_range_c_50_g4000_t2000_10_sims', ]
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210224-002809_parallel_b1_push_evolved_simple_into_complex_foraging_task']
+    # folder_names = ['sim-20210224-002809_parallel_b1_push_evolved_simple_into_complex_foraging_task']
+    folder_names = ['sim-20210224-151812_parallel_b1_beta_jumps_push_evolved_simple_into_complex_foraging_task']
 
-    regimes = ['b1', 'b10', 'b01']
+    # regimes = ['b1', 'b10', 'b01']
+    regimes = ['b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
         plot_settings['regime'] = regime
@@ -295,7 +300,7 @@ if __name__ == '__main__':
             plot_settings['new_fig'] = True
         else:
             plot_settings['new_fig'] = False
-        if i+1 == len(regimes):
+        if i+1 == len(folder_names):
             plot_settings['plot_legend'] = True
             plot_settings['save_fig'] = True
         else:

@@ -15,16 +15,12 @@ import pickle
 from run_combi import RunCombi
 import numpy as np
 
-from mutate_genotype import mutate_genotype_main
-mutate_masked = mutate_genotype_main
+# from mutate_genotype import mutate_genotype_main
 from mutate_genotype_from_unconnected import mutate_genotype_main
-mutate_all_connectable = mutate_genotype_main
+# from mutate_genotype_all_edges import mutate_genotype_main
 
 def dynamic_pipeline_all_sims(folder_names, pipeline_settings):
-    if pipeline_settings['mutate_function'] == 'masked_edges':
-        mutate_genotype_main = mutate_masked
-    elif pipeline_settings['mutate_function'] == 'all_connectable_edges':
-        mutate_genotype_main = mutate_masked
+
 
 
     for folder_name in folder_names:
@@ -168,21 +164,19 @@ if __name__=='__main__':
 
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
-    pipeline_settings['cores'] = 6
-    pipeline_settings['num_repeats'] = 3
+    pipeline_settings['cores'] = 20
+    pipeline_settings['num_repeats'] = 1
     pipeline_settings['lowest_genetic_perturbation'] = 0
     pipeline_settings['largest_genetic_perturbation'] = 300
 
     pipeline_settings['genetic_perturbation_constant'] = 0.005 #0.005
-    pipeline_settings['number_of_edges_to_perturb'] = 5 #5
-
-    pipeline_settings['mutate_function'] = 'all_connectable_edges' # Either 'masked_edges' or 'all_connectable_edges'
+    pipeline_settings['number_of_edges_to_perturb'] = 10 #5
 
 
-    pipeline_settings['resolution'] = 50
+    pipeline_settings['resolution'] = 40
     # !!!!!!!! add_save_file_name has to be unique each run and must not be a substring of previous run !!!!!!!!!
     # !!!!!!!! otherwise runs are indistringuishible !!!!!!!!!
-    pipeline_settings['add_save_file_name'] = 'first_high_res_test_all_connectable_5_edges_0-005' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
+    pipeline_settings['add_save_file_name'] = 'third_try_10_runs_all_connectable_ALL_edges_0-005' #'resulotion_80_hugeres_3_repeats_gen_100' # 'resulotion_80_hugeres_3_repeats_last_gen'
     # list of repeats, that should be animated, keep in mind, that this Creates an animation for each REPEAT!
     # If no animations, just emtpy list, if an animation should be created f.e. [0]
     pipeline_settings['animation_for_repeats'] = []
@@ -210,7 +204,9 @@ if __name__=='__main__':
 
     pipeline_settings['compress_save_isings'] = True
 
-    folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2', 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
+    # folder_names = ['sim-20210216-001754_parallel_-b_10_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2', 'sim-20210215-235355_parallel_-g_10_-t_200_-noplt_-n_test_genotype_phenotype2']#, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims']
     folder_names = ['sim-20201210-200605_parallel_b1_genotype_phenotype_test', 'sim-20201210-200613_parallel_b10_genotype_phenotype_test']
-    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims']
+
+
+# folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims']
     dynamic_pipeline_all_sims(folder_names, pipeline_settings)
