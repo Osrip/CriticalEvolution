@@ -2165,10 +2165,15 @@ def interact(settings, isings, foods):
         I.r_food = theta_mat_food[i, foodInd] # "angle" to closest food
 
         # Added condition to eat only when below speed threshold
-        if not settings['max_speed_eat'] is None:
-            eat_boo = I.v < settings['max_speed_eat']
-        else:
+        # Exception caught in case previous version is used where this has not been implemented
+        try:
+            if not settings['max_speed_eat'] is None:
+                eat_boo = I.v < settings['max_speed_eat']
+            else:
+                eat_boo = True
+        except KeyError:
             eat_boo = True
+
 
         if minFoodDist <= settings['org_radius'] and eat_boo:
             if settings['energy_model']:

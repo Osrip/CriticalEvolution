@@ -31,3 +31,5 @@ if __name__ == '__main__':
     folder_names = ['sim-20210224-190549_parallel_test_resrospective_heat_cap']
     for folder_name in folder_names:
         compute_heat_cap_retrospectively(folder_name, every_nth_gen, settings)
+
+    # THIS DOES NOT WORK FOR RECORDED HEAT CAPACITY AS THE IN-SIMULATION RECORDED VALUES ARE NOT SAVED BY DEFAULT
