@@ -100,6 +100,7 @@ def create_settings():
     settings['beta_jump_mutations'] = args.beta_jump_mutations
     settings['beta_linspace'] = args.beta_linspace
     settings['change_beta_loaded_simulation'] = args.change_beta_loaded_simulation
+    settings['beta_linspace_within_sim'] = args.beta_linspace_within_sim
 
     #settings['loadfile'] = sim-20191114-000009_server
     settings['loadfile'] = args.loadfile
@@ -243,6 +244,8 @@ def parse():
                              ', it gives the number of entries of the linspace array.'
                              'So just leave all values except for index constant and then iterate through index with'
                              'your parallelization tool. Only works when used in train.py')
+    parser.add_argument('-b_linspace_within_sim', dest='beta_linspace_within_sim', action='store_true',
+                        help='Initializes the first simulation of a simulation log linspace between 0.1 and 10')
     parser.add_argument('-std_b', dest='sig_beta', type=float,
                         help='Std of normal distribution for beta mutation')
     parser.add_argument('-b_jump', dest='beta_jump_mutations', action='store_true',
@@ -389,7 +392,7 @@ def parse():
                         save_energies_velocities_gens=None, save_energies_velocities_last_gen=True, random_time_steps_power_law=False,
                         random_time_steps_power_law_limits=[100, 1000000, 700], num_neurons=12, compress_save_isings= False, max_speed_eat=None,
                         beta_linspace=None, change_beta_loaded_simulation=None, commands_in_folder_name=True, plot_heat_cap=False,
-                        minimal_energy_initializatin_heat_cap=True)
+                        minimal_energy_initializatin_heat_cap=True, beta_linspace_within_sim=False)
     args = parser.parse_args()
     return args
 
@@ -472,6 +475,9 @@ def run(settings, Iterations):
         isings = []
         for i in range(0, settings['pop_size']):
             isings.append(ising(settings, size, nSensors, nMotors, name='gen[0]-org[' + str(i) + ']'))
+
+        if settings['beta_linspace_within_sim']:
+            beta_linspace_within_sim(isings, settings)
         
 
     # --- CYCLE THROUGH EACH GENERATION --------------------+
@@ -501,6 +507,14 @@ def beta_linspace(settings):
     beta_exp = np.linspace(loglow, loghigh, number)[index]
     beta = 10 ** beta_exp
     return beta
+
+
+def beta_linspace_within_sim(isings, settings):
+    linspace_exponents = np.linspace(-1, 1, settings['pop_size'])
+    linspace_betas = [10**expo for expo in linspace_exponents]
+    for I, new_beta in zip(isings, linspace_betas):
+        I.Beta = new_beta
+
 
 
 # --- RUN ----------------------------------------------------------------------+
