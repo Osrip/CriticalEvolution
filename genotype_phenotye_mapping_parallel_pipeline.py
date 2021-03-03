@@ -166,7 +166,7 @@ if __name__=='__main__':
     pipeline_settings = {}
     pipeline_settings['varying_parameter'] = 'time_steps'  # 'food'
     pipeline_settings['cores'] = 60
-    pipeline_settings['num_repeats'] = 1 # (!!!!!)
+    pipeline_settings['num_repeats'] = 10 # (!!!!!)
     pipeline_settings['lowest_genetic_perturbation'] = 0
     pipeline_settings['largest_genetic_perturbation'] = 300
 

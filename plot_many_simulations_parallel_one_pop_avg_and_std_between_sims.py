@@ -97,14 +97,17 @@ def plot(attrs_lists, plot_settings):
             '''
             # smoothed_mean_attrs_list = gaussian_kernel_smoothing(mean_attrs_list)
             # Savitzky-Golay filter:
-            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 201, 3) # window size, polynomial order
+
+            smoothed_mean_attrs_list = savgol_filter(mean_attrs_list, 5, 3) # window size, polynomial order
+
+            print('An error occurred: Is windown length of savgol filter uneven, less or equal size of input arr and larger than polynomial???')
             # plt.plot(generations, smoothed_mean_attrs_list, c=color)
 
             # Uncommand the following, if interpolation shall be applied to smoothed data
             f_interpolate = interp1d(generations, smoothed_mean_attrs_list, kind='cubic')
             x_interp = np.linspace(np.min(generations), np.max(generations), num=4000, endpoint=True)
             y_interp = f_interpolate(x_interp)
-            plt.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
+            plt.plot(x_interp, y_interp, c=color, alpha=0.2, linewidth=2)
 
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     plt.xlabel('Generation')
@@ -194,7 +197,7 @@ if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
     plot_settings = {}
     # Only plot loads previously saved plotting file instead of loading all simulations to save time
-    plot_settings['only_plot'] = True
+    plot_settings['only_plot'] = False
     plot_settings['decompress'] = True
 
     plot_settings['add_save_name'] = ''
@@ -222,11 +225,15 @@ if __name__ == '__main__':
     plot_settings['title'] = ''
     plot_settings['legend'] = True
 
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'] # sim-20201202-021347_parallel_b1_break_eat_v_eat_max_05_g4000_t2000_20_sims
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1']
+    # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1']
+    folder_names = ['sim-20210225-184418_parallel_b1_g_26_100_sims', 'sim-20210225-184453_parallel_b1-78_g_26_100_sims',
+                    'sim-20210225-184503_parallel_b3-16_g_26_100_sims']
+    # folder_names = ['sim-20210225-184503_parallel_b3-16_g_26_100_sims']
+    # folder_names = ['sim-20210226-021646_parallel_b1-78_g_26_100_sims']
 
-    title_colors = ['olive', 'royalblue']
+    title_colors = ['olive', 'royalblue', 'red']
     titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
     for i, (folder_name, title, title_color) in enumerate(zip(folder_names, titles, title_colors)):
         plot_settings['folder_name'] = folder_name

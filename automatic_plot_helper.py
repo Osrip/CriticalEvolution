@@ -599,7 +599,6 @@ def compress_isings_in_parallel_simulations(folder_name):
 
 
 
-
 # Some function from stackoverflow useful for actual plotting:
 
 def mscatter(x,y,ax=None, m=None, **kw):

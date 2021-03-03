@@ -107,7 +107,7 @@ class ResponseCurveSimData:
 def dynamic_range_main(folder_name_dict, plot_settings):
 
     if not plot_settings['only_plot']:
-        plot_settings['savefolder_name'] = 'genotype_phenotype_plot_{}_{}' \
+        plot_settings['savefolder_name'] = 'response_plot_{}_{}' \
             .format(time.strftime("%Y%m%d-%H%M%S"), plot_settings['varying_parameter'])
         os.makedirs('save/{}'.format(plot_settings['savefolder_name']))
         sim_data_list_each_folder = prepare_data(folder_name_dict, plot_settings)
@@ -118,15 +118,15 @@ def dynamic_range_main(folder_name_dict, plot_settings):
     else:
         sim_data_list_each_folder = load_plot_data(plot_settings['only_plot_folder_name'])
         plot_settings['savefolder_name'] = plot_settings['only_plot_folder_name']
-    # if plot_settings['load_dynamic_range_parameter'] or not plot_settings['only_plot']:
-    #     sim_data_list_each_folder = load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings)
-    #     save_plot_data(sim_data_list_each_folder, plot_settings)
+    if plot_settings['load_dynamic_range_parameter'] or not plot_settings['only_plot']:
+        sim_data_list_each_folder = load_dynamic_range_parameter(sim_data_list_each_folder, plot_settings)
+        save_plot_data(sim_data_list_each_folder, plot_settings)
 
     plot_axis(sim_data_list_each_folder, plot_settings)
     font = {'family': 'serif', 'size': 32, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
-    # scatter_plot(sim_data_list_each_folder, plot_settings)
-    # dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
+    scatter_plot(sim_data_list_each_folder, plot_settings)
+    dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings)
 
 
 def prepare_data(folder_name_dict, plot_settings):
@@ -199,49 +199,49 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # matplotlib.use('ps')
 
 
-    plt.figure(figsize=(14, 10))
+    plt.figure(figsize=(10, 14))
     ax_main = plt.subplot(111)
 
     # Make main plot
-    # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.8, linewidth=1)
-    # plt.text(2200, 250, 'Trained on \n 2000 time steps', color='firebrick', alpha=0.8)
+    plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.8, linewidth=1)
+    plt.text(2200, 250, 'Trained on \n 2000 time steps', color='firebrick', alpha=0.8)
 
     plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, zoomed_axis=False)
-    # plt.ylim(-10, 1800)
+    plt.ylim(-10, 1800)
 
     # ax_main.set_yticks(ax_main.get_yticks()[:-5])
     # Hide some tick labels:
-    # for i in range(1,6):
-    #     ax_main.yaxis.get_major_ticks()[-i].draw = lambda *args:None
+    for i in range(1,6):
+        ax_main.yaxis.get_major_ticks()[-i].draw = lambda *args:None
     # plt.ylabel(r'$\langle \langle \langle E_\mathrm{org} \rangle_\mathrm{life time} \rangle_\mathrm{simulation} \rangle_\mathrm{repeats}$')
-    # plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
+    plt.ylabel(r'$\langle E_\mathrm{org} \rangle$')
     # plt.xlabel('Percentage of food that population was originally trained on')
-    # if plot_settings['varying_parameter'] == 'time_steps':
-    #     plt.xlabel('Number of time steps')
-    # elif plot_settings['varying_parameter'] == 'food':
-    #     plt.xlabel('Number of foods')
-    #
-    # pad = +30
-    # color = 'dimgray'
-    # ax_main.annotate('Duration of $2$D-simulation', xy=(0, 1.5), xytext=(158, -ax_main.xaxis.labelpad - pad),
-    #             xycoords=ax_main.xaxis.label, textcoords='offset points',
-    #             size=15, ha='right', va='center', rotation=0, color=color)
+    if plot_settings['varying_parameter'] == 'time_steps':
+        plt.xlabel('Number of time steps')
+    elif plot_settings['varying_parameter'] == 'food':
+        plt.xlabel('Number of foods')
+
+    pad = +30
+    color = 'dimgray'
+    ax_main.annotate('Duration of $2$D-simulation', xy=(0, 1.5), xytext=(158, -ax_main.xaxis.labelpad - pad),
+                xycoords=ax_main.xaxis.label, textcoords='offset points',
+                size=15, ha='right', va='center', rotation=0, color=color)
 
 
 
     # PLot zoomed-in inset
 
 
-    # ax_zoom1 = inset_axes(ax_main, 4.3, 4.9, loc='upper right')
+    ax_zoom1 = inset_axes(ax_main, 4.3, 4.9, loc='upper right')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
-    # plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
-    # plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
-    #
-    # plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_upper_cut_off_label_sim=70
-    #           , x_offset_boo=False, y_offset_boo=False, zoomed_axis=True)
-    #
-    # ax_zoom1.set_xlim(10000, 52000)
-    # ax_zoom1.set_ylim(0, 70)
+    plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+    plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=70
+              , x_offset_boo=False, y_offset_boo=False, zoomed_axis=True)
+
+    ax_zoom1.set_xlim(10000, 52000)
+    ax_zoom1.set_ylim(0, 70)
 
     # ax_zoom1.set_ylim(1.94, 1.98)
     # ax_zoom1.set_xlim(0, 1)
@@ -249,23 +249,23 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
 
     # ax_zoom1.xaxis.get_major_ticks()[-1].draw = lambda *args:None
 
-    # plt.yticks(visible=False)
+    plt.yticks(visible=False)
     # plt.xticks(visible=False)
     # Still has to be tested:
     # ax_zoom1.set_xticks([])
     # ax_zoom1.set_yticks([])
-    # mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
+    mark_inset(ax_main, ax_zoom1, loc1=3, loc2=4, fc='none', ec='0.5')
 
 
-    # ax_zoom2 = inset_axes(ax_main, 3.31, 4.9, loc='upper left')
+    ax_zoom2 = inset_axes(ax_main, 3.31, 4.9, loc='upper left')
     # plt.axvline(2000, linestyle='dashed', color='firebrick', alpha=0.3, linewidth=1)
-    # plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
-    # plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
-    #
-    # plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, zoomed_axis=True)
-    #
-    # ax_zoom2.set_xlim(1500, 10000)
-    # ax_zoom2.set_ylim(0, 70)
+    plt.vlines(2000, 42, 70, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+    plt.vlines(2000, 0, 4, linestyles='dashed', colors='firebrick', alpha=0.8, linewidth=1)
+
+    plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, zoomed_axis=True)
+
+    ax_zoom2.set_xlim(1500, 10000)
+    ax_zoom2.set_ylim(0, 70)
 
     # ax_zoom1.set_ylim(1.94, 1.98)
     # ax_zoom1.set_xlim(0, 1)
@@ -277,27 +277,27 @@ def plot_axis(sim_data_list_each_folder, plot_settings):
     # ax_zoom1.set_xticks([])
     # ax_zoom1.set_yticks([])
     # ax_zoom2.set_yticks(ax_zoom2.get_yticks()[:-1])
-    # mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
-    #
-    # legend_elements = [
-    #     Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
-    #            markersize=20, alpha=0.75),
-    #     Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
-    #            markersize=20, alpha=0.75),
-    #     Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=10$, Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
-    #            markersize=20, alpha=0.75),
-    # ]
-    #
-    # ax_zoom2.legend(loc="upper left", bbox_to_anchor=(0.20, -0.23), handles=legend_elements, fontsize=16)
+    mark_inset(ax_main, ax_zoom2, loc1=3, loc2=4, fc='none', ec='0.5')
 
-    save_name = 'genotype_phenotype_plot.png'
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 4000', markerfacecolor=plot_settings['color']['critical'][1],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=1$, Generation 100', markerfacecolor=plot_settings['color']['critical'][0],
+               markersize=20, alpha=0.75),
+        Line2D([0], [0], marker='o', color='w', label=r'$\beta_\mathrm{init}=10$, Generation 4000', markerfacecolor=plot_settings['color']['sub_critical'][0],
+               markersize=20, alpha=0.75),
+    ]
+
+    ax_zoom2.legend(loc="upper left", bbox_to_anchor=(0.20, -0.23), handles=legend_elements, fontsize=16)
+
+    save_name = 'response_plot.png'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
     plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
 
 
-def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_upper_cut_off_label_sim=None, x_offset_boo=True, y_offset_boo=True, zoomed_axis=False):
+def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=True, y_upper_cut_off_label_sim=None, x_offset_boo=True, y_offset_boo=True, zoomed_axis=False):
     # Iterating through each folder
     for sim_data_list in sim_data_list_each_folder:
         list_of_avg_attr_list = []
@@ -355,16 +355,16 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
                     alpha = 0.5
                     linewidth=2
                 else:
-                    alpha = 0.5
-                    linewidth=2
+                    alpha = 1
+                    linewidth=1
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
             else:
                 if zoomed_axis:
                     alpha = 0.5
-                    linewidth=2
+                    linewidth=0.6
                 else:
-                    alpha = 0.5
-                    linewidth=2
+                    alpha = 0.3
+                    linewidth=0.6
                 plt.plot(food_num_list, avg_attr_list, c=color, alpha=alpha, linewidth=linewidth)
 
         # Plot averages of each folder
@@ -400,7 +400,7 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
 
                 y_offset += y_add_offset
                 x_offset += x_add_offset
-                # coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
+                coordinates = (food_num_list[-1]+x_offset, avg_attr_list[-1]+y_offset)
 
                 plot_this_label = True
                 if y_upper_cut_off_label_sim is not None:
@@ -412,8 +412,8 @@ def plot_data(sim_data_list_each_folder, plot_settings, label_each_sim=False, y_
                     fontsize = 14
                 else:
                     fontsize = 3
-                # if (label is not None) and plot_this_label:
-                #     plt.text(coordinates[0], coordinates[1], label, fontsize=fontsize, c=color)
+                if (label is not None) and plot_this_label:
+                    plt.text(coordinates[0], coordinates[1], label, fontsize=fontsize, c=color)
 
 
 def create_color_list(list_of_food_num_list, list_of_avg_attr_list, sim_data_list, plot_settings):
@@ -601,8 +601,12 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
             trained_varying_param = sim_data.food_num_list[index_trained_varying_param]
             fitness_at_trained_varying_param = sim_data.avg_attr_list[index_trained_varying_param]
 
-            ratio_largest_trained_varying_param = (fitness_at_largest_varying_param / fitness_at_trained_varying_param)\
-                                                  / (largest_varying_param / trained_varying_param)
+            # Gamma parameter:
+            # ratio_largest_trained_varying_param = (fitness_at_largest_varying_param / fitness_at_trained_varying_param)\
+            #                                       / (largest_varying_param / trained_varying_param)
+
+            # Ratio:
+            ratio_largest_trained_varying_param = (fitness_at_largest_varying_param / fitness_at_trained_varying_param)
 
             colors = plot_settings['color'][sim_data.key]
             markers = plot_settings['marker2'][sim_data.key]
@@ -646,8 +650,9 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     # plt.xscale('log')
 
     # plt.xlabel('{}/{}'.format(largest_varying_param_list[0], trained_varying_param_list[0]))
-    # plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
-    plt.xlabel(r'Generalizability $\gamma_{t}$')
+    # plt.xlabel(r'$\langle E_\mathrm{org}^{t=50000} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org}^{t=2000} \rangle$ 2000 time steps')
+    plt.xlabel(r'$\langle E_\mathrm{org}^{t=50000} \rangle / \langle E_\mathrm{org}^{t=2000} \rangle$')
+    # plt.xlabel(r'Generalizability $\gamma_{t}$')
     plt.ylabel(r'Dynamical Regime $\langle \delta \rangle$')
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
     cbar.set_label(r'$\langle E_\mathrm{org} \rangle$ at Training Condition', rotation=270, labelpad=33)
@@ -658,7 +663,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
 
     # plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
 
-    plt.axvline(1, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
+    plt.axvline(25, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
 
     '''
     Legende:
@@ -798,14 +803,12 @@ if __name__ == '__main__':
     # shall be loaded in the dynamic range folder of each simulation
     #
 
-    critical_folder_name = 'sim-20210206-122918_parallel_b1_normal_run_g4000_t2000_54_sims' #'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims'
-    # critical_folder_name = 'sim-20201210-200605_parallel_b1_genotype_phenotype_test'
+    critical_folder_name = 'sim-20210206-122918_parallel_b1_normal_run_g4000_t2000_54_sims'
     critical_low_gen_include_name = '_intermediate_run_res_40_gen_100d'
-    critical_last_gen_include_name = 'second_big_10_runs_all_connectable_mutate_ALL_edges_0-005_5_repeats'
+    critical_last_gen_include_name = 'gen4000_100foods_res_40_3_repeats_gen_4000d'
 
-    sub_critical_folder_name = 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims' #'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims'
-    # sub_critical_folder_name = 'sim-20201210-200613_parallel_b10_genotype_phenotype_test'
-    sub_critical_last_gen_include_name = 'second_big_10_runs_all_connectable_mutate_ALL_edges_0-005_5_repeats'
+    sub_critical_folder_name = 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims'
+    sub_critical_last_gen_include_name = 'gen4000_100foods_intermediate_run_res_40d'
 
     # Plot with generation 100 critical:
     # critical_folder_name_dict = {critical_folder_name: [critical_low_gen_include_name, critical_last_gen_include_name]}
@@ -817,9 +820,9 @@ if __name__ == '__main__':
     plot_settings = {}
     plot_settings['varying_parameter'] = 'time_steps'  # 'time_steps' or 'food'
     plot_settings['only_plot'] = True
-    plot_settings['load_dynamic_range_parameter'] = True
+    plot_settings['load_dynamic_range_parameter'] = False
 
-    plot_settings['only_plot_folder_name'] = 'genotype_phenotype_plot_20210226-020759_time_steps_HUGE_RUN_2x54_SIMS'
+    plot_settings['only_plot_folder_name'] = 'response_plot_20210210-121901_time_steps'
     # plot_settings['only_plot_folder_name'] = 'response_plot_20201125-211925_time_steps_2000ts_fixed_CritGen100_3999_SubCritGen3999_huge_run_resolution_50_3_repeats'
 
     plot_settings['add_save_name'] = ''

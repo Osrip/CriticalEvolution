@@ -114,9 +114,9 @@ class ising:
         #self.Beta = 1.0
         # self.defaultT = max(100, netsize * 20)
 
-        self.Ssize1 = 1 # FOOD ROTATIONAL SENSOR: sigmoid(theta)
-        self.Ssize2 = 1 # FOOD DISTANCE SENSOR: sigmoid(distance)
-        self.Ssize3 = 1 # DIRECTIONAL NEIGHBOUR SENSOR: dot-product distance normalized, see self.org_sens
+        self.Ssize1 = 1  # FOOD ROTATIONAL SENSOR: sigmoid(theta)
+        self.Ssize2 = 1  # FOOD DISTANCE SENSOR: sigmoid(distance)
+        self.Ssize3 = 1  # DIRECTIONAL NEIGHBOUR SENSOR: dot-product distance normalized, see self.org_sens
 
         self.Msize1 = int(self.Msize/2)  # dv motor neuron
 
