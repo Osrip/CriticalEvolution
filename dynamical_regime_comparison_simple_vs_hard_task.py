@@ -7,6 +7,7 @@ import pickle
 import matplotlib.pyplot as plt
 import time
 import warnings
+import seaborn as sns
 
 def comparison_main(folder_name_dict, plot_settings):
     folders_delta_dict = {}
@@ -45,7 +46,8 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
                 mean_delta_list_each_sim = delta_dict[list(delta_dict.keys())[0]]
             else:
                 mean_delta_list_each_sim = delta_dict[str(plot_settings['compare_generation'])]
-            plt.hist(mean_delta_list_each_sim)
+            plt.hist(mean_delta_list_each_sim, bins=15, alpha=0.2)
+            sns.kdeplot(mean_delta_list_each_sim, data2=None, shade=False, vertical=False, color='red')
         except KeyError:
             warnings.warn('Simulation for {} not loaded'.format(plot_key))
 
@@ -133,10 +135,15 @@ if __name__ == '__main__':
     # folder_name_dict['folder_hard_continuous_delta'] = ''
     # folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen'
 
+    # folder_name_dict['folder_simple_continuous_delta'] = ''
+    # folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen'
+    # folder_name_dict['folder_hard_continuous_delta'] = ''
+    # folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen'
+
     folder_name_dict['folder_simple_continuous_delta'] = ''
-    folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen'
+    folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
     folder_name_dict['folder_hard_continuous_delta'] = ''
-    folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen'
+    folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
     #
     # folder_name_dict['folder_simple_continuous_delta'] = ''
     # folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210302-215811_parallel_beta_linspace_rec_c20_TEST'
