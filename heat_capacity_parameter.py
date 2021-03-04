@@ -138,8 +138,7 @@ def load_heat_cap_files(sim_name, settings, gen_list):
             try:
                 C[:, :, bind, i_gen] = np.load(filename)
             except FileNotFoundError:
-                warnings.warn('C file with bind {} in generation {} of simulation {}'.format(bind, gen, sim_name))
-                pass
+                warnings.warn('File not found: C file with bind {} in generation {} of simulation {}'.format(bind, gen, sim_name))
     print('Done.')
     return C, betas
 

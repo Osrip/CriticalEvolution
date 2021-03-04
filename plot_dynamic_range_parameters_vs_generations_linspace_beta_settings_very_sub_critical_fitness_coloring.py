@@ -111,7 +111,8 @@ def plot(sim_plot_data_list, plot_settings):
 
     fitnesses = [sim_data.fitness_at_given_generation for sim_data in sim_plot_data_list]
     cmap = plt.get_cmap('plasma')
-    norm = colors_package.Normalize(vmin=min(fitnesses), vmax=max(fitnesses))
+    # norm = colors_package.Normalize(vmin=min(fitnesses), vmax=max(fitnesses))
+    norm = colors_package.Normalize(vmin=1.9, vmax=max(fitnesses))
 
     # cmap, norm = colormap_according_to_delta(delta_dicts_all_sims, plot_settings['color_according_to_delta_in_generation'],
     #                                          plot_settings)
@@ -194,7 +195,7 @@ def plot(sim_plot_data_list, plot_settings):
     plt.ylim(plot_settings['ylim'])
 
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-    cbar.set_label(r'$\langle \delta \rangle$ at Generation 0', rotation=270, labelpad=23)
+    cbar.set_label(r'$\langle E \rangle$ at Generation 4000', rotation=270, labelpad=23)
 
 
     # plt.text(-200, 1, 'hallo', fontsize=14)
@@ -396,8 +397,9 @@ if __name__ == '__main__':
 
     # folder_names = ['sim-20210302-215811_parallel_beta_linspace_rec_c20_TEST']
     # folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims']
-    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
-
+    # folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
+    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
+    # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
     regimes = ['b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
