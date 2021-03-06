@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import time
 import warnings
 import seaborn as sns
+from scipy.signal import savgol_filter
 
 def comparison_main(folder_name_dict, plot_settings):
     plt.rc('text', usetex=True)
@@ -40,6 +41,8 @@ def comparison_main(folder_name_dict, plot_settings):
     plot_continuous(folders_delta_dict, plot_settings)
 
 def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_name_dict, plot_settings):
+    font = {'family': 'serif', 'size': 38, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
     plt.figure(figsize=(10, 5))
     plot_keys = ['folder_simple_last_gen_delta', 'folder_hard_last_gen_delta']
     colors = ['olive', 'maroon']
@@ -69,6 +72,7 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
 
 
 def plot_continuous(folders_delta_dict, plot_settings):
+
     fig, ax = plt.subplots(figsize=(10, 5))
     plot_keys = ['folder_simple_continuous_delta', 'folder_hard_continuous_delta']
     colors = ['olive', 'maroon']
@@ -98,16 +102,27 @@ def plot_continuous(folders_delta_dict, plot_settings):
         plot_std_delta_low = plot_std_delta_low[sort_gen_inds]
         plot_std_delta_high = plot_std_delta_high[sort_gen_inds]
 
+        plot_mean_deltas = smooth_svgal(plot_mean_deltas)
+        plot_std_delta_low = smooth_svgal(plot_std_delta_low)
+        plot_std_delta_high = smooth_svgal(plot_std_delta_high)
+
 
 
         ax.plot(plot_gens, plot_mean_deltas, color=color, label=label)
         ax.fill_between(plot_gens, plot_std_delta_low, plot_std_delta_high, alpha=0.2, color=color)
     plt.legend()
+    plt.xlabel('Generation')
+    plt.ylabel(r'$\langle \delta \rangle$')
+    save_dir = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+    plt.savefig(save_dir + 'continuous_generations.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 
 
-
+def smooth_svgal(x_vec):
+    smoothed_x_vec = savgol_filter(x_vec, 11, 3)
+    # smoothed_x_vec = x_vec
+    return smoothed_x_vec
 
 def converting_list_of_dicts_to_dict_of_lists(delta_dicts_all_sims):
     # converting to
