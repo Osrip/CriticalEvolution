@@ -73,15 +73,19 @@ def colormap_according_to_delta(delta_dicts_all_sims, generation, plot_settings)
     for delta_dict in delta_dicts_all_sims:
         # delta dict: mean delta of each generation
 
-        delta_one_gen = delta_dict[str(generation)]
+        delta_one_gen = delta_dict[str(0)] / delta_dict[str(4000)]
         delta_list_one_gen.append(delta_one_gen)
 
-    colors = [plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    # colors = [plot_settings['colors']['b10'], plot_settings['colors']['b1'], plot_settings['colors']['b01']]
+    colors = [plot_settings['colors']['b01'], plot_settings['colors']['b1'], plot_settings['colors']['b10']]
     cmap_name = 'custom_cmap'
     # cmap = plt.get_cmap('brg')
     cmap = LinearSegmentedColormap.from_list(
         cmap_name, colors)
-    norm = colors_package.Normalize(vmin=min(delta_list_one_gen), vmax=max(delta_list_one_gen))
+    # norm = colors_package.Normalize(vmin=min(delta_list_one_gen), vmax=max(delta_list_one_gen))
+    norm = colors_package.Normalize(vmin=0, vmax=2.86)
+
+# min -2.8548752834467135 max 1.0784883720930236
     return cmap, norm
 
 
@@ -133,6 +137,7 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
 
 
         curr_color_delta= delta_dict[str(plot_settings['color_according_to_delta_in_generation'])]
+        curr_color_delta = np.abs(delta_dict[str(0)] / delta_dict[str(4000)])
         color = cmap(norm(curr_color_delta))
 
 
@@ -180,7 +185,7 @@ def plot(delta_dicts_all_sims, deltas_dicts_all_sims, plot_settings):
     plt.ylim(plot_settings['ylim'])
 
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-    cbar.set_label(r'$\langle \delta \rangle$ at Generation 0', rotation=270, labelpad=23)
+    cbar.set_label(r'$\langle \delta \rangle_\mathrm{Generation 0} / \langle \delta \rangle_\mathrm{Generation 4000}$ ', rotation=270, labelpad=23)
 
 
     # plt.text(-200, 1, 'hallo', fontsize=14)
@@ -290,7 +295,7 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = ''
     # plot_settings['only_plot_fittest']
 
-    plot_settings['ylim'] = (-1.8, 1.1) #(-1.5, 1.1)
+    plot_settings['ylim'] = (-2.0, 1.1)
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
     plot_settings['sliding_window'] = False
     plot_settings['sliding_window_size'] = 10
@@ -315,9 +320,11 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
     # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
-    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
+    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT', 'sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
+    # folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
+
     # folder_names = ['sim-20210216-210708_parallel_beta_linspace_rec_c100_10_sims_no_mut_beta']
-    regimes = ['b1']
+    regimes = ['b1', 'b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
         plot_settings['regime'] = regime

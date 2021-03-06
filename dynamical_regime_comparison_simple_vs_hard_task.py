@@ -10,6 +10,9 @@ import warnings
 import seaborn as sns
 
 def comparison_main(folder_name_dict, plot_settings):
+    plt.rc('text', usetex=True)
+    font = {'family': 'serif', 'size': 28, 'serif': ['computer modern roman']}
+    plt.rc('font', **font)
     folders_delta_dict = {}
     folders_deltas_dict = {}
     for key, folder_name in folder_name_dict.items():
@@ -37,22 +40,29 @@ def comparison_main(folder_name_dict, plot_settings):
 
 
 def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_name_dict, plot_settings):
-    plt.figure(figsize=(10,5))
+    plt.figure(figsize=(10, 5))
     plot_keys = ['folder_simple_last_gen_delta', 'folder_hard_last_gen_delta']
-    for plot_key in plot_keys:
+    colors = ['olive', 'maroon']
+    labels = ['Easy Task', 'Hard Task']
+    for plot_key, color, label in zip(plot_keys, colors, labels):
         try:
             delta_dict = folders_delta_dict[plot_key]
             if len(list(delta_dict.keys())) == 1:
                 mean_delta_list_each_sim = delta_dict[list(delta_dict.keys())[0]]
             else:
                 mean_delta_list_each_sim = delta_dict[str(plot_settings['compare_generation'])]
-            plt.hist(mean_delta_list_each_sim, bins=15, alpha=0.2)
-            sns.kdeplot(mean_delta_list_each_sim, data2=None, shade=False, vertical=False, color='red')
+            plt.hist(mean_delta_list_each_sim, bins=15, alpha=0.2, color=color, label= label)
+            sns.kdeplot(mean_delta_list_each_sim, data2=None, shade=False, vertical=False, color=color)
+            plt.axvline(np.mean(mean_delta_list_each_sim), color=color, alpha=0.7, linestyle='dashed', linewidth=3)
         except KeyError:
             warnings.warn('Simulation for {} not loaded'.format(plot_key))
 
 
     save_dir = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
+    plt.legend()
+    plt.ylabel('Density')
+    plt.xlabel(r'$\langle \delta \rangle$')
+    plt.title(r'$\beta_\mathrm{init}=1$, Generation 4000')
     plt.savefig(save_dir + 'probability_density.png', dpi=300, bbox_inches='tight')
     plt.show()
 

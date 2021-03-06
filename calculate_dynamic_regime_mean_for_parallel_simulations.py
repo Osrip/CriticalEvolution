@@ -58,8 +58,11 @@ if __name__ == '__main__':
     '''
 
     # Thesis:
-    compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1'],
-                            ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10']]
+    # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1'],
+    #                         ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10']]
+    # compare_generations = [['4000', '0'], ['4000', '0']]
+
+
     #'sim-20210126-013412_parallel_break_for_food_heat_cap_b_1' includes heat capacity calculations in generation 0 from 'sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims' in generation 4000
     # sam applies to 'sim-20210126-013429_parallel_break_for_food_heat_cap_b_10' and 'sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims'
 
@@ -70,9 +73,9 @@ if __name__ == '__main__':
 
     # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims'],
     #                         ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims']]
+    compare_folder_pairs = [['sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen', 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen']]
 
-    compare_generations = [['4000', '0'], ['4000', '0']]
-    # compare_generations = [['4000', '4000'], ['4000', '4000']]
+    compare_generations = [['4000', '4000']]
 
 # compare_generations = [['2000', '100'], ['2000', '100']]
     plot_settings = {}
