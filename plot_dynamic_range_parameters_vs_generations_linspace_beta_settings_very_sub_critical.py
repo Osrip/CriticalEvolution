@@ -369,6 +369,7 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201211-211021_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims']
     # folder_names = ['sim-20201215-201024_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201043_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT', 'sim-20201215-201011_parallel_b0_1_dynamic_range_c_20_g4000_t2000_10_sims_beta_jump_HEL_ONLY_PLOT']
     folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
+    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
     regimes = ['b1']
     plot_settings['last_sim'] = False
     for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):

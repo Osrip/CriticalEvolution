@@ -73,7 +73,9 @@ if __name__ == '__main__':
 
     # compare_folder_pairs = [['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims'],
     #                         ['sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims', 'sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims']]
-    compare_folder_pairs = [['sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen', 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen']]
+    # compare_folder_pairs = [['sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen', 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen']]
+    compare_folder_pairs = [['sim-20210305-223257_parallel_b1_default_task_significance_44_runs_delta_last_gen', 'sim-20210305-223243_parallel_b1_break_eat_significance_44_runs_delta_last_gen']]
+
 
     compare_generations = [['4000', '4000']]
 

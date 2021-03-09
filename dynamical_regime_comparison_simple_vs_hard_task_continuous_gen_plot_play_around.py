@@ -44,10 +44,9 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
     plt.rc('font', **font)
     plt.figure(figsize=(10, 5))
     plot_keys = ['folder_simple_last_gen_delta', 'folder_hard_last_gen_delta']
-    colors = [plot_settings['our_colors']['lgreen'], plot_settings['our_colors']['sgreen']]
-    line_styles = ['solid', 'dashed']
-    labels = ['Simple Task', 'Hard Task']
-    for plot_key, color, label, line_style in zip(plot_keys, colors, labels, line_styles):
+    colors = ['olive', 'maroon']
+    labels = ['Easy Task', 'Hard Task']
+    for plot_key, color, label in zip(plot_keys, colors, labels):
         try:
             delta_dict = folders_delta_dict[plot_key]
             if len(list(delta_dict.keys())) == 1:
@@ -55,8 +54,8 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
             else:
                 mean_delta_list_each_sim = delta_dict[str(plot_settings['compare_generation'])]
             plt.hist(mean_delta_list_each_sim, bins=15, alpha=0.2, color=color, label= label)
-            sns.kdeplot(mean_delta_list_each_sim, data2=None, shade=False, vertical=False, color=color, linestyle=line_style)
-            plt.axvline(np.mean(mean_delta_list_each_sim), color=color, alpha=0.7, linestyle=line_style, linewidth=3)
+            sns.kdeplot(mean_delta_list_each_sim, data2=None, shade=False, vertical=False, color=color)
+            plt.axvline(np.mean(mean_delta_list_each_sim), color=color, alpha=0.7, linestyle='dashed', linewidth=3)
         except KeyError:
             warnings.warn('Simulation for {} not loaded'.format(plot_key))
 
@@ -65,6 +64,7 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
     # plt.legend()
     plt.ylabel('Density')
     plt.xlabel(r'$\langle \delta \rangle$')
+
     # plt.title(r'$\beta_\mathrm{init}=1$, Generation 4000')
     plt.savefig(save_dir + 'probability_density.png', dpi=300, bbox_inches='tight')
     plt.show()
@@ -74,15 +74,13 @@ def plot_probability_density(folders_delta_dict, folders_deltas_dict, folder_nam
 def plot_continuous(folders_delta_dict, plot_settings):
     font = {'family': 'serif', 'size': 28, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10, 7))
     # change this back!!!
     plot_keys = ['folder_simple_continuous_delta', 'folder_hard_continuous_delta']
     # plot_keys = ['folder_simple_continuous_delta']
-    # colors = ['olive', 'maroon']
-    colors = [plot_settings['our_colors']['lgreen'], plot_settings['our_colors']['sgreen']]
-    line_styles = ['solid', 'dashed']
-    labels = ['Simple Task', 'Hard Task']
-    for plot_key, color, label, line_style in zip(plot_keys, colors, labels, line_styles):
+    colors = ['olive', 'maroon']
+    labels = ['Easy Task', 'Hard Task']
+    for plot_key, color, label in zip(plot_keys, colors, labels):
         delta_dict = folders_delta_dict[plot_key]
         plot_gens = []
         plot_mean_deltas = []
@@ -113,11 +111,12 @@ def plot_continuous(folders_delta_dict, plot_settings):
 
 
 
-        ax.plot(plot_gens, plot_mean_deltas, color=color, label=label, linestyle=line_style)
+        ax.plot(plot_gens, plot_mean_deltas, color=color, label=label)
         ax.fill_between(plot_gens, plot_std_delta_low, plot_std_delta_high, alpha=0.2, color=color)
     # plt.legend()
     plt.xlabel('Generation')
     plt.ylabel(r'$\langle \delta \rangle$')
+    plt.ylim(-1.5, 1)
     save_dir = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
     plt.savefig(save_dir + 'continuous_generations.png', dpi=300, bbox_inches='tight')
     plt.show()
@@ -125,8 +124,8 @@ def plot_continuous(folders_delta_dict, plot_settings):
 
 
 def smooth_svgal(x_vec):
-    smoothed_x_vec = savgol_filter(x_vec, 11, 3)
-    # smoothed_x_vec = x_vec
+    # smoothed_x_vec = savgol_filter(x_vec, 11, 3)
+    smoothed_x_vec = x_vec
     return smoothed_x_vec
 
 def converting_list_of_dicts_to_dict_of_lists(delta_dicts_all_sims):
@@ -192,9 +191,6 @@ if __name__ == '__main__':
     # Only works when 'only_plot' == False, should be None by default!!!!
     plot_settings['only_load_generation'] = None #None #4000
     plot_settings['compare_generation'] = 4000 #10
-    plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
-                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
-                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff'}
 
     folder_name_dict = {}
     # folder_name_dict['folder_simple_continuous_delta'] = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims'
@@ -222,15 +218,10 @@ if __name__ == '__main__':
     # folder_name_dict['folder_hard_continuous_delta'] = 'sim-20210226-023745_parallel_b1_break_eat_significance_10_runs_delta_every_20_gen'
     # folder_name_dict['folder_hard_last_gen_delta'] = ''
 
-    # folder_name_dict['folder_simple_continuous_delta'] = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'
-    # folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
-    # folder_name_dict['folder_hard_continuous_delta'] = 'sim-20210226-023745_parallel_b1_break_eat_significance_10_runs_delta_every_20_gen_HEL_ONLY_PLOT'
-    # folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
-
     folder_name_dict['folder_simple_continuous_delta'] = 'sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT'
-    folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210305-223243_parallel_b1_break_eat_significance_44_runs_delta_last_gen_HEL_ONLY_PLOT'
+    folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210226-023914_parallel_b1_default_task_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
     folder_name_dict['folder_hard_continuous_delta'] = 'sim-20210226-023745_parallel_b1_break_eat_significance_10_runs_delta_every_20_gen_HEL_ONLY_PLOT'
-    folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210305-223257_parallel_b1_default_task_significance_44_runs_delta_last_gen_HEL_ONLY_PLOT'
+    folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210226-023902_parallel_b1_break_eat_significance_20_runs_delta_last_gen_HEL_ONLY_PLOT'
     #
     # beta_jumps_simple_task
     # folder_name_dict['folder_simple_continuous_delta'] = 'sim-20201029-192538_parallel_b1_beta_jump_normal_run_HEL_ONLY_PLOT'

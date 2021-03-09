@@ -79,12 +79,16 @@ if __name__ == '__main__':
     # sim_name = 'sim-20201026-224639_parallel_b1_fixed_4000ts/sim-20201026-224642-b_1_-g_8000_-t_4000_-rec_c_2000_-c_props_10_10_-2_2_100_40_-c_1_-subfolder_sim-20201026-224639_parallel_b1_fixed_4000ts_-n_Run_1' #
     # sim_name = 'sim-20201026-224709_parallel_b10_fixed_4000ts/sim-20201026-224711-b_10_-g_8000_-t_4000_-rec_c_2000_-c_props_10_10_-2_2_100_40_-c_1_-subfolder_sim-20201026-224709_parallel_b10_fixed_4000ts_-n_Run_1'
     # sim_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000/sim-20201022-190555-b_1_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_-n_Run_1', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_1']
-    sim_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190555-b_1_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_-n_Run_1', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_1']
+    # sim_names = ['sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190555-b_1_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_-n_Run_1', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT_MUTATION/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_1']
+    sim_names = ['sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000/sim-20201022-190618-b_10_-g_4000_-t_2000_-noplt_-subfolder_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_-n_Run_{}'.format(i) for i in range(6,11)]
     plot_legend = [True, False]
-    titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$']
-    for sim_name, legend, title in zip(sim_names, plot_legend, titles):
+    # titles = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$']
+    # for sim_name, legend, title in zip(sim_names, plot_legend, titles):
+    for sim_name in sim_names:
+        legend = False
+        title = ''
         plot_settings = {}
-        plot_settings['only_plot'] = True
+        plot_settings['only_plot'] = False
 
         plot_settings['title'] = title
         plot_settings['plot_legend'] = legend
