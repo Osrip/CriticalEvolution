@@ -18,6 +18,8 @@ from scipy.interpolate import interp1d
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+import time
+from matplotlib.colors import LinearSegmentedColormap
 
 
 def main_plot_parallel_sims(folder_name, plot_settings):
@@ -83,7 +85,11 @@ def load_plot_data(folder_name, plot_settings):
 def plot(attrs_lists, plot_settings):
     plt.figure(figsize=(10, 7))
     plt.grid()
-    colors = sns.color_palette("dark", len(attrs_lists))
+    # colors = sns.color_palette("dark", len(attrs_lists))
+    cmap = LinearSegmentedColormap.from_list('my_cmap', plot_settings['color_list'])
+    color_norm_getters = np.linspace(0, 1, len(attrs_lists))
+    colors = [cmap(color_norm_getter) for color_norm_getter in color_norm_getters]
+    colors.reverse()
 
 
     for attrs_list, color in zip(attrs_lists, colors):
@@ -129,28 +135,33 @@ def plot(attrs_lists, plot_settings):
             labelbottom=False) # labels along the bottom edge are off
 
     if plot_settings['remove_y_ticks']:
-        plt.yticks([], [])
+        # plt.yticks([], [])
         plt.tick_params(
             axis='y',          # changes apply to the x-axis
             which='both',      # both major and minor ticks are affected
-            bottom=False,      # ticks along the bottom edge are off
-            top=False,         # ticks along the top edge are off
-            labelbottom=False) # labels along the bottom edge are off
+            left=False,      # ticks along the bottom edge are off
+            labelleft=False) # labels along the bottom edge are off
 
 
 
     # save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-    save_dir = 'save/{}/figs/several_plots{}/'.format(plot_settings['save_folder'], plot_settings['add_save_name'])
-    save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
-        format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
-               plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
-               plot_settings['plot_generations_str'])
+    save_dir = 'save/{}/figs/several_plots{}/'.format(plot_settings['savefolder_name'], plot_settings['add_save_name'])
+    # save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
+    #     format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
+    #            plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
+    #            plot_settings['plot_generations_str'])
+    # save_name = '{}several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}'. \
+    #     format(folder_name, plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
+    #            plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
+    #            plot_settings['plot_generations_str'])
+    save_name = 'Gens_vs_fitness_panel_{}'.format(plot_settings['save_fig_add'])
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
 
 
-    plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+    plt.savefig(save_dir+save_name+'.png', bbox_inches='tight', dpi=300)
+    plt.savefig(save_dir+save_name+'.pdf', bbox_inches='tight')
 
 
 def create_legend():
@@ -214,6 +225,21 @@ def slide_window(iterable, win_size):
         n += 1
     return slided, x_axis_gens
 
+# These two functions are also in automatic_plot_helper, import them in future!!
+def adjust_lightness(color, amount=0.5):
+    import matplotlib.colors as mc
+    import colorsys
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    return colorsys.hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
+
+
+def color_shadings(color, lightness=1.5, darkness=0.5, num_colors=3):
+    lightness_amount_vals = np.linspace(lightness, darkness, num_colors)
+    return [adjust_lightness(color, lightness_amount_val) for lightness_amount_val in lightness_amount_vals]
 
 if __name__ == '__main__':
     # folder_name = 'sim-20201020-181300_parallel_TEST'
@@ -247,6 +273,15 @@ if __name__ == '__main__':
     plot_settings['title'] = ''
     plot_settings['legend'] = True
 
+    plot_settings['savefolder_name'] = 'fitness_vs_gens_panel_{}' \
+        .format(time.strftime("%Y%m%d-%H%M%S"))
+
+    plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
+                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
+                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff'}
+
+
+
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190605_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000'] #
     # folder_names = ['sim-20201019-154142_parallel_parallel_mean_4000_ts_b1_rand_ts', 'sim-20201019-154106_parallel_parallel_mean_4000_ts_b1_fixed_ts', 'sim-20201019-153950_parallel_parallel_mean_4000_ts_b10_fixed_ts', 'sim-20201019-153921_parallel_parallel_mean_4000_ts_b10_rand_ts']
     # folder_names = ['sim-20201022-190625_parallel_b1_rand_seas_g4000_t2000', 'sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000', 'sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000']
@@ -261,11 +296,22 @@ if __name__ == '__main__':
     remove_x_ticks_list = [True, False, True, False]
     remove_y_ticks_list = [False, False, True, True]
     plot_legend_list = [False, False, False, False]
-    for i, (folder_name, remove_x_ticks, remove_y_ticks, plot_legend) in enumerate(zip(folder_names, remove_x_ticks_list,
-                                                                          remove_y_ticks_list, plot_legend_list)):
+    save_fig_add_list = ['1', '2', '3', '4']
+    base_colors = ['igreen', 'iblue', 'igreen', 'iblue']
+    for i, (folder_name, remove_x_ticks, remove_y_ticks, plot_legend, save_fig_add, base_color) in\
+            enumerate(zip(folder_names, remove_x_ticks_list, remove_y_ticks_list, plot_legend_list, save_fig_add_list, base_colors)):
         plot_settings['folder_name'] = folder_name
         plot_settings['remove_x_ticks'] = remove_x_ticks
         plot_settings['remove_y_ticks'] = remove_y_ticks
         plot_settings['legend'] = plot_legend
         plot_settings['title_color'] = ''
+        plot_settings['save_fig_add'] = save_fig_add
+
+        # intermediate_colors = [plot_settings['our_colors']['igreen'], plot_settings['our_colors']['iblue'], plot_settings['our_colors']['ired']]
+        color_list = color_shadings(plot_settings['our_colors'][base_color], lightness=1.5, darkness=0.5, num_colors=100)
+
+        plot_settings['color_list'] = color_list
+
+
+
         main_plot_parallel_sims(folder_name, plot_settings)
