@@ -95,7 +95,7 @@ def plot(attrs_lists, plot_settings):
     for attrs_list, color in zip(attrs_lists, colors):
         generations = np.arange(len(attrs_list))
         mean_attrs_list = [np.nanmean(gen_attrs) for gen_attrs in attrs_list]
-        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.15, c=color)
+        plt.scatter(generations, mean_attrs_list, s=2, alpha=0.05, c=color) #alpha = .15git commit -a -m "
         if plot_settings['sliding_window']:
             slided_mean_attrs_list, slided_x_axis = slide_window(mean_attrs_list, plot_settings['sliding_window_size'])
             plt.plot(slided_x_axis, slided_mean_attrs_list, alpha=0.8, linewidth=2, c=color)
