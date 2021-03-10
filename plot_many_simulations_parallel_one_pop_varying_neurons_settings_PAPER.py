@@ -139,7 +139,8 @@ def plot(attrs_lists, plot_settings):
 
 
 
-    save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
+    # save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
+    save_dir = 'save/{}/figs/several_plots{}/'.format(plot_settings['save_folder'], plot_settings['add_save_name'])
     save_name = 'several_sims_criticial_{}{}_{}_min_ts{}_min_food{}_{}.png'. \
         format(plot_settings['attr'], plot_settings['only_copied_str'], plot_settings['folder_name'],
                plot_settings['min_ts_for_plot'], plot_settings['min_food_for_plot'],
