@@ -105,7 +105,9 @@ def main(sim_name, settings, generation_list, recorded, plot_settings, draw_orig
         # cm = plt.get_cmap(plot_settings['cmap'])
         # cm = plt.get_cmap('gist_earth')  # gist_ncar # gist_earth #cmocean.cm.phase
         cm = LinearSegmentedColormap.from_list('my_cmap', plot_settings['color_list'])
-        ax.set_prop_cycle(color=[cm(1.*i/numAgents) for i in range(numAgents)])
+        cycle_colors = [cm(1.*i/numAgents) for i in range(numAgents)]
+        # cycle_colors.reverse()
+        ax.set_prop_cycle(color=cycle_colors)
         if draw_original_heat_cap_data:
             for numOrg in range(numAgents):
 
@@ -361,7 +363,9 @@ def color_shadings(color, lightness=1.5, darkness=0.5, num_colors=3):
 
 if __name__ == '__main__':
    # sim_names = ['sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT', 'sim-20201207-214853-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20201207-214834-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_super_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
-    sim_names = ['sim-20210211-012742-b_1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20210211-012746-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20210211-012750-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
+    sim_names = ['sim-20210211-012742-b_1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
+                 'sim-20210211-012746-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
+                 'sim-20210211-012750-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
     draw_critical_list = [True, False, False]
     save_plots = [False, False, True]
     first_plots = [True, False, False]

@@ -110,7 +110,9 @@ def plot(sim_plot_data_list, plot_settings):
     # })
 
     fitnesses = [sim_data.fitness_at_given_generation for sim_data in sim_plot_data_list]
-    cmap = plt.get_cmap('plasma')
+    cmap = sns.cubehelix_palette(as_cmap=True, dark=0.1, light=0.7, reverse=True, rot=-.4)
+    # cmap = plt.get_cmap('plasma')
+    # cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']])
     # norm = colors_package.Normalize(vmin=min(fitnesses), vmax=max(fitnesses))
     norm = colors_package.Normalize(vmin=1.9, vmax=max(fitnesses))
 
@@ -225,11 +227,12 @@ def plot(sim_plot_data_list, plot_settings):
 
 
         save_dir = 'save/{}/figs/several_plots{}/'.format(folder_name, plot_settings['add_save_name'])
-        save_name = 'delta_vs_generations_all_in_one.png'
+        save_name = 'delta_vs_generations_all_in_one'
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
-        plt.savefig(save_dir+save_name, bbox_inches='tight', dpi=300)
+        plt.savefig(save_dir+save_name+'.png', bbox_inches='tight', dpi=300)
+        plt.savefig(save_dir+save_name+'.pdf', bbox_inches='tight')
 
 
 def load_data_from_sims(folder_name, plot_settings):
@@ -400,6 +403,11 @@ if __name__ == '__main__':
     folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
+
+    plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
+                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
+                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff',
+                                   'our_orange': '#e87a12ff', 'our_violet': '#3b3a7eff'}
 
     regimes = ['b1']
     plot_settings['last_sim'] = False

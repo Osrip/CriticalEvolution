@@ -34,6 +34,7 @@ from heat_capacity_parameter import calc_heat_cap_param_main
 from automatic_plot_helper import custom_color_map
 import matplotlib
 import matplotlib.cm as cm
+from automatic_plot_helper import adjust_lightness
 
 
 
@@ -623,8 +624,13 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
             fitness_at_trained_varying_param_list.append(fitness_at_trained_varying_param)
 
     #
-    cmap, norm = custom_color_map(colors=['xkcd:darkish blue', 'xkcd:plum purple', 'xkcd:darkish red'], min_val=min(fitness_at_trained_varying_param_list),
+    # cmap, norm = custom_color_map(colors=['xkcd:darkish blue', 'xkcd:plum purple', 'xkcd:darkish red'], min_val=min(fitness_at_trained_varying_param_list),
+    #                               max_val=max(fitness_at_trained_varying_param_list), cmap_name='fitness_cmap')
+    # cmap_colors = [adjust_lightness(plot_settings['our_colors']['our_violet'], 1.3), adjust_lightness(plot_settings['our_colors']['our_violet'], 0.8), plot_settings['our_colors']['our_orange']]
+    cmap_colors = [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']]
+    cmap, norm = custom_color_map(colors=cmap_colors, min_val=min(fitness_at_trained_varying_param_list),
                                   max_val=max(fitness_at_trained_varying_param_list), cmap_name='fitness_cmap')
+
     # cmap = plt.get_cmap('turbo')
     # cmap = plt.get_cmap('plasma')
     colors_for_trained_fitness = [cmap(norm(fitness)) for fitness in fitness_at_trained_varying_param_list]
@@ -640,7 +646,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
 
     # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
-    s_list = [50 if marker == 'o' else 100 for marker in marker_list]
+    s_list = [80 if marker == 'o' else 100 for marker in marker_list]
     mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=0.5,
              m=marker_list, s=s_list)
     # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
@@ -886,6 +892,11 @@ if __name__ == '__main__':
     # plot_settings['colormaps'] = {critical_folder_name: {critical_low_gen_include_name: 'autumn', critical_last_gen_include_name: 'summer'}, 'sim-20201119-190204_parallel_b10_normal_run_g4000_t2000_54_sims': {sub_critical_last_gen_include_name: 'winter'}}
 
     folder_name_dict = {'critical': critical_folder_name_dict, 'sub_critical': sub_critical_folder_name_dict}
+
+    plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
+                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
+                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff',
+                                   'our_orange': '#e87a12ff', 'our_violet': '#3b3a7eff'}
 
     t1 = time.time()
 

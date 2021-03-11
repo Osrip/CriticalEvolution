@@ -89,7 +89,8 @@ def plot(attrs_lists, plot_settings):
     cmap = LinearSegmentedColormap.from_list('my_cmap', plot_settings['color_list'])
     color_norm_getters = np.linspace(0, 1, len(attrs_lists))
     colors = [cmap(color_norm_getter) for color_norm_getter in color_norm_getters]
-    colors.reverse()
+    if not plot_settings['fitness_2']:
+        colors.reverse()
 
 
     for attrs_list, color in zip(attrs_lists, colors):
@@ -116,7 +117,8 @@ def plot(attrs_lists, plot_settings):
             plt.plot(x_interp, y_interp, c=color, alpha=0.8, linewidth=2)
 
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
-
+    if plot_settings['fitness_2']:
+        plt.axhline(2, color='black', alpha=0.5, linewidth=10, linestyle=(0, (2, 4)))
     if not plot_settings['remove_x_ticks']:
         plt.xlabel('Generation')
     # plt.ylabel(plot_settings['attr'])
@@ -160,8 +162,11 @@ def plot(attrs_lists, plot_settings):
 
 
 
-    plt.savefig(save_dir+save_name+'.png', bbox_inches='tight', dpi=300)
-    plt.savefig(save_dir+save_name+'.pdf', bbox_inches='tight')
+    # plt.savefig(save_dir+save_name+'.png', bbox_inches='tight', dpi=300)
+    # plt.savefig(save_dir+save_name+'.pdf', bbox_inches='tight')
+    bbox_inches = 'tight'
+    plt.savefig(save_dir+save_name+'.png', dpi=300, bbox_inches=bbox_inches)
+    plt.savefig(save_dir+save_name+'.pdf',bbox_inches=bbox_inches)
 
 
 def create_legend():
@@ -251,11 +256,11 @@ if __name__ == '__main__':
     plot_settings['add_save_name'] = 'PAPER'
     plot_settings['attr'] = 'avg_energy' #'norm_food_and_ts_avg_energy' #'norm_avg_energy'
     # plot_settings['only_plot_fittest']
-    if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
-        plot_settings['ylim'] = (-0.0001, 0.00025)
-    else:
-        plot_settings['ylim'] = (-0.001, 0.015)
-    plot_settings['ylim'] = (-1, 40)
+    # if plot_settings['attr'] == 'norm_food_and_ts_avg_energy':
+    #     plot_settings['ylim'] = (-0.0001, 0.00025)
+    # else:
+    #     plot_settings['ylim'] = (-0.001, 0.015)
+
     # plot_settings['ylim'] = (-0.000001, 0.00007)
 
     # This only plots individuals that have not been mutated in previous generation (thus were fittest in previous generation)
@@ -292,20 +297,29 @@ if __name__ == '__main__':
     # folder_names = ['sim-20201023-202855_parallel_b1_num_neurons20_g4000_t2000', 'sim-20201023-202920_parallel_b1_num_neurons28_g4000_t2000', 'sim-20201023-202932_parallel_b10_num_neurons20_g4000_t2000', 'sim-20201023-202949_parallel_b10_num_neurons28_g4000_t2000']
     # folder_names = ['different_neurons_runs/sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'different_neurons_runs/sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT']
     # folder_names = ['var_neurons_sim-20201022-190553_parallel_b1_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201022-190615_parallel_b10_normal_seas_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202855_parallel_b1_num_neurons20_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202920_parallel_b1_num_neurons28_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202932_parallel_b10_num_neurons20_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202949_parallel_b10_num_neurons28_g4000_t2000_HEL_ONLY_PLOT']
-    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202920_parallel_b1_num_neurons28_g4000_t2000_HEL_ONLY_PLOT', 'var_neurons_sim-20201023-202949_parallel_b10_num_neurons28_g4000_t2000_HEL_ONLY_PLOT']
-    remove_x_ticks_list = [True, False, True, False]
-    remove_y_ticks_list = [False, False, True, True]
-    plot_legend_list = [False, False, False, False]
-    save_fig_add_list = ['1', '2', '3', '4']
-    base_colors = ['igreen', 'iblue', 'igreen', 'iblue']
-    for i, (folder_name, remove_x_ticks, remove_y_ticks, plot_legend, save_fig_add, base_color) in\
-            enumerate(zip(folder_names, remove_x_ticks_list, remove_y_ticks_list, plot_legend_list, save_fig_add_list, base_colors)):
+    folder_names = ['sim-20201210-200605_parallel_b1_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT',
+                    'sim-20201210-200613_parallel_b10_dynamic_range_c_20_g4000_t2000_10_sims_HEL_ONLY_PLOT',
+                    'var_neurons_sim-20201023-202920_parallel_b1_num_neurons28_g4000_t2000_HEL_ONLY_PLOT',
+                    'var_neurons_sim-20201023-202949_parallel_b10_num_neurons28_g4000_t2000_HEL_ONLY_PLOT',
+                    'break_eat_sim-20201226-111318_parallel_b1_break_eat_v_eat_max_0_005_g4000_t2000_10_sims_HEL_ONLY_PLOT',
+                    'break_eat_sim-20201226-111308_parallel_b10_break_eat_v_eat_max_0_005_g4000_t2000_10_sims_HEL_ONLY_PLOT']
+    remove_x_ticks_list = [True, False, True, False, True, False]
+    remove_y_ticks_list = [False, False, True, True, False, False]
+    plot_legend_list = [False, False, False, False, False, False]
+    save_fig_add_list = ['1', '2', '3', '4', '5', '6']
+    base_colors = ['igreen', 'iblue', 'igreen', 'iblue', 'igreen', 'iblue']
+    fitness_2_list = [False, False, False, False, False, True]
+    ylims = [(-1, 40), (-1, 40), (-1, 40), (-1, 40), (-0.25, 10), (-0.25, 10)]
+    for i, (folder_name, remove_x_ticks, remove_y_ticks, plot_legend, save_fig_add, base_color, ylim, fitness_2) in\
+            enumerate(zip(folder_names, remove_x_ticks_list, remove_y_ticks_list, plot_legend_list, save_fig_add_list, base_colors, ylims, fitness_2_list)):
         plot_settings['folder_name'] = folder_name
         plot_settings['remove_x_ticks'] = remove_x_ticks
         plot_settings['remove_y_ticks'] = remove_y_ticks
         plot_settings['legend'] = plot_legend
         plot_settings['title_color'] = ''
         plot_settings['save_fig_add'] = save_fig_add
+        plot_settings['ylim'] = ylim
+        plot_settings['fitness_2'] = fitness_2
 
         # intermediate_colors = [plot_settings['our_colors']['igreen'], plot_settings['our_colors']['iblue'], plot_settings['our_colors']['ired']]
         color_list = color_shadings(plot_settings['our_colors'][base_color], lightness=1.5, darkness=0.5, num_colors=100)
