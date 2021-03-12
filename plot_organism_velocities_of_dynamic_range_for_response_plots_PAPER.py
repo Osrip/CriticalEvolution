@@ -201,16 +201,16 @@ def plot_velocities_and_energies(energies_list_attr, velocities_list_attr, fig, 
     ax1.set_xticks([])
     if not sim_num == 21:
         ax1.set_ylabel(r'$E$')
-    ax1.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color='firebrick', alpha=0.8, linewidth=4)
+    ax1.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color=plot_settings['our_colors']['sred'], alpha=0.8, linewidth=5)
 
 
     ax2 = plt.Subplot(fig, inner_plot[1]) # , sharex=ax1
     x_axis_gens = np.arange(len(velocities_list_attr))
     ax2.scatter(x_axis_gens, velocities_list_attr, s=2, alpha=0.5, c=color)
-    ax2.set_xlabel('$t$')
+    ax2.set_xlabel('Time Step, $t$')
     if not sim_num == 21:
         ax2.set_ylabel(r'$v$')
-    ax2.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color='firebrick', alpha=0.8, linewidth=4)
+    ax2.axvline(plot_settings['data_set_trained_on_time_step'], linestyle='dashed', color=plot_settings['our_colors']['sred'], alpha=0.8, linewidth=5)
 
     # shared axis does not work.. also not in Subplot(sharex=ax1)
     # ax1.get_shared_x_axes().join(ax1, ax2)
@@ -290,5 +290,10 @@ if __name__ == '__main__':
     plot_settings['data_set_trained_on_time_step'] = 2000
 
     plot_settings['max_number_of_plots_on_one_page'] = 6
+
+    plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
+                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
+                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff'}
+
     #inds = [0]
     main(plot_settings)

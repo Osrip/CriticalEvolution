@@ -183,7 +183,7 @@ def plot_legend(cmap, draw_smoothed_heat_caps):
         # Line2D([0], [0], marker='o', color='w', markerfacecolor=cmap(norm(3)),
         #        markersize=15, alpha=0.75),
         Line2D([0], [0], marker='o', color='w', markerfacecolor='xkcd:dried blood',
-               markersize=15, alpha=0.75, label=r'Maximum'),
+               markersize=20, alpha=1, label=r'Maximum'),
         # Patch(facecolor='maroon', edgecolor='w', label=r'$\mathrm{std}(\beta_\mathrm{fac}^\mathrm{crit})$', alpha=0.4),
         # Line2D([0], [0], color='b', lw=3, c='maroon', linestyle='dashed', alpha=0.7, label=r'$\langle \beta_\mathrm{fac}^\mathrm{crit} \rangle$'),
         # Line2D([0], [0], color='b', lw=3, c='xkcd:vivid purple', linestyle='dashed', alpha=0.7, label=r'$\beta_\mathrm{fac}^\mathrm{orig} = 1$'),
@@ -277,7 +277,7 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
     std_max_betas = np.std(betas_max_gen_dict[generation])
 
     # Mark max beta values red
-    plt.scatter(betas_max_gen_dict[generation], heat_caps_max_dict[generation], s=10, c='xkcd:dried blood')
+    plt.scatter(betas_max_gen_dict[generation], heat_caps_max_dict[generation], s=15, c='xkcd:dried blood')
     # Mean max beta values
     plt.axvline(mean_max_betas, c='gray', linestyle='dashed', alpha=0.7, linewidth=3)
     # Mark hypothetical critical value
@@ -295,17 +295,17 @@ def plot_dynamic_range_parameter(sim_name, betas, generation, draw_critical, gau
             x_max = 1
             text_y_pos = mean_beta_distance + (mean_beta_distance * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-            plt.text(text_y_pos, 0.368, plot_settings['dynamical_regime_label'])
+            plt.text(text_y_pos, 0.360, plot_settings['dynamical_regime_label'])
             # plt.title(plot_settings['title'])
-            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
+            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.8))
         else:
             x_min = 1
             x_max = mean_beta_distance
             text_y_pos = 1 + (1 * 0.4)
             # plt.text(text_y_pos, 0.35, r'$\langle \delta \rangle = %s$' % np.round(mean_log_beta_distance, decimals=2), fontsize=35)
-            plt.text(text_y_pos, 0.368, plot_settings['dynamical_regime_label'])
+            plt.text(text_y_pos, 0.360, plot_settings['dynamical_regime_label'])
             # plt.title(plot_settings['title'])
-            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.5))
+            plt.hlines(0.35, x_min, x_max, linestyles='dotted', linewidths=5, colors=cmap(0.8))
 
     return smoothed_heat_caps
 
@@ -363,16 +363,16 @@ def color_shadings(color, lightness=1.5, darkness=0.5, num_colors=3):
 
 if __name__ == '__main__':
    # sim_names = ['sim-20200916-192139-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_20_-noplt_-n_FINE_RESOLVED_HEAT_CAP_PLOT_THESIS_PLOT', 'sim-20201207-214853-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT', 'sim-20201207-214834-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_300_40_-c_40_-n_super_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
-    sim_names = ['sim-20210211-012742-b_1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
-                 'sim-20210211-012746-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
+    sim_names = ['sim-20210211-012746-b_10_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
+                 'sim-20210211-012742-b_1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT',
                  'sim-20210211-012750-b_0.1_-g_2_-t_2000_-rec_c_1_-c_props_10000_100_-2_2_800_40_-c_28_-n_sub_crit_FINE_RESOLVED_HEAT_CAP_PLOT']
-    draw_critical_list = [True, False, False]
+    draw_critical_list = [False, True, False]
     save_plots = [False, False, True]
     first_plots = [True, False, False]
     dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
     # color_lists = [['olive', 'xkcd:neon green'], ['royalblue', 'xkcd:grape purple'], ['maroon', 'xkcd:neon red']]
     # color_lists = [['olive', 'olive'], ['royalblue', 'royalblue'], ['maroon', 'maroon']]
-    legend_labels = [r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 0.1$']
+    legend_labels = [ r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 0.1$']
     cmaps = ['cmo.algae', 'cmo.deep', 'cmo.solar']
 
     # 'cmo.thermal' 'gist_earth'
@@ -384,8 +384,8 @@ if __name__ == '__main__':
     plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
                                   'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
                                   'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff'}
-    intermediate_colors = [plot_settings['our_colors']['igreen'], plot_settings['our_colors']['iblue'], plot_settings['our_colors']['ired']]
-    color_lists = [color_shadings(color, lightness=1.6, darkness=0.4, num_colors=100) for color in intermediate_colors]
+    intermediate_colors = [plot_settings['our_colors']['iblue'], plot_settings['our_colors']['igreen'], plot_settings['our_colors']['ired']]
+    color_lists = [color_shadings(color, lightness=1.6, darkness=0.3, num_colors=100) for color in intermediate_colors]
 
     # color_lists = [[plot_settings['our_colors']['lblue'], plot_settings['our_colors']['iblue'], plot_settings['our_colors']['sblue']],
     #                [plot_settings['our_colors']['lgreen'], plot_settings['our_colors']['igreen'], plot_settings['our_colors']['sgreen']],

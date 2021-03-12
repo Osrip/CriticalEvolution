@@ -654,10 +654,10 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
 
     # plt.xlabel('{}/{}'.format(largest_varying_param_list[0], trained_varying_param_list[0]))
     # plt.xlabel(r'$\langle E_\mathrm{org} \rangle$ 50000 time steps $/$ $\langle E_\mathrm{org} \rangle$ 2000 time steps')
-    plt.xlabel(r'Generalizability $\gamma_{t}$', labelpad=10)
-    plt.ylabel(r'Dynamical Regime $\langle \delta \rangle$', labelpad=20)
+    plt.xlabel(r'Generalizability, $\gamma_{t}$', labelpad=10)
+    plt.ylabel(r'Dynamical Regime, $\langle \delta \rangle$', labelpad=20)
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-    cbar.set_label(r'$\langle E \rangle$ at Training Condition', rotation=270, labelpad=45)
+    cbar.set_label(r'$\langle E \rangle$ at $t_\mathrm{train}$', rotation=270, labelpad=45)
 
     pad = -30
     color = 'dimgray'
@@ -665,7 +665,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
 
     # plt.axvline(5, alpha=0.5, linestyle='dashed', color='grey', linewidth=3)
 
-    plt.axvline(1, alpha=0.5, linestyle='dashed', color='darkcyan', linewidth=3)
+    plt.axvline(1, alpha=0.5, linestyle='dashed', color='black', linewidth=3)
 
     '''
     Legende:
