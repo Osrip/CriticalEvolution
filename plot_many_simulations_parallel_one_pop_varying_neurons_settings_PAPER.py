@@ -118,15 +118,18 @@ def plot(attrs_lists, plot_settings):
 
         # plt.scatter(generations, mean_attrs_list, s=20, alpha=1)
     if plot_settings['fitness_2']:
-        plt.axhline(2, color='black', alpha=0.5, linewidth=10, linestyle=(0, (2, 4)))
+        plt.axhline(2, color='black', alpha=1, linewidth=3, linestyle=(0, (2, 4)))
     if not plot_settings['remove_x_ticks']:
         plt.xlabel('Generation')
     # plt.ylabel(plot_settings['attr'])
     if not plot_settings['remove_y_ticks']:
-        plt.ylabel(r'$\langle E \rangle$')
+        plt.ylabel(r'Fitness, $\langle E \rangle$')
     plt.ylim(plot_settings['ylim'])
     if plot_settings['legend']:
         create_legend()
+
+    if plot_settings['ylim'][-1] == 10:
+        plt.yticks(np.arange(0, 10+1, 2.0))
 
     if plot_settings['remove_x_ticks']:
         plt.tick_params(
@@ -137,12 +140,12 @@ def plot(attrs_lists, plot_settings):
             labelbottom=False) # labels along the bottom edge are off
 
     if plot_settings['remove_y_ticks']:
-        # plt.yticks([], [])
-        plt.tick_params(
-            axis='y',          # changes apply to the x-axis
-            which='both',      # both major and minor ticks are affected
-            left=False,      # ticks along the bottom edge are off
-            labelleft=False) # labels along the bottom edge are off
+        pass
+        # plt.tick_params(
+        #     axis='y',          # changes apply to the x-axis
+        #     which='both',      # both major and minor ticks are affected
+        #     left=False,      # ticks along the bottom edge are off
+        #     labelleft=False) # labels along the bottom edge are off
 
 
 
@@ -308,7 +311,7 @@ if __name__ == '__main__':
     plot_legend_list = [False, False, False, False, False, False]
     save_fig_add_list = ['1', '2', '3', '4', '5', '6']
     base_colors = ['igreen', 'iblue', 'igreen', 'iblue', 'igreen', 'iblue']
-    fitness_2_list = [False, False, False, False, False, True]
+    fitness_2_list = [False, True, False, True, False, True]
     ylims = [(-1, 40), (-1, 40), (-1, 40), (-1, 40), (-0.25, 10), (-0.25, 10)]
     for i, (folder_name, remove_x_ticks, remove_y_ticks, plot_legend, save_fig_add, base_color, ylim, fitness_2) in\
             enumerate(zip(folder_names, remove_x_ticks_list, remove_y_ticks_list, plot_legend_list, save_fig_add_list, base_colors, ylims, fitness_2_list)):
