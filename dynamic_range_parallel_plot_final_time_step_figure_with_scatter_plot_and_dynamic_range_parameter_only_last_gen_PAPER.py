@@ -647,7 +647,7 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
 
     # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
     s_list = [80 if marker == 'o' else 100 for marker in marker_list]
-    mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=0.5,
+    mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=1,
              m=marker_list, s=s_list)
     # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
     # plt.xscale('log')
@@ -693,12 +693,13 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
 
     plt.legend(loc='upper left', handles=legend_elements, fontsize=32)  # , bbox_to_anchor=(0, 1.32)
 
-    save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param.png'
+    save_name = 'fitness_largest_time_step_num_vs_dynamic_range_param'
     save_folder = 'save/{}/figs/'.format(plot_settings['savefolder_name'])
 
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
-    plt.savefig(save_folder+save_name, bbox_inches='tight', dpi=300)
+    plt.savefig(save_folder+save_name+'.png', bbox_inches='tight', dpi=300)
+    plt.savefig(save_folder+save_name+'.pdf', bbox_inches='tight')
 
 
 def all_equal(lst):

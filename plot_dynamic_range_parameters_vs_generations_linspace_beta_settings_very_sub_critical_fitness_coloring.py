@@ -32,7 +32,7 @@ class OneSimPlotData:
 
 def main_plot_parallel_sims(folder_name, plot_settings):
     plt.rc('text', usetex=True)
-    font = {'family': 'serif', 'size': 18, 'serif': ['computer modern roman']}
+    font = {'family': 'serif', 'size': 23, 'serif': ['computer modern roman']}
     plt.rc('font', **font)
 
     if not plot_settings['only_plot']:
@@ -101,7 +101,8 @@ def colormap_according_to_delta(delta_dicts_all_sims, generation, plot_settings)
 
 def plot(sim_plot_data_list, plot_settings):
     if plot_settings['new_fig']:
-        plt.figure(figsize=(10, 5))
+        fig_scaling = 1
+        plt.figure(figsize=(10*fig_scaling, 5*fig_scaling))
         ax = plt.subplot()
         plt.grid()
     # plt.rcParams.update({
@@ -110,9 +111,11 @@ def plot(sim_plot_data_list, plot_settings):
     # })
 
     fitnesses = [sim_data.fitness_at_given_generation for sim_data in sim_plot_data_list]
-    cmap = sns.cubehelix_palette(as_cmap=True, dark=0.1, light=0.7, reverse=True, rot=-.4)
+    # cmap = sns.cubehelix_palette(as_cmap=True, dark=0.1, light=0.7, reverse=True, rot=-.4)
     # cmap = plt.get_cmap('plasma')
-    # cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']])
+    cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']])
+    # cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange'], '#ffb871ff'])
+    # cmap = shiftedColorMap(cmap, 0, 0.5, 0.7)
     # norm = colors_package.Normalize(vmin=min(fitnesses), vmax=max(fitnesses))
     norm = colors_package.Normalize(vmin=1.9, vmax=max(fitnesses))
 
@@ -185,7 +188,7 @@ def plot(sim_plot_data_list, plot_settings):
         if plot_settings['plot_deltas_of_individuals']:
             plt.scatter(generations_unnested_ind,  mean_attr_list_ind_unnested, s=2, alpha=0.2, c=color)
 
-        plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4, c=color, marker='.')
+        # plt.scatter(generations, mean_attrs_list, s=5, alpha=0.4, c=color, marker='.')
 
         if plot_settings['sliding_window']:
             slided_mean_attrs_list = moving_average(mean_attrs_list, plot_settings['sliding_window_size'])
@@ -193,11 +196,12 @@ def plot(sim_plot_data_list, plot_settings):
 
 
     plt.xlabel('Generation')
-    plt.ylabel(r'$\langle \delta \rangle$')
+    if plot_settings['label_y_axis']:
+        plt.ylabel(r'$\langle \delta \rangle$')
     plt.ylim(plot_settings['ylim'])
 
     cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
-    cbar.set_label(r'$\langle E \rangle$ at Generation 4000', rotation=270, labelpad=23)
+    cbar.set_label(r'$\langle E \rangle$ at Generation 4000', rotation=270, labelpad=26)
 
 
     # plt.text(-200, 1, 'hallo', fontsize=14)
@@ -210,18 +214,25 @@ def plot(sim_plot_data_list, plot_settings):
     if plot_settings['plot_legend']:
         create_legend()
 
-    if plot_settings['new_fig']:
+    if plot_settings['new_fig'] and plot_settings['label_y_axis']:
         pad = -20
         color = 'dimgray'
-        ax.annotate('Super-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 155),
+        ax.annotate('Super-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 90),
                     xycoords=ax.yaxis.label, textcoords='offset points',
-                    size=15, ha='right', va='center', rotation=0, color=color)
-        ax.annotate('Critical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 22),
+                    size=18, ha='right', va='center', rotation=0, color=color)
+        ax.annotate('Critical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, 0),
                     xycoords=ax.yaxis.label, textcoords='offset points',
-                    size=15, ha='right', va='center', rotation=0, color=color)
-        ax.annotate('Sub-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, -115),
+                    size=18, ha='right', va='center', rotation=0, color=color)
+        ax.annotate('Sub-\nCritical', xy=(0, 1.5), xytext=(-ax.yaxis.labelpad - pad, -100),
                     xycoords=ax.yaxis.label, textcoords='offset points',
-                    size=15, ha='right', va='center', rotation=0, color=color)
+                    size=18, ha='right', va='center', rotation=0, color=color)
+
+    if not plot_settings['label_y_axis']:
+        plt.tick_params(
+            axis='y',          # changes apply to the x-axis
+            which='both',      # both major and minor ticks are affected
+            left=False,      # ticks along the bottom edge are off
+            labelleft=False) # labels along the bottom edge are off
 
     if plot_settings['save_fig']:
 
@@ -383,7 +394,7 @@ if __name__ == '__main__':
     plot_settings['smooth'] = True
     plot_settings['interpolate'] = True
     plot_settings['smooth_window'] = 7  # 21
-    plot_settings['line_alpha'] = 0.6  # beta jump 0.4 # normal 0.6
+    plot_settings['line_alpha'] = 1 # normal 0.6
 
     plot_settings['decompress'] = True
 
@@ -396,29 +407,32 @@ if __name__ == '__main__':
 
     plot_settings['colors'] = {'b1': 'olive', 'b01': 'maroon', 'b10': 'royalblue'}
 
-    beta_inits = [1, 10, 0.1]
+    beta_inits = [1, 1]
 
     # folder_names = ['sim-20210302-215811_parallel_beta_linspace_rec_c20_TEST']
     # folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims']
-    folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
+    # folder_names = ['sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT']
     # folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims']
+    folder_names = ['sim-20201226-002401_parallel_beta_linspace_rec_c40_30_sims_HEL_ONLY_PLOT', 'sim-20210118-014339_parallel_beta_linspace_break_eat_rec_c40_30_sims_HEL_ONLY_PLOT']
 
     plot_settings['our_colors'] = {'lblue': '#8da6cbff', 'iblue': '#5e81b5ff', 'sblue': '#344e73ff',
                                    'lgreen': '#b6d25cff', 'igreen': '#8fb032ff', 'sgreen': '#5e7320ff',
                                    'lred': '#f2977aff', 'ired': '#eb6235ff', 'sred': '#c03e13ff',
                                    'our_orange': '#e87a12ff', 'our_violet': '#3b3a7eff'}
 
-    regimes = ['b1']
+    regimes = ['b1', 'b1']
     plot_settings['last_sim'] = False
-    for i, (folder_name, beta_init, regime) in enumerate(zip(folder_names, beta_inits, regimes)):
+    label_x_axis_list = [True, False]
+    for i, (folder_name, beta_init, regime, label_x_axis) in enumerate(zip(folder_names, beta_inits, regimes, label_x_axis_list)):
+        plot_settings['label_y_axis'] = label_x_axis
         plot_settings['regime'] = regime
         plot_settings['folder_name'] = folder_name
         plot_settings['beta_init_for_title'] = beta_init
 
         plot_settings['new_fig'] = True
 
-        plot_settings['plot_legend'] = True
+        plot_settings['plot_legend'] = False
         plot_settings['save_fig'] = True
 
 

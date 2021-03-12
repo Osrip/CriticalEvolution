@@ -239,6 +239,11 @@ if __name__ == '__main__':
     # folder_name_dict['folder_hard_continuous_delta'] = ''
     # folder_name_dict['folder_hard_last_gen_delta'] = ''
 
+    folder_name_dict['folder_simple_continuous_delta'] = 'sim-20210309-131629_parallel_extend_b1_simple_task_by_4000_generations_HEL_ONLY_PLOT'
+    folder_name_dict['folder_simple_last_gen_delta'] = 'sim-20210305-223257_parallel_b1_default_task_significance_44_runs_delta_last_gen_HEL_ONLY_PLOT'
+    folder_name_dict['folder_hard_continuous_delta'] = 'sim-20210309-134302_parallel_extend_b1_hard_task_by_4000_generations_HEL_ONLY_PLOT'
+    folder_name_dict['folder_hard_last_gen_delta'] = 'sim-20210305-223243_parallel_b1_break_eat_significance_44_runs_delta_last_gen_HEL_ONLY_PLOT'
+
 
 
     comparison_main(folder_name_dict, plot_settings)
