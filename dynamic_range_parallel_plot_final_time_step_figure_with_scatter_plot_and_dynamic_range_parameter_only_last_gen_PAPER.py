@@ -646,8 +646,11 @@ def dynamic_range_parameter_plot(sim_data_list_each_folder, plot_settings):
     ratio_largest_trained_varying_param_list_log = list(map(lambda x: np.log10(x), ratio_largest_trained_varying_param_list))
 
     # plt.scatter(fitness_at_largest_varying_param_list, dynamic_range_param_list, c=color_list, alpha=0.5)
-    s_list = [80 if marker == 'o' else 100 for marker in marker_list]
-    mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=1,
+    # s_list = [80 if marker == 'o' else 100 for marker in marker_list]
+    # mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=1,
+    #          m=marker_list, s=s_list)
+    s_list = [20 if marker == 'o' else 25 for marker in marker_list]
+    mscatter(ratio_largest_trained_varying_param_list, dynamic_range_param_list, c=colors_for_trained_fitness, alpha=0.3,
              m=marker_list, s=s_list)
     # plt.scatter(ratio_largest_trained_varying_param_list_log, dynamic_range_param_list, c=color_list, alpha=0.5)
     # plt.xscale('log')

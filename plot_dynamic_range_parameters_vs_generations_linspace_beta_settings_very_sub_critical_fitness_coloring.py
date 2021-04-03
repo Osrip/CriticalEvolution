@@ -113,7 +113,8 @@ def plot(sim_plot_data_list, plot_settings):
     fitnesses = [sim_data.fitness_at_given_generation for sim_data in sim_plot_data_list]
     # cmap = sns.cubehelix_palette(as_cmap=True, dark=0.1, light=0.7, reverse=True, rot=-.4)
     # cmap = plt.get_cmap('plasma')
-    cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']])
+    # cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange']])
+    cmap = LinearSegmentedColormap.from_list('our_cmap', ['xkcd:dark blue', plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange'], 'xkcd:orangey yellow'])
     # cmap = LinearSegmentedColormap.from_list('our_cmap', [plot_settings['our_colors']['our_violet'], plot_settings['our_colors']['our_orange'], '#ffb871ff'])
     # cmap = shiftedColorMap(cmap, 0, 0.5, 0.7)
     # norm = colors_package.Normalize(vmin=min(fitnesses), vmax=max(fitnesses))

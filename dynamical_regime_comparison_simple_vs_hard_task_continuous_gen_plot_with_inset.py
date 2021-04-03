@@ -65,7 +65,7 @@ def plot_probability_density(ax_in, folders_delta_dict, folders_deltas_dict, fol
     colors = [plot_settings['our_colors']['lgreen'], plot_settings['our_colors']['sgreen']]
     line_styles = ['solid', 'dashed']
     labels = ['Simple Task', 'Hard Task']
-    alphas = [0.4, 0.2]
+    alphas = [0.5, 0.3]
     # plot_keys.reverse()
     # colors.reverse()
     # labels.reverse()
@@ -79,8 +79,8 @@ def plot_probability_density(ax_in, folders_delta_dict, folders_deltas_dict, fol
             else:
                 mean_delta_list_each_sim = delta_dict[str(plot_settings['compare_generation'])]
             ax_in.hist(mean_delta_list_each_sim, bins=15, alpha=alpha, color=color, label= label, density=True)
-            sns.kdeplot(mean_delta_list_each_sim, ax=ax_in, data2=None, shade=False, vertical=False, color=color, linestyle=line_style)
-            ax_in.axvline(np.mean(mean_delta_list_each_sim), color=color, alpha=alpha*2, linestyle=line_style, linewidth=3)
+            sns.kdeplot(mean_delta_list_each_sim, ax=ax_in, data2=None, shade=False, vertical=False, color=color, linestyle=line_style, linewidth=3)
+            ax_in.axvline(np.mean(mean_delta_list_each_sim), color=color, linestyle=line_style, linewidth=4) # , alpha=alpha*2
             # ax_in.axvline(np.mean(mean_delta_list_each_sim)+np.std(mean_delta_list_each_sim), color=color, alpha=alpha*2, linestyle='dotted', linewidth=3)
             # ax_in.axvline(np.mean(mean_delta_list_each_sim)-np.std(mean_delta_list_each_sim), color=color, alpha=alpha*2, linestyle='dotted', linewidth=3)
         except KeyError:
@@ -139,8 +139,8 @@ def plot_continuous(ax_main, folders_delta_dict, plot_settings):
 
 
 
-        ax_main.plot(plot_gens, plot_mean_deltas, color=color, label=label, linestyle=line_style)
-        ax_main.fill_between(plot_gens, plot_std_delta_low, plot_std_delta_high, alpha=0.2, color=color)
+        ax_main.plot(plot_gens, plot_mean_deltas, color=color, label=label, linestyle=line_style, linewidth=3)
+        ax_main.fill_between(plot_gens, plot_std_delta_low, plot_std_delta_high, alpha=0.5, color=color, linewidth=2)
     # plt.legend()
     ax_main.set_xlabel('Generation')
     ax_main.set_ylabel(r'Dynamical Regime,  $\langle \delta \rangle$', labelpad=10)

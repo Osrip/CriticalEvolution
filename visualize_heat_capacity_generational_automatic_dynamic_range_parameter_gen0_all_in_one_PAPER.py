@@ -369,7 +369,7 @@ if __name__ == '__main__':
     draw_critical_list = [False, True, False]
     save_plots = [False, False, True]
     first_plots = [True, False, False]
-    dynamical_regime_labels = [r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
+    dynamical_regime_labels = [r'$\langle \delta_\mathrm{sub} \rangle \approx -1$', r'$\langle \delta_\mathrm{crit} \rangle \approx 0$', r'$\langle \delta_\mathrm{super} \rangle \approx 1$']
     # color_lists = [['olive', 'xkcd:neon green'], ['royalblue', 'xkcd:grape purple'], ['maroon', 'xkcd:neon red']]
     # color_lists = [['olive', 'olive'], ['royalblue', 'royalblue'], ['maroon', 'maroon']]
     legend_labels = [ r'$\beta_\mathrm{init} = 10$', r'$\beta_\mathrm{init} = 1$', r'$\beta_\mathrm{init} = 0.1$']
